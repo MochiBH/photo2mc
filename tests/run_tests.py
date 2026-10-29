@@ -79,5 +79,67 @@ with tempfile.TemporaryDirectory() as d:
     bb, final, vers = photos_to_build([img], rounds=1, client=client, workdir=d, log=lambda *a: None)
 check("vision loop (stub)", len(vers) == 2 and validate(final) == [])
 
+# 9. measured palette: real ids, versions, CIEDE2000 reference values
+from mcbuild.palette import MATERIALS, Palette, delta_e2000, srgb_to_lab
+check("palette size", len(MATERIALS) > 200 and sum(m.stairs is not None for m in MATERIALS) > 80)
+ref = delta_e2000(np.array([[50, 2.6772, -79.7751]]), np.array([[50, 0, -82.7485]]))[0]
+check("CIEDE2000 reference pair", abs(ref - 2.0425) < 1e-3, f"{ref:.4f}")
+old = Palette(target="1.21")
+check("1.21 target drops 26.x blocks", all(m.since[0] == "1.21" for m in old.materials)
+      and not any(m.stairs and "concrete" in m.stairs for m in old.materials))
+
+# 10. colour accuracy with texture mixing beats single blocks on the temple
+b1 = build(load_meshes(os.path.join(S, "temple.glb")), block_size=1.0, dither=False)
+b2 = build(load_meshes(os.path.join(S, "temple.glb")), block_size=1.0, dither=True)
+check("mixing improves colour match", b2.color_error["median"] < b1.color_error["median"],
+      f"{b1.color_error['median']:.1f} -> {b2.color_error['median']:.1f}")
+
+# 11. thin blocks connect correctly
+thin = {"name": "t", "parts": [
+    {"shape": "box", "size": [6, 3, 6], "at": [0, 0, 0], "material": "bricks"},
+    {"shape": "box", "size": [2, 1, 1.4], "at": [0, 1, 3], "material": "glass_pane", "mode": "paint"},
+    {"shape": "box", "size": [8, 1, 0.1], "at": [0, 0, 5], "material": "oak_fence"},
+    {"shape": "box", "size": [8, 1, 0.3], "at": [0, 0, -5], "material": "cobblestone_wall"}]}
+bt = build_from_spec(thin, block_size=1.0)
+fences = [s_ for s_ in bt.states if "oak_fence" in s_]
+mid = [s_ for s_ in fences if "east=true" in s_ and "west=true" in s_]
+walls = [s_ for s_ in bt.states if "cobblestone_wall" in s_]
+check("fence row connects", len(fences) == 8 and len(mid) == 6, f"{len(fences)} fences")
+check("wall row: posts at the ends only", sum("up=true" in w for w in walls) == 2 and len(walls) == 8)
+check("pane windows in wall", sum("glass_pane" in s_ for s_ in bt.states) == 2)
+
+# 12. landmark specs all build (small scale for speed)
+lib = os.path.join(S, "landmarks")
+bad = []
+for f in sorted(os.listdir(lib)):
+    sp = json.load(open(os.path.join(lib, f)))
+    try:
+        if validate(sp):
+            bad.append(f)
+        build_from_spec(sp, height_blocks=30)
+    except Exception as e:  # noqa: BLE001
+        bad.append(f"{f}: {e}")
+check("landmark library builds", not bad and len(os.listdir(lib)) >= 11, str(bad))
+
+# 13. survival materials
+from mcbuild.recipes import raw_materials
+raw, steps = raw_materials({"minecraft:stone_brick_stairs": 10, "minecraft:quartz_block": 3, "minecraft:oak_fence": 3})
+check("raw materials", raw.get("cobblestone") == 10 and raw.get("nether_quartz") == 12 and raw.get("oak_log", 0) >= 2, str(raw))
+from mcbuild.guide import guide_data
+gd = guide_data(bt, "t")
+check("guide layers", len(gd["layers"]) == bt.size[1] and sum(len(l) for l in gd["layers"]) == len(bt.coords))
+
+# 14. semantic regions with a stand-in client
+from mcbuild.regions import find_regions, ask_claude, apply_assignment
+bc = build(load_meshes(os.path.join(S, "cottage.glb")), block_size=0.5)
+rid, regs = find_regions(bc)
+roof = next(r["id"] for r in regs if r["stairs_or_slabs_pct"] > 10)
+stub = types.SimpleNamespace(messages=types.SimpleNamespace(create=lambda **kw: types.SimpleNamespace(content=[
+    types.SimpleNamespace(type="tool_use", input={"analysis": "", "regions": [{"id": roof, "material": "waxed_oxidized_cut_copper"}]})])))
+with tempfile.TemporaryDirectory() as d:
+    asg = ask_claude(bc, rid, regs, client=stub, workdir=d)
+bs = apply_assignment(bc, rid, asg)
+check("semantic remap keeps stair shapes", any("waxed_oxidized_cut_copper_stairs[facing" in s_ for s_ in bs.states))
+
 print(f"\n{sum(results)}/{len(results)} passed")
 sys.exit(0 if all(results) else 1)

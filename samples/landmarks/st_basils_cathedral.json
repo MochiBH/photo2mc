@@ -1,0 +1,858 @@
+{
+ "name": "Saint Basil's Cathedral",
+ "height_m": 47.5,
+ "recommended_block_size": 0.5,
+ "camera": {
+  "azimuth_deg": 20,
+  "elevation_deg": 10
+ },
+ "notes": "47.5 m overall; central tent church with four octagonal churches on the compass points and four smaller cuboid ones on the diagonals, red brick on a white stone base (Wikipedia). Dome colours vary per dome in reality; heights of side churches estimated.",
+ "parts": [
+  {
+   "shape": "box",
+   "size": [
+    42,
+    5,
+    42
+   ],
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "material": "quartz_block",
+   "label": "white stone gallery base"
+  },
+  {
+   "shape": "box",
+   "size": [
+    38,
+    3,
+    38
+   ],
+   "at": [
+    0,
+    5,
+    0
+   ],
+   "material": "bricks",
+   "label": "upper gallery"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 8,
+   "radius": 6.5,
+   "height": 22,
+   "at": [
+    -1.5,
+    5,
+    0
+   ],
+   "material": "bricks",
+   "label": "central drum"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 8,
+   "radius": 7.2,
+   "height": 1.5,
+   "at": [
+    -1.5,
+    27,
+    0
+   ],
+   "material": "quartz_block",
+   "label": "kokoshnik band"
+  },
+  {
+   "shape": "cone",
+   "sides": 8,
+   "radius": 6.0,
+   "height": 13.5,
+   "at": [
+    -1.5,
+    28.5,
+    0
+   ],
+   "material": "bricks",
+   "label": "tent roof"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 8,
+   "radius": 1.6,
+   "height": 1.5,
+   "at": [
+    -1.5,
+    40,
+    0
+   ],
+   "material": "quartz_block",
+   "label": "lantern"
+  },
+  {
+   "shape": "revolve",
+   "profile": [
+    [
+     1.1700000000000002,
+     41.2
+    ],
+    [
+     1.534,
+     41.848000000000006
+    ],
+    [
+     1.625,
+     42.388000000000005
+    ],
+    [
+     1.4300000000000002,
+     43.0
+    ],
+    [
+     0.9099999999999999,
+     43.648
+    ],
+    [
+     0.39,
+     44.260000000000005
+    ],
+    [
+     0.15,
+     44.800000000000004
+    ]
+   ],
+   "at": [
+    -1.5,
+    0,
+    0
+   ],
+   "material": "gold_block",
+   "label": "onion dome"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.35,
+   "height": 2.5,
+   "at": [
+    -1.5,
+    44.800000000000004,
+    0
+   ],
+   "material": "gold_block",
+   "label": "cross"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 8,
+   "radius": 4.4,
+   "height": 17,
+   "at": [
+    -1.5,
+    5,
+    -14
+   ],
+   "material": "bricks",
+   "label": "axial church"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 8,
+   "radius": 3.0,
+   "height": 4,
+   "at": [
+    -1.5,
+    22,
+    -14
+   ],
+   "material": "bricks",
+   "label": "drum"
+  },
+  {
+   "shape": "revolve",
+   "profile": [
+    [
+     2.7,
+     26
+    ],
+    [
+     3.54,
+     27.404
+    ],
+    [
+     3.75,
+     28.574
+    ],
+    [
+     3.3000000000000003,
+     29.9
+    ],
+    [
+     2.0999999999999996,
+     31.304000000000002
+    ],
+    [
+     0.8999999999999999,
+     32.63
+    ],
+    [
+     0.15,
+     33.8
+    ]
+   ],
+   "at": [
+    -1.5,
+    0,
+    -14
+   ],
+   "material": "green_concrete",
+   "label": "onion dome"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.35,
+   "height": 2.5,
+   "at": [
+    -1.5,
+    33.8,
+    -14
+   ],
+   "material": "gold_block",
+   "label": "cross"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 8,
+   "radius": 4.4,
+   "height": 17,
+   "at": [
+    -1.5,
+    5,
+    14
+   ],
+   "material": "bricks",
+   "label": "axial church"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 8,
+   "radius": 3.0,
+   "height": 4,
+   "at": [
+    -1.5,
+    22,
+    14
+   ],
+   "material": "bricks",
+   "label": "drum"
+  },
+  {
+   "shape": "revolve",
+   "profile": [
+    [
+     2.7,
+     26
+    ],
+    [
+     3.54,
+     27.404
+    ],
+    [
+     3.75,
+     28.574
+    ],
+    [
+     3.3000000000000003,
+     29.9
+    ],
+    [
+     2.0999999999999996,
+     31.304000000000002
+    ],
+    [
+     0.8999999999999999,
+     32.63
+    ],
+    [
+     0.15,
+     33.8
+    ]
+   ],
+   "at": [
+    -1.5,
+    0,
+    14
+   ],
+   "material": "red_concrete",
+   "label": "onion dome"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.35,
+   "height": 2.5,
+   "at": [
+    -1.5,
+    33.8,
+    14
+   ],
+   "material": "gold_block",
+   "label": "cross"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 8,
+   "radius": 4.4,
+   "height": 17,
+   "at": [
+    -15.5,
+    5,
+    0
+   ],
+   "material": "bricks",
+   "label": "axial church"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 8,
+   "radius": 3.0,
+   "height": 4,
+   "at": [
+    -15.5,
+    22,
+    0
+   ],
+   "material": "bricks",
+   "label": "drum"
+  },
+  {
+   "shape": "revolve",
+   "profile": [
+    [
+     2.7,
+     26
+    ],
+    [
+     3.54,
+     27.404
+    ],
+    [
+     3.75,
+     28.574
+    ],
+    [
+     3.3000000000000003,
+     29.9
+    ],
+    [
+     2.0999999999999996,
+     31.304000000000002
+    ],
+    [
+     0.8999999999999999,
+     32.63
+    ],
+    [
+     0.15,
+     33.8
+    ]
+   ],
+   "at": [
+    -15.5,
+    0,
+    0
+   ],
+   "material": "yellow_concrete",
+   "label": "onion dome"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.35,
+   "height": 2.5,
+   "at": [
+    -15.5,
+    33.8,
+    0
+   ],
+   "material": "gold_block",
+   "label": "cross"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 8,
+   "radius": 4.4,
+   "height": 17,
+   "at": [
+    12.5,
+    5,
+    0
+   ],
+   "material": "bricks",
+   "label": "axial church"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 8,
+   "radius": 3.0,
+   "height": 4,
+   "at": [
+    12.5,
+    22,
+    0
+   ],
+   "material": "bricks",
+   "label": "drum"
+  },
+  {
+   "shape": "revolve",
+   "profile": [
+    [
+     2.7,
+     26
+    ],
+    [
+     3.54,
+     27.404
+    ],
+    [
+     3.75,
+     28.574
+    ],
+    [
+     3.3000000000000003,
+     29.9
+    ],
+    [
+     2.0999999999999996,
+     31.304000000000002
+    ],
+    [
+     0.8999999999999999,
+     32.63
+    ],
+    [
+     0.15,
+     33.8
+    ]
+   ],
+   "at": [
+    12.5,
+    0,
+    0
+   ],
+   "material": "blue_concrete",
+   "label": "onion dome"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.35,
+   "height": 2.5,
+   "at": [
+    12.5,
+    33.8,
+    0
+   ],
+   "material": "gold_block",
+   "label": "cross"
+  },
+  {
+   "shape": "box",
+   "size": [
+    6,
+    12,
+    6
+   ],
+   "at": [
+    -11.5,
+    5,
+    -10
+   ],
+   "material": "bricks",
+   "label": "diagonal church"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 8,
+   "radius": 2.0,
+   "height": 3,
+   "at": [
+    -11.5,
+    17,
+    -10
+   ],
+   "material": "bricks",
+   "label": "drum"
+  },
+  {
+   "shape": "revolve",
+   "profile": [
+    [
+     1.8,
+     20
+    ],
+    [
+     2.36,
+     20.936
+    ],
+    [
+     2.5,
+     21.716
+    ],
+    [
+     2.2,
+     22.6
+    ],
+    [
+     1.4,
+     23.536
+    ],
+    [
+     0.6,
+     24.42
+    ],
+    [
+     0.15,
+     25.2
+    ]
+   ],
+   "at": [
+    -11.5,
+    0,
+    -10
+   ],
+   "material": "red_concrete",
+   "label": "onion dome"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.35,
+   "height": 2.5,
+   "at": [
+    -11.5,
+    25.2,
+    -10
+   ],
+   "material": "gold_block",
+   "label": "cross"
+  },
+  {
+   "shape": "box",
+   "size": [
+    6,
+    12,
+    6
+   ],
+   "at": [
+    8.5,
+    5,
+    -10
+   ],
+   "material": "bricks",
+   "label": "diagonal church"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 8,
+   "radius": 2.0,
+   "height": 3,
+   "at": [
+    8.5,
+    17,
+    -10
+   ],
+   "material": "bricks",
+   "label": "drum"
+  },
+  {
+   "shape": "revolve",
+   "profile": [
+    [
+     1.8,
+     20
+    ],
+    [
+     2.36,
+     20.936
+    ],
+    [
+     2.5,
+     21.716
+    ],
+    [
+     2.2,
+     22.6
+    ],
+    [
+     1.4,
+     23.536
+    ],
+    [
+     0.6,
+     24.42
+    ],
+    [
+     0.15,
+     25.2
+    ]
+   ],
+   "at": [
+    8.5,
+    0,
+    -10
+   ],
+   "material": "green_concrete",
+   "label": "onion dome"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.35,
+   "height": 2.5,
+   "at": [
+    8.5,
+    25.2,
+    -10
+   ],
+   "material": "gold_block",
+   "label": "cross"
+  },
+  {
+   "shape": "box",
+   "size": [
+    6,
+    12,
+    6
+   ],
+   "at": [
+    -11.5,
+    5,
+    10
+   ],
+   "material": "bricks",
+   "label": "diagonal church"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 8,
+   "radius": 2.0,
+   "height": 3,
+   "at": [
+    -11.5,
+    17,
+    10
+   ],
+   "material": "bricks",
+   "label": "drum"
+  },
+  {
+   "shape": "revolve",
+   "profile": [
+    [
+     1.8,
+     20
+    ],
+    [
+     2.36,
+     20.936
+    ],
+    [
+     2.5,
+     21.716
+    ],
+    [
+     2.2,
+     22.6
+    ],
+    [
+     1.4,
+     23.536
+    ],
+    [
+     0.6,
+     24.42
+    ],
+    [
+     0.15,
+     25.2
+    ]
+   ],
+   "at": [
+    -11.5,
+    0,
+    10
+   ],
+   "material": "blue_concrete",
+   "label": "onion dome"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.35,
+   "height": 2.5,
+   "at": [
+    -11.5,
+    25.2,
+    10
+   ],
+   "material": "gold_block",
+   "label": "cross"
+  },
+  {
+   "shape": "box",
+   "size": [
+    6,
+    12,
+    6
+   ],
+   "at": [
+    8.5,
+    5,
+    10
+   ],
+   "material": "bricks",
+   "label": "diagonal church"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 8,
+   "radius": 2.0,
+   "height": 3,
+   "at": [
+    8.5,
+    17,
+    10
+   ],
+   "material": "bricks",
+   "label": "drum"
+  },
+  {
+   "shape": "revolve",
+   "profile": [
+    [
+     1.8,
+     20
+    ],
+    [
+     2.36,
+     20.936
+    ],
+    [
+     2.5,
+     21.716
+    ],
+    [
+     2.2,
+     22.6
+    ],
+    [
+     1.4,
+     23.536
+    ],
+    [
+     0.6,
+     24.42
+    ],
+    [
+     0.15,
+     25.2
+    ]
+   ],
+   "at": [
+    8.5,
+    0,
+    10
+   ],
+   "material": "yellow_concrete",
+   "label": "onion dome"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.35,
+   "height": 2.5,
+   "at": [
+    8.5,
+    25.2,
+    10
+   ],
+   "material": "gold_block",
+   "label": "cross"
+  },
+  {
+   "shape": "box",
+   "size": [
+    6,
+    22,
+    6
+   ],
+   "at": [
+    17.5,
+    0,
+    17
+   ],
+   "material": "bricks",
+   "label": "bell tower"
+  },
+  {
+   "shape": "cone",
+   "sides": 8,
+   "radius": 3.4,
+   "height": 9,
+   "at": [
+    17.5,
+    22,
+    17
+   ],
+   "material": "green_concrete",
+   "label": "bell tower tent"
+  },
+  {
+   "shape": "revolve",
+   "profile": [
+    [
+     0.81,
+     31
+    ],
+    [
+     1.062,
+     31.432
+    ],
+    [
+     1.125,
+     31.792
+    ],
+    [
+     0.9900000000000001,
+     32.2
+    ],
+    [
+     0.63,
+     32.632
+    ],
+    [
+     0.27,
+     33.04
+    ],
+    [
+     0.15,
+     33.4
+    ]
+   ],
+   "at": [
+    17.5,
+    0,
+    17
+   ],
+   "material": "gold_block",
+   "label": "onion dome"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.35,
+   "height": 2.5,
+   "at": [
+    17.5,
+    33.4,
+    17
+   ],
+   "material": "gold_block",
+   "label": "cross"
+  }
+ ]
+}

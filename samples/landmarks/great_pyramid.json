@@ -1,0 +1,58 @@
+{
+ "name": "Great Pyramid of Giza",
+ "height_m": 138.5,
+ "recommended_block_size": 1.0,
+ "camera": {
+  "azimuth_deg": 35,
+  "elevation_deg": 12
+ },
+ "notes": "230.3 m base, 138.5 m current height (146.6 m originally), faces at 51.84 degrees.",
+ "parts": [
+  {
+   "shape": "pyramid",
+   "size": [
+    230.3,
+    138.5,
+    230.3
+   ],
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "material": "sandstone",
+   "label": "pyramid (current height)"
+  },
+  {
+   "shape": "box",
+   "size": [
+    3,
+    4,
+    3
+   ],
+   "at": [
+    0,
+    136.5,
+    0
+   ],
+   "mode": "carve",
+   "label": "missing capstone"
+  },
+  {
+   "shape": "box",
+   "size": [
+    2.1,
+    1.1,
+    3
+   ],
+   "at": [
+    0,
+    16.8,
+    115.2
+   ],
+   "mode": "carve",
+   "rotate": 0,
+   "label": "original entrance"
+  }
+ ]
+}

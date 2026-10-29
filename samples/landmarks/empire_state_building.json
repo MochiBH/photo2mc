@@ -1,0 +1,263 @@
+{
+ "name": "Empire State Building",
+ "height_m": 443.2,
+ "recommended_block_size": 1.75,
+ "camera": {
+  "azimuth_deg": 30,
+  "elevation_deg": 8
+ },
+ "notes": "Roof 381 m, tip 443.2 m, 5-storey podium covering the 129 x 57 m lot, setbacks above the 5th, 21st, 25th, 30th, 72nd, 81st and 85th storeys, 4-tier mast (Wikipedia). Widths of the upper tiers are estimates from photos.",
+ "parts": [
+  {
+   "shape": "box",
+   "size": [
+    129,
+    25,
+    57
+   ],
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "material": "sandstone",
+   "label": "tier to 25 m"
+  },
+  {
+   "shape": "box",
+   "size": [
+    105,
+    60,
+    47
+   ],
+   "at": [
+    0,
+    25,
+    0
+   ],
+   "material": "sandstone",
+   "label": "tier to 85 m"
+  },
+  {
+   "shape": "box",
+   "size": [
+    85,
+    18,
+    45
+   ],
+   "at": [
+    0,
+    85,
+    0
+   ],
+   "material": "sandstone",
+   "label": "tier to 103 m"
+  },
+  {
+   "shape": "box",
+   "size": [
+    70,
+    19,
+    43
+   ],
+   "at": [
+    0,
+    103,
+    0
+   ],
+   "material": "sandstone",
+   "label": "tier to 122 m"
+  },
+  {
+   "shape": "box",
+   "size": [
+    60,
+    171,
+    41
+   ],
+   "at": [
+    0,
+    122,
+    0
+   ],
+   "material": "sandstone",
+   "label": "tier to 293 m"
+  },
+  {
+   "shape": "box",
+   "size": [
+    48,
+    35,
+    34
+   ],
+   "at": [
+    0,
+    293,
+    0
+   ],
+   "material": "sandstone",
+   "label": "tier to 328 m"
+  },
+  {
+   "shape": "box",
+   "size": [
+    38,
+    22,
+    28
+   ],
+   "at": [
+    0,
+    328,
+    0
+   ],
+   "material": "sandstone",
+   "label": "tier to 350 m"
+  },
+  {
+   "shape": "box",
+   "size": [
+    30,
+    31,
+    24
+   ],
+   "at": [
+    0,
+    350,
+    0
+   ],
+   "material": "sandstone",
+   "label": "tier to 381 m"
+  },
+  {
+   "shape": "box",
+   "size": [
+    1.5,
+    166,
+    1.4
+   ],
+   "at": [
+    -24.75,
+    125,
+    20.5
+   ],
+   "material": "deepslate_bricks",
+   "mode": "paint",
+   "repeat": {
+    "count": 12,
+    "step": [
+     4.5,
+     0,
+     0
+    ]
+   },
+   "mirror": "z",
+   "label": "window bands"
+  },
+  {
+   "shape": "box",
+   "size": [
+    1.4,
+    166,
+    1.5
+   ],
+   "at": [
+    30,
+    125,
+    -15.75
+   ],
+   "material": "deepslate_bricks",
+   "mode": "paint",
+   "repeat": {
+    "count": 8,
+    "step": [
+     0,
+     0,
+     4.5
+    ]
+   },
+   "mirror": "x",
+   "label": "window bands"
+  },
+  {
+   "shape": "box",
+   "size": [
+    18,
+    10,
+    18
+   ],
+   "at": [
+    0,
+    381,
+    0
+   ],
+   "material": "sandstone",
+   "label": "mast tier 1"
+  },
+  {
+   "shape": "box",
+   "size": [
+    14,
+    10,
+    14
+   ],
+   "at": [
+    0,
+    391,
+    0
+   ],
+   "material": "sandstone",
+   "label": "mast tier 2"
+  },
+  {
+   "shape": "box",
+   "size": [
+    10,
+    8,
+    10
+   ],
+   "at": [
+    0,
+    401,
+    0
+   ],
+   "material": "iron_block",
+   "label": "mast tier 3"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 3.5,
+   "height": 8,
+   "at": [
+    0,
+    409,
+    0
+   ],
+   "material": "iron_block",
+   "label": "mast cylinder"
+  },
+  {
+   "shape": "cone",
+   "radius": 3,
+   "height": 6,
+   "at": [
+    0,
+    417,
+    0
+   ],
+   "material": "iron_block",
+   "label": "pinnacle"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.8,
+   "height": 20,
+   "at": [
+    0,
+    423,
+    0
+   ],
+   "material": "iron_block",
+   "label": "antenna"
+  }
+ ]
+}

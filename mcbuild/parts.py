@@ -19,13 +19,17 @@ photo, z = toward the camera (the photographed facade faces +z).
 Shapes: box, cylinder (radius, height, [radius_top], [sides]), cone, pyramid,
 gable_roof (ridge "x"|"z"), hip_roof, dome (radius, [height]), sphere,
 revolve (profile [[r, y], ...]), extrude (footprint [[x, z], ...], height),
-arch (width, height, depth, [axis] - box with a round top, for openings).
+arch (width, height, depth, [axis] - box with a round top, for openings),
+beam ("from": [x,y,z], "to": [x,y,z], "radius" or "width", [sides]) - a strut
+between two points, for leaning legs, trusses and lattices ("at" is ignored).
 
 Modes: "solid" (default) adds material; "carve" removes it (doorways,
 arches, courtyards); "paint" re-materials whatever solid surface it overlaps
 (windows, bands, trim) without changing the shape.
 
-Extras on any part: "rotate" (degrees about y), "repeat" {"count": n or
+Extras on any part: "rotate" (degrees about y), "tilt" [deg about x, deg
+about z] (applied first, about the base center; [90, 0] lays a cylinder
+along +z, e.g. a clock face on a wall), "repeat" {"count": n or
 [nx, ny], "step": [dx,dy,dz] or [[..],[..]]}, "mirror": "x" | "z" | "xz".
 """
 from __future__ import annotations
@@ -36,7 +40,7 @@ import trimesh
 from trimesh import transformations as tf
 
 SHAPES = ["box", "cylinder", "cone", "pyramid", "gable_roof", "hip_roof", "dome",
-          "sphere", "revolve", "extrude", "arch"]
+          "sphere", "revolve", "extrude", "arch", "beam"]
 
 
 def _closed(v, f):
@@ -178,8 +182,28 @@ def make_mesh(p: dict) -> trimesh.Trimesh:
         m = _extrude(p["footprint"], float(p["height"]))
     elif s == "arch":
         m = _arch(float(p["width"]), float(p["height"]), float(p["depth"]), p.get("axis", "z"))
+    elif s == "beam":
+        a, b = np.asarray(p["from"], float), np.asarray(p["to"], float)
+        v = b - a
+        L = float(np.linalg.norm(v))
+        if L < 1e-6:
+            raise ValueError("beam 'from' and 'to' are the same point")
+        if "width" in p:
+            w = float(p["width"])
+            m = _box(w, L, w)
+        else:
+            m = _frustum(float(p["radius"]), float(p.get("radius_top", p["radius"])), L, int(p.get("sides", 12)))
+        m.apply_transform(trimesh.geometry.align_vectors([0, 1, 0], v / L))
+        m.apply_translation(a)
+        return m
     else:
         raise ValueError(f"unknown shape {s!r} (known: {', '.join(SHAPES)})")
+    if p.get("tilt"):
+        tx, tz = (list(p["tilt"]) + [0, 0])[:2]
+        if tx:
+            m.apply_transform(tf.rotation_matrix(np.radians(float(tx)), (1, 0, 0)))
+        if tz:
+            m.apply_transform(tf.rotation_matrix(np.radians(float(tz)), (0, 0, 1)))
     if p.get("rotate"):
         m.apply_transform(tf.rotation_matrix(np.radians(float(p["rotate"])), (0, 1, 0)))
     m.apply_translation(np.asarray(p.get("at", (0, 0, 0)), float))
@@ -203,6 +227,9 @@ def expand(parts: list[dict]) -> list[dict]:
             for g in grid:
                 q = copy.deepcopy(p)
                 q["at"] = (np.asarray(p.get("at", (0, 0, 0)), float) + g).tolist()
+                for k in ("from", "to"):
+                    if k in q:
+                        q[k] = (np.asarray(q[k], float) + g).tolist()
                 base.append(q)
         mir = p.get("mirror", "")
         allp = list(base)
@@ -214,8 +241,16 @@ def expand(parts: list[dict]) -> list[dict]:
                 at = list(r.get("at", (0, 0, 0)))
                 at[i] = -at[i]
                 r["at"] = at
+                for k in ("from", "to"):
+                    if k in r:
+                        r[k] = list(r[k])
+                        r[k][i] = -r[k][i]
                 if r.get("rotate"):
                     r["rotate"] = -r["rotate"]
+                if r.get("tilt"):
+                    t = list(r["tilt"]) + [0, 0]
+                    # mirroring x flips rotation about z; mirroring z flips rotation about x
+                    r["tilt"] = [-t[0], t[1]] if axis == "z" else [t[0], -t[1]]
                 if r["shape"] == "extrude":
                     r["footprint"] = [[(-x if axis == "x" else x), (-z if axis == "z" else z)]
                                       for x, z in r["footprint"]]
@@ -236,8 +271,17 @@ def expand(parts: list[dict]) -> list[dict]:
 
 
 def spec_meshes(spec: dict):
-    """-> list of (mesh, material, mode) in spec order."""
+    """-> list of (mesh, material, mode) in spec order.
+    A spec-level "tilt": [deg about x, deg about z] leans the whole structure
+    about the ground origin (e.g. the Leaning Tower of Pisa)."""
     res = []
+    T = np.eye(4)
+    if spec.get("tilt"):
+        tx, tz = (list(spec["tilt"]) + [0, 0])[:2]
+        T = tf.rotation_matrix(np.radians(float(tz)), (0, 0, 1)) @ tf.rotation_matrix(np.radians(float(tx)), (1, 0, 0))
     for p in expand(spec["parts"]):
-        res.append((make_mesh(p), p.get("material", "stone"), p.get("mode", "solid")))
+        m = make_mesh(p)
+        if spec.get("tilt"):
+            m.apply_transform(T)
+        res.append((m, p.get("material", "stone"), p.get("mode", "solid")))
     return res

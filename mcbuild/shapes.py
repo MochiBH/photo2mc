@@ -64,3 +64,45 @@ def mask_boxes(mask: int):
         for dx, dz in cells - used:
             boxes.append((dx * .5, y0, dz * .5, dx * .5 + .5, y1, dz * .5 + .5))
     return boxes
+
+
+def _props(state):
+    if "[" not in state:
+        return {}
+    return dict(p.split("=") for p in state[state.index("[") + 1:-1].split(","))
+
+
+_ARM = {"north": lambda a, b: (a, b, 0, 1 - a, 0, 0.5), "south": lambda a, b: (a, b, 0.5, 1 - a, 0, 1),
+        "east": lambda a, b: (0.5, b, a, 1, 0, 1 - a), "west": lambda a, b: (0, b, a, 0.5, 0, 1 - a)}
+
+
+def _arm(d, half_w, y0, y1):
+    """Arm from the block centre toward side d, half_w wide, y0..y1 tall."""
+    a = 0.5 - half_w
+    x0, _, z0, x1, _, z1 = _ARM[d](a, 0)
+    return (x0, y0, z0, x1, y1, z1)
+
+
+def state_boxes(state: str):
+    """Boxes (block units) Minecraft draws for a blockstate — full blocks,
+    slabs, stairs, and the thin connecting blocks (panes, bars, fences, walls)."""
+    bid = state.split("[")[0]
+    p = _props(state)
+    if bid.endswith("_pane") or bid.endswith("_bars"):
+        boxes = [(7 / 16, 0, 7 / 16, 9 / 16, 1, 9 / 16)]
+        boxes += [_arm(d, 1 / 16, 0, 1) for d in ("north", "south", "east", "west") if p.get(d) == "true"]
+        return boxes
+    if bid.endswith("_fence"):
+        boxes = [(6 / 16, 0, 6 / 16, 10 / 16, 1, 10 / 16)]
+        for d in ("north", "south", "east", "west"):
+            if p.get(d) == "true":
+                boxes += [_arm(d, 1 / 16, 6 / 16, 9 / 16), _arm(d, 1 / 16, 12 / 16, 15 / 16)]
+        return boxes
+    if bid.endswith("_wall"):
+        boxes = [(4 / 16, 0, 4 / 16, 12 / 16, 1, 12 / 16)] if p.get("up", "true") == "true" else []
+        for d in ("north", "south", "east", "west"):
+            h = p.get(d, "none")
+            if h != "none":
+                boxes.append(_arm(d, 3 / 16, 0, 1 if h == "tall" else 14 / 16))
+        return boxes or [(4 / 16, 0, 4 / 16, 12 / 16, 1, 12 / 16)]
+    return mask_boxes(state_mask(state))

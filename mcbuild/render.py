@@ -7,7 +7,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.collections import PolyCollection
 
-from .shapes import state_mask, mask_boxes
+from .shapes import state_boxes
 
 
 VIEWS = {"se": (45, 38), "sw": (-45, 38), "ne": (135, 38), "nw": (-135, 38), "front": (20, 15)}
@@ -33,7 +33,7 @@ def render_iso(b, path, view="se", size=9, title=None, azimuth=None, elevation=N
         # skip blocks hidden behind full neighbours on all three visible sides
         if (x + sx, y, z) in full and (x, y + 1, z) in full and (x, y, z + sz) in full:
             continue
-        for (x0, y0, z0, x1, y1, z1) in mask_boxes(state_mask(s)):
+        for (x0, y0, z0, x1, y1, z1) in state_boxes(s):
             X0, X1, Y0, Y1, Z0, Z1 = x + x0, x + x1, y + y0, y + y1, z + z0, z + z1
             xf = X1 if sx > 0 else X0
             zf = Z1 if sz > 0 else Z0

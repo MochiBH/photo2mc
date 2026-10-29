@@ -9,15 +9,27 @@ from __future__ import annotations
 import difflib
 import warnings
 import numpy as np
+import trimesh
 
-from .palette import BY_NAME, Material
+from .palette import BY_NAME, Material, for_version
 from .parts import spec_meshes
-from .voxelize import (Build, FULL, STAIRS, SLAB, _parity_occupancy, classify_blocks,
+from .voxelize import (Build, FULL, STAIRS, SLAB, CONNECT, _parity_occupancy, classify_blocks,
                        grid_origin, make_states)
+from .connect import CONNECTABLES, Connectable, connection_states
+
+THIN_FALLBACK = {"pane": "glass_pane", "bars": "iron_bars", "fence": "oak_fence", "wall": "cobblestone_wall"}
 
 
-def resolve_material(name: str) -> Material:
+def resolve_material(name: str):
+    """Spec material name -> Material (block family) or Connectable (thin)."""
     name = name.replace("minecraft:", "").strip()
+    if name in CONNECTABLES:
+        return CONNECTABLES[name]
+    if name.endswith(("_pane", "_fence", "_wall", "_bars")) or name in ("pane", "fence", "wall", "bars"):
+        close = difflib.get_close_matches(name, list(CONNECTABLES), n=1, cutoff=0.5)
+        pick = close[0] if close else THIN_FALLBACK.get(name.split("_")[-1], "glass_pane")
+        warnings.warn(f"material {name!r} not found, using {pick!r}")
+        return CONNECTABLES[pick]
     if name in BY_NAME:
         return BY_NAME[name]
     # accept stair/slab names and common aliases ("brick_stairs" -> bricks)
@@ -43,7 +55,7 @@ def _occ(mesh, origin, dims, sub):
 
 
 def build_from_spec(spec: dict, block_size: float | None = None, height_blocks: int | None = None,
-                    hollow: bool = True, shapes: bool = True) -> Build:
+                    hollow: bool = True, shapes: bool = True, target: str = "latest") -> Build:
     parts = spec_meshes(spec)
     solids = [m for m, _, mode in parts if mode == "solid"]
     if not solids:
@@ -64,6 +76,11 @@ def build_from_spec(spec: dict, block_size: float | None = None, height_blocks: 
     mid = {}
     def idx(name):
         m = resolve_material(name)
+        if isinstance(m, Connectable):
+            if target != "latest" and m.since == "26":
+                m = CONNECTABLES[THIN_FALLBACK[m.kind]]
+        else:
+            m = for_version(m, target) or for_version(BY_NAME["stone"], target)
         if m.name not in mid:
             mid[m.name] = len(mats)
             mats.append(m)
@@ -72,17 +89,46 @@ def build_from_spec(spec: dict, block_size: float | None = None, height_blocks: 
     occ = np.zeros(dims, bool)
     matg = np.full(dims, -1, np.int16)
     paint = np.full(dims, -1, np.int16)
+    thin = np.full(tuple(nblocks), -1, np.int16)      # block-level thin parts
+
+    def touched_blocks(mesh, g):
+        """Blocks a thin part passes through at all (it may be far thinner
+        than half a block, so 'centre inside' would miss it)."""
+        t = g.reshape(nblocks[0], 2, nblocks[1], 2, nblocks[2], 2).sum(axis=(1, 3, 5)) >= 4
+        n = max(500, int(mesh.area / (block_size / 4) ** 2))
+        pts, fi = trimesh.sample.sample_surface(mesh, min(n, 2_000_000), seed=0)
+        # nudge inward so faces lying exactly on a block boundary (the top of
+        # a 1 m fence) don't spill into the next block
+        pts = pts - mesh.face_normals[fi] * (1e-3 * block_size)
+        # along any axis where the part is thinner than a block, keep it to
+        # the single row containing its centre plane
+        ext = mesh.extents / block_size
+        ctr = mesh.bounds.mean(0)
+        for ax in range(3):
+            if ext[ax] < 0.9:
+                pts[:, ax] = ctr[ax]
+        ij = np.floor((pts - origin) / block_size).astype(int)
+        ok = np.all((ij >= 0) & (ij < nblocks), axis=1)
+        t[tuple(ij[ok].T)] = True
+        return t
+
     for mesh, mname, mode in parts:
         g = _occ(mesh, origin, dims, sub)
         if mode == "carve":
             occ &= ~g
+            thin[g.reshape(nblocks[0], 2, nblocks[1], 2, nblocks[2], 2).any(axis=(1, 3, 5))] = -1
         elif mode == "paint":
             paint[g] = idx(mname)
         else:
-            occ |= g
-            matg[g] = idx(mname)
+            i = idx(mname)
+            if isinstance(mats[i], Connectable):
+                thin[touched_blocks(mesh, g)] = i
+            else:
+                occ |= g
+                matg[g] = i
 
-    (X, Y, Z), coords, kinds, codes = classify_blocks(occ, shapes=shapes, hollow=hollow)
+    (X, Y, Z), coords, kinds, codes = classify_blocks(occ, shapes=shapes, hollow=hollow) if occ.any() else \
+        ((int(nblocks[0]), int(nblocks[1]), int(nblocks[2])), np.zeros((0, 3), int), np.zeros(0, np.int8), np.zeros(0, int))
 
     # material of each block = majority of its solid sub-cells
     M = max(len(mats), 1)
@@ -98,7 +144,8 @@ def build_from_spec(spec: dict, block_size: float | None = None, height_blocks: 
     blk = tally.argmax(1)
 
     # paint: any painted sub-cell in the block repaints it, if the paint
-    # material has the shape this block needs
+    # material has the shape this block needs. Painting a wall with a pane
+    # material turns those wall blocks into panes (inset windows).
     pv = block_vals(paint)
     ptally = np.zeros((len(coords), M), int)
     for j in range(8):
@@ -106,10 +153,33 @@ def build_from_spec(spec: dict, block_size: float | None = None, height_blocks: 
         np.add.at(ptally, (np.flatnonzero(ok), pv[ok, j]), 1)
     painted = ptally.sum(1) > 0
     pmat = ptally.argmax(1)
+    is_thin = np.array([isinstance(m, Connectable) for m in mats])
     has_st = np.array([m.stairs is not None for m in mats])
     has_sl = np.array([m.slab is not None for m in mats])
-    can = (kinds == FULL) | ((kinds == STAIRS) & has_st[pmat]) | ((kinds == SLAB) & has_sl[pmat])
-    blk = np.where(painted & can, pmat, blk)
+    can = (kinds == FULL) | ((kinds == STAIRS) & has_st[pmat] & ~is_thin[pmat]) | \
+          ((kinds == SLAB) & has_sl[pmat] & ~is_thin[pmat])
+    apply = painted & can
+    blk = np.where(apply, pmat, blk)
+    kinds = kinds.copy()
+    kinds[apply & is_thin[pmat]] = CONNECT
+
+    # thin parts fill only where nothing solid is
+    if (thin >= 0).any():
+        have = np.zeros(tuple(nblocks), bool)
+        if len(coords):
+            have[tuple(coords.T)] = True
+        add = np.argwhere((thin >= 0) & ~have)
+        coords = np.vstack([coords, add]) if len(coords) else add
+        kinds = np.concatenate([kinds, np.full(len(add), CONNECT, np.int8)])
+        codes = np.concatenate([codes, np.zeros(len(add), codes.dtype)])
+        blk = np.concatenate([blk, thin[tuple(add.T)].astype(blk.dtype)])
 
     states, rgb, names = make_states(mats, blk, kinds, codes)
+    conn = kinds == CONNECT
+    if conn.any():
+        ids = np.array([mats[b].id if conn[i] else "" for i, b in enumerate(blk)], dtype=object)
+        ckind = np.array([mats[b].kind if conn[i] else "" for i, b in enumerate(blk)], dtype=object)
+        full = (kinds == FULL)
+        for i, st in connection_states(coords, ids, ckind, conn, full).items():
+            states[i] = st
     return Build((X, Y, Z), coords, kinds, states, rgb, names)

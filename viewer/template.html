@@ -75,7 +75,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 <div class="wrap">
   <header>
     <h1>photo2mc</h1>
-    <p>Test builds from the block engine. Drag to orbit, pinch or scroll to zoom, and use the layer slider to see the build row by row the way you'd place it.</p>
+    <p>The landmark library: each built from a structure spec at real dimensions. Drag to orbit, pinch or scroll to zoom, and use the layer slider to see the build row by row the way you'd place it.</p>
   </header>
 
   <div class="stage" id="stage">
@@ -116,32 +116,6 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
 const DATA = /*DATA*/null;
-
-// ---- sub-cell mask -> boxes (mirrors mcbuild/shapes.py) -------------------
-const QUAD = { north: [[0,0],[1,0]], south: [[0,1],[1,1]], east: [[1,0],[1,1]], west: [[0,0],[0,1]] };
-function maskBoxes(mask) {
-  const out = [];
-  for (const dy of [0, 1]) {
-    const cells = [];
-    for (const dx of [0, 1]) for (const dz of [0, 1]) if (mask >> (dy * 4 + dz * 2 + dx) & 1) cells.push(dx + "," + dz);
-    const y0 = dy * 0.5;
-    if (cells.length === 4) { out.push([0, y0, 0, 1, y0 + .5, 1]); continue; }
-    const used = new Set();
-    if (cells.length >= 2) for (const q of Object.values(QUAD)) {
-      const keys = q.map(c => c.join(","));
-      if (keys.every(k => cells.includes(k)) && !keys.some(k => used.has(k))) {
-        const xs = q.map(c => c[0]), zs = q.map(c => c[1]);
-        out.push([Math.min(...xs) * .5, y0, Math.min(...zs) * .5, Math.max(...xs) * .5 + .5, y0 + .5, Math.max(...zs) * .5 + .5]);
-        keys.forEach(k => used.add(k));
-      }
-    }
-    for (const k of cells) if (!used.has(k)) {
-      const [dx, dz] = k.split(",").map(Number);
-      out.push([dx * .5, y0, dz * .5, dx * .5 + .5, y0 + .5, dz * .5 + .5]);
-    }
-  }
-  return out;
-}
 
 // ---- UI --------------------------------------------------------------------
 const $ = id => document.getElementById(id);
@@ -220,7 +194,7 @@ function initThree() {
     if (ground) scene.remove(ground);
     size = b.size;
     const boxes = [];
-    for (const [x, y, z, mask, mi] of b.blocks) for (const bx of maskBoxes(mask)) boxes.push([x, y, z, bx, mi, y + bx[1]]);
+    for (const [x, y, z, si, mi] of b.blocks) for (const bx of b.shapes[si]) boxes.push([x, y, z, bx, mi, y + bx[1]]);
     boxes.sort((a, c) => a[5] - c[5]);
     mesh = new THREE.InstancedMesh(geo, mat, boxes.length);
     const m4 = new THREE.Matrix4(), col = new THREE.Color();

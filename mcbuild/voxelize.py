@@ -22,9 +22,9 @@ import trimesh
 from scipy import ndimage
 from scipy.spatial import cKDTree
 
-from .palette import Palette, srgb_to_lab
+from .palette import Palette, srgb_to_lab, delta_e2000, lab_to_linear, linear_to_lab
 
-AIR, FULL, SLAB, STAIRS = 0, 1, 2, 3
+AIR, FULL, SLAB, STAIRS, CONNECT = 0, 1, 2, 3, 4
 CW = {"north": "east", "east": "south", "south": "west", "west": "north"}
 
 
@@ -215,8 +215,8 @@ def occupancy(meshes, block_size: float, open_bottom: bool = True):
     buried = np.zeros(len(pts), bool)
     buried[inb] = grid[tuple(probe[inb].T)]
     if (~buried).sum() > 0.2 * len(pts):
-        pts, cols = pts[~buried], cols[~buried]
-    return grid, origin, pts, cols
+        pts, cols, nrm = pts[~buried], cols[~buried], nrm[~buried]
+    return grid, origin, pts, cols, nrm
 
 
 # --------------------------------------------------------------------------
@@ -293,6 +293,7 @@ class Build:
     states: list[str]                   # (N,) full blockstate strings
     rgb: np.ndarray                     # (N,3) display color
     materials: list[str]                # (N,) family name
+    color_error: dict | None = None     # ΔE2000 source colour vs chosen block (colour-matched builds)
 
     def counts(self) -> dict[str, int]:
         from collections import Counter
@@ -322,6 +323,68 @@ def _mode_filter(coords, mats, rounds=1):
                 out[i] = best
         mats = out
     return mats
+
+
+def _dither(palette, mats, kinds, coords, target, top, kept, gap=5.0, gain=2.0, max_pair=14.0):
+    """Where no single block is close (ΔE > gap), mix two similar blocks
+    (1:3, 1:1 or 3:1) in an irregular pattern whose average colour, mixed in
+    linear light the way the eye blends texture at a distance, is closer by at
+    least `gain`. Builders call this texturing; here it is chosen per colour."""
+    allowed = kept if kept is not None else np.ones(len(palette.materials), bool)
+    lin_side, lin_top = lab_to_linear(palette.lab), lab_to_linear(palette.lab_top)
+    full = kinds == FULL
+    cur_ref = np.where(top[:, None], palette.lab_top[mats], palette.lab[mats])
+    single = delta_e2000(target, cur_ref)
+    todo = np.flatnonzero(full & (single > gap))
+    out = mats.copy()
+    done_idx, done_de = [], []
+    if len(todo) == 0:
+        _dither.last = (np.array([], int), np.array([]))
+        return out
+    key = np.c_[np.round(target[todo] * 2), top[todo]]
+    uk, inv = np.unique(key, axis=0, return_inverse=True)
+    inv = inv.ravel()
+    ts = np.array([0.25, 0.5, 0.75])
+    for u in range(len(uk)):
+        tl, tp = uk[u, :3] / 2, bool(uk[u, 3])
+        d = palette.distances(tl[None], np.array([tp]))[0]
+        d = np.where(allowed, d, np.inf)
+        # mix within one material class (stone with stone, wood with wood)
+        cls = palette.materials[int(np.argmin(d))].tags - {"roof"}
+        same = np.array([bool(m.tags & cls) for m in palette.materials])
+        d = np.where(same, d, np.inf)
+        cand = np.argsort(d)[:6]
+        cand = cand[np.isfinite(d[cand])]
+        if len(cand) < 2:
+            continue
+        lin = (lin_top if tp else lin_side)[cand]
+        i, j = np.triu_indices(len(cand), 1)
+        # partners must be near each other, or the mix reads as a pattern
+        # instead of texture
+        ref = palette.lab_top if tp else palette.lab
+        near = delta_e2000(ref[cand[i]], ref[cand[j]]) <= max_pair
+        if not near.any():
+            continue
+        i, j = i[near], j[near]
+        mix = (1 - ts[None, :, None]) * lin[i][:, None, :] + ts[None, :, None] * lin[j][:, None, :]
+        mde = delta_e2000(linear_to_lab(mix.reshape(-1, 3)), np.repeat(tl[None], mix.shape[0] * 3, 0))
+        k = int(np.argmin(mde))
+        if mde[k] > d[cand[0]] - gain:
+            continue
+        pi, ti = divmod(k, 3)
+        a_, b_, t = cand[i[pi]], cand[j[pi]], ts[ti]
+        members = todo[inv == u]
+        c = coords[members]
+        # irregular but repeatable pattern (hash of the block position):
+        # reads as natural weathering, not a checkerboard
+        h = (c[:, 0] * 73856093) ^ (c[:, 1] * 19349663) ^ (c[:, 2] * 83492791)
+        thr = ((h * 2654435761) % 4294967296) / 4294967296
+        out[members] = np.where(thr < t, b_, a_)
+        done_idx.append(members)
+        done_de.append(np.full(len(members), mde[k]))
+    _dither.last = (np.concatenate(done_idx) if done_idx else np.array([], int),
+                    np.concatenate(done_de) if done_de else np.array([]))
+    return out
 
 
 def classify_blocks(sub, shapes=True, hollow=True):
@@ -382,7 +445,7 @@ def make_states(materials, mats, kinds, codes):
 def build(meshes, height_blocks: int | None = None, block_size: float | None = None,
           palette: Palette | None = None, max_materials: int = 12,
           hollow: bool = True, shapes: bool = True, smooth: int = 1,
-          open_bottom: bool = True, shaped_bonus: float = 6.0) -> Build:
+          open_bottom: bool = True, shaped_bonus: float = 6.0, dither: bool = True) -> Build:
     palette = palette or Palette()
     lo = np.min([m.bounds[0] for m in meshes], axis=0)
     hi = np.max([m.bounds[1] for m in meshes], axis=0)
@@ -391,7 +454,8 @@ def build(meshes, height_blocks: int | None = None, block_size: float | None = N
             raise ValueError("give height_blocks or block_size")
         block_size = (hi[1] - lo[1]) / height_blocks
 
-    sub, origin, pts, cols = occupancy(meshes, block_size, open_bottom=open_bottom)
+    sub, origin, pts, cols, nrm = occupancy(meshes, block_size, open_bottom=open_bottom)
+    s_top = nrm[:, 1] > 0.7          # samples on upward faces compare against top textures
     (X, Y, Z), coords, kinds, codes = classify_blocks(sub, shapes=shapes, hollow=hollow)
 
     # ---- color: look at the surface samples around each block (in Lab)
@@ -410,6 +474,7 @@ def build(meshes, height_blocks: int | None = None, block_size: float | None = N
     nn = np.where(valid, nn, 0)
     w = valid.astype(float)
     block_lab = (lab_pts[nn] * w[..., None]).sum(1) / w.sum(1, keepdims=True)
+    block_top = (s_top[nn] * w).sum(1) / w.sum(1) > 0.5
     used_s = np.unique(nn[valid])
 
     def assign(mask=None):
@@ -421,16 +486,17 @@ def build(meshes, height_blocks: int | None = None, block_size: float | None = N
         smat = np.zeros(len(pts), dtype=np.int64)
         for i in range(0, len(used_s), 250_000):
             ch = used_s[i:i + 250_000]
-            smat[ch] = palette.nearest(lab_pts[ch], mask=mask, shaped_bonus=shaped_bonus)
+            smat[ch] = palette.nearest(lab_pts[ch], mask=mask, shaped_bonus=shaped_bonus, top=s_top[ch])
         votes = smat[nn]
         key = (np.arange(len(coords))[:, None] * M + votes)[valid]
         tally = np.bincount(key, minlength=len(coords) * M).reshape(len(coords), M)
         winner = tally.argmax(1)
         share = tally.max(1) / np.maximum(tally.sum(1), 1)
-        avg = palette.nearest(block_lab, mask=mask, shaped_bonus=shaped_bonus)
+        avg = palette.nearest(block_lab, mask=mask, shaped_bonus=shaped_bonus, top=block_top)
         return np.where(share >= 0.45, winner, avg)
 
     # ---- pick materials, then limit the palette to the most-used ones
+    kept = None
     mats = assign()
     if max_materials and len(np.unique(mats)) > max_materials:
         u, c = np.unique(mats, return_counts=True)
@@ -445,6 +511,7 @@ def build(meshes, height_blocks: int | None = None, block_size: float | None = N
                     keep.append(u[i])
         mask = np.zeros(len(palette.materials), bool)
         mask[keep] = True
+        kept = mask
         mats = assign(mask)
     if smooth:
         mats = _mode_filter(coords, mats, rounds=smooth)
@@ -460,12 +527,23 @@ def build(meshes, height_blocks: int | None = None, block_size: float | None = N
         if not has_shape.any():
             kinds[bad] = FULL
             continue
-        d = palette.distances(block_lab[bad])
+        d = palette.distances(block_lab[bad], block_top[bad])
         d_all = np.where(has_shape, d, np.inf)
         d_used = np.where(has_shape & used, d, np.inf)
         best_all, best_used = d_all.argmin(1), d_used.argmin(1)
         ok = d_used.min(1) <= d_all.min(1) + 6.0
         mats[bad] = np.where(ok, best_used, best_all)
 
+    if dither:
+        mats = _dither(palette, mats, kinds, coords, block_lab, block_top, kept)
+
     states, rgb, names = make_states(palette.materials, mats, kinds, codes)
-    return Build((int(X), int(Y), int(Z)), coords, kinds, states, rgb, names)
+    chosen = np.where(block_top[:, None], palette.lab_top[mats], palette.lab[mats])
+    de = delta_e2000(block_lab, chosen)
+    if dither and hasattr(_dither, "last"):     # judge mixed blocks by the mix they're part of
+        idx, mix_de = _dither.last
+        de[idx] = mix_de
+    err = {"median": float(np.median(de)), "p90": float(np.percentile(de, 90)),
+           "share_under_5": float((de < 5).mean())}
+    return Build((int(X), int(Y), int(Z)), coords, kinds, states, rgb, names, err)
+

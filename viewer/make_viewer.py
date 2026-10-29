@@ -11,22 +11,27 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
 
 from mcbuild import load_meshes, build                       # noqa: E402
-from mcbuild.shapes import state_mask                         # noqa: E402
+from mcbuild.shapes import state_boxes                        # noqa: E402
 from mcbuild.voxelize import STAIRS, SLAB                     # noqa: E402
 
 
 def viewer_entry(b, name, desc):
     mats, mindex = [], {}
+    shapes, sindex = [], {}
     blocks = []
     for (x, y, z), s, rgb in zip(b.coords.tolist(), b.states, b.rgb.tolist()):
         bid = s.split("[")[0].replace("minecraft:", "")
         if bid not in mindex:
             mindex[bid] = len(mats)
             mats.append([bid, "%02x%02x%02x" % tuple(rgb)])
-        blocks.append([x, y, z, state_mask(s), mindex[bid]])
+        bx = tuple(tuple(round(v, 4) for v in box) for box in state_boxes(s))
+        if bx not in sindex:
+            sindex[bx] = len(shapes)
+            shapes.append([list(b) for b in bx])
+        blocks.append([x, y, z, sindex[bx], mindex[bid]])
     counts = Counter(m for *_, m in blocks)
     bom = [[mats[i][0], mats[i][1], n] for i, n in counts.most_common()]
-    return {"name": name, "desc": desc, "size": list(b.size), "mats": mats, "blocks": blocks, "bom": bom,
+    return {"name": name, "desc": desc, "size": list(b.size), "mats": mats, "shapes": shapes, "blocks": blocks, "bom": bom,
             "kinds": {"stairs": int((b.kinds == STAIRS).sum()), "slabs": int((b.kinds == SLAB).sum())}}
 
 
@@ -38,27 +43,24 @@ def make(entries, out):
     return out
 
 
+def landmark_entries(names=None, log=print):
+    from mcbuild.semantic import build_from_spec
+    lib = os.path.join(os.path.dirname(HERE), "samples", "landmarks")
+    order = ["eiffel_tower", "big_ben", "st_basils_cathedral", "taj_mahal", "colosseum", "space_needle",
+             "leaning_tower_of_pisa", "parthenon", "arc_de_triomphe", "empire_state_building", "great_pyramid"]
+    out = []
+    for n in names or order:
+        sp = json.load(open(os.path.join(lib, n + ".json")))
+        bs = sp.get("recommended_block_size", 1.0)
+        b = build_from_spec(sp, block_size=bs)
+        per_m = 1 / bs
+        scale = f"{per_m:g} blocks per meter" if per_m >= 1 else f"1 block = {bs:g} m"
+        out.append(viewer_entry(b, sp["name"].split(" (")[0], f"{sp['notes']} Scale: {scale}."))
+        log(n, b.size, len(b.coords))
+    return out
+
+
 if __name__ == "__main__":
     out = sys.argv[1] if len(sys.argv) > 1 else "out/viewer.html"
-    S = os.path.join(os.path.dirname(HERE), "samples")
-    specs = [
-        ("Cottage", "cottage.glb", dict(block_size=0.5),
-         "12 m brick cottage, 2 blocks per meter. Gabled slate roof becomes deepslate tile stairs; door and windows come through as separate materials."),
-        ("Great Pyramid", "pyramid.glb", dict(height_blocks=60),
-         "Real proportions (230 m base, 51.8° faces) scaled to 60 blocks tall. The slope resolves to sandstone stairs on every step."),
-        ("Domed temple", "temple.glb", dict(block_size=1.0),
-         "Pantheon-like drum, dome and portico at 1 block per meter. Tests curved surfaces and a shallow pediment."),
-    ]
-    entries = []
-    from mcbuild.semantic import build_from_spec
-    from mcbuild.scan import clean_scan
-    spec = json.load(open(os.path.join(S, "taj_mahal.json")))
-    b = build_from_spec(spec, block_size=1.0)
-    entries.append(viewer_entry(b, "Taj Mahal", "Built from a structure spec, the format Claude writes from a photo: 21 parts at real dimensions, 1 block per meter. Materials come from the spec, so doors are wood and window recesses are glass."))
-    for name, f, kw, desc in specs:
-        b = build(load_meshes(os.path.join(S, f)), **kw)
-        entries.append(viewer_entry(b, name, desc))
-        print(name, b.size, len(b.coords))
-    b = build(clean_scan(load_meshes(os.path.join(S, "fake_scan.glb")), log=lambda *a: None), block_size=0.5)
-    entries.append(viewer_entry(b, "Cleaned scan", "A simulated phone scan of the cottage: Z-up, rotated 8°, noisy, with ground, a car and a tree. Scan cleanup found the ground, squared the walls and kept only the house."))
+    entries = landmark_entries()
     print(make(entries, out), os.path.getsize(out) // 1024, "KB")

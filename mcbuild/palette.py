@@ -1,141 +1,70 @@
 """Minecraft building-block palette with perceptual (CIELAB) color matching.
 
-Each material is a *family*: the full block plus its stairs and slab variants
-when they exist, so a roof sloping through a brick wall becomes brick stairs,
-not a random gray stair. Colors are approximate texture averages (sRGB).
-They are good enough for matching; `calibrate_from_textures()` can replace
-them with exact averages computed from a resource pack.
+Each material is a *family*: the full block plus its stairs and slab when
+they exist, so a roof sloping through a brick wall becomes brick stairs.
+
+Colors are MEASURED from the game's own textures (tools/gen_palette.py ->
+palette_data.json): the linear-light average of each block's side and top
+faces. Walls are matched against side colors and roofs/floors against top
+colors, which matters for blocks like sandstone, grass, logs and copper.
+
+Version target: "latest" uses everything in the newest release (e.g. concrete
+and wool stairs); "1.21" restricts to blocks that exist in 1.21.1, so builds
+also load on older servers.
 """
 from __future__ import annotations
 
+import json
+import os
 from dataclasses import dataclass, field
+
 import numpy as np
+
+_DATA = os.path.join(os.path.dirname(os.path.abspath(__file__)), "palette_data.json")
 
 
 @dataclass(frozen=True)
 class Material:
-    name: str                 # family name, e.g. "bricks"
-    full: str                 # block id of the full block
-    rgb: tuple[int, int, int]
+    name: str                       # family name, e.g. "bricks"
+    full: str                       # block id of the full block
+    rgb: tuple[int, int, int]       # side face
     stairs: str | None = None
     slab: str | None = None
-    tags: frozenset = field(default_factory=frozenset)  # e.g. {"stone","wood"}
+    tags: frozenset = field(default_factory=frozenset)
+    top: tuple[int, int, int] | None = None
+    contrast: float = 0.0           # texture busyness (0 smooth .. ~0.2 noisy)
+    since: tuple = ("1.21", None, None)   # versions of (full, stairs, slab)
+
+    @property
+    def top_rgb(self):
+        return self.top or self.rgb
 
 
-def _m(name, rgb, stairs=None, slab=None, full=None, tags=()):
-    return Material(name, full or name, rgb, stairs, slab, frozenset(tags))
+def _load():
+    if not os.path.exists(_DATA):
+        raise FileNotFoundError(f"{_DATA} missing; run tools/gen_palette.py")
+    d = json.load(open(_DATA))
+    out = []
+    for e in d["materials"]:
+        s = e.get("since", {})
+        out.append(Material(e["name"], e["full"], tuple(e["side"]), e.get("stairs"), e.get("slab"),
+                            frozenset(e.get("tags", [])), tuple(e["top"]), e.get("contrast", 0.0),
+                            (s.get("full", "1.21"), s.get("stairs"), s.get("slab"))))
+    return out
 
 
-# fmt: off
-MATERIALS: list[Material] = [
-    # --- stone family -----------------------------------------------------
-    _m("stone",            (125,125,125), "stone_stairs", "stone_slab", tags=["stone"]),
-    _m("cobblestone",      (127,127,127), "cobblestone_stairs", "cobblestone_slab", tags=["stone"]),
-    _m("mossy_cobblestone",(110,118, 94), "mossy_cobblestone_stairs", "mossy_cobblestone_slab", tags=["stone"]),
-    _m("stone_bricks",     (122,121,122), "stone_brick_stairs", "stone_brick_slab", tags=["stone"]),
-    _m("mossy_stone_bricks",(115,121,105),"mossy_stone_brick_stairs", "mossy_stone_brick_slab", tags=["stone"]),
-    _m("smooth_stone",     (158,158,158), None, "smooth_stone_slab", tags=["stone"]),
-    _m("andesite",         (136,136,137), "andesite_stairs", "andesite_slab", tags=["stone"]),
-    _m("polished_andesite",(132,135,134), "polished_andesite_stairs", "polished_andesite_slab", tags=["stone"]),
-    _m("diorite",          (189,188,189), "diorite_stairs", "diorite_slab", tags=["stone"]),
-    _m("polished_diorite", (193,193,195), "polished_diorite_stairs", "polished_diorite_slab", tags=["stone"]),
-    _m("granite",          (149,103, 86), "granite_stairs", "granite_slab", tags=["stone"]),
-    _m("polished_granite", (154,106, 89), "polished_granite_stairs", "polished_granite_slab", tags=["stone"]),
-    _m("cobbled_deepslate",( 77, 77, 80), "cobbled_deepslate_stairs", "cobbled_deepslate_slab", tags=["stone"]),
-    _m("polished_deepslate",(72, 72, 73), "polished_deepslate_stairs", "polished_deepslate_slab", tags=["stone"]),
-    _m("deepslate_bricks", ( 70, 70, 71), "deepslate_brick_stairs", "deepslate_brick_slab", tags=["stone"]),
-    _m("deepslate_tiles",  ( 54, 54, 55), "deepslate_tile_stairs", "deepslate_tile_slab", tags=["stone","roof"]),
-    _m("tuff",             (108,109,102), "tuff_stairs", "tuff_slab", tags=["stone"]),
-    _m("tuff_bricks",      ( 98,103, 95), "tuff_brick_stairs", "tuff_brick_slab", tags=["stone"]),
-    _m("blackstone",       ( 42, 36, 41), "blackstone_stairs", "blackstone_slab", tags=["stone"]),
-    _m("polished_blackstone_bricks",(48,42,49),"polished_blackstone_brick_stairs","polished_blackstone_brick_slab", tags=["stone"]),
-    _m("mud_bricks",       (137,103, 79), "mud_brick_stairs", "mud_brick_slab", tags=["stone"]),
-    _m("bricks",           (151, 98, 83), "brick_stairs", "brick_slab", tags=["stone"]),
-    _m("sandstone",        (216,203,155), "sandstone_stairs", "sandstone_slab", tags=["stone"]),
-    _m("smooth_sandstone", (223,214,170), "smooth_sandstone_stairs", "smooth_sandstone_slab", tags=["stone"]),
-    _m("cut_sandstone",    (217,206,159), None, "cut_sandstone_slab", tags=["stone"]),
-    _m("red_sandstone",    (186, 99, 29), "red_sandstone_stairs", "red_sandstone_slab", tags=["stone"]),
-    _m("smooth_red_sandstone",(181,97,31),"smooth_red_sandstone_stairs","smooth_red_sandstone_slab", tags=["stone"]),
-    _m("quartz_block",     (236,230,223), "quartz_stairs", "quartz_slab", tags=["stone"]),
-    _m("smooth_quartz",    (235,229,222), "smooth_quartz_stairs", "smooth_quartz_slab", tags=["stone"]),
-    _m("prismarine",       ( 99,156,151), "prismarine_stairs", "prismarine_slab", tags=["stone"]),
-    _m("prismarine_bricks",( 99,172,158), "prismarine_brick_stairs", "prismarine_brick_slab", tags=["stone"]),
-    _m("dark_prismarine",  ( 52, 92, 76), "dark_prismarine_stairs", "dark_prismarine_slab", tags=["stone","roof"]),
-    _m("nether_bricks",    ( 44, 21, 26), "nether_brick_stairs", "nether_brick_slab", tags=["stone"]),
-    _m("red_nether_bricks",( 69,  7,  9), "red_nether_brick_stairs", "red_nether_brick_slab", tags=["stone"]),
-    _m("end_stone_bricks", (218,224,162), "end_stone_brick_stairs", "end_stone_brick_slab", tags=["stone"]),
-    _m("purpur_block",     (169,125,169), "purpur_stairs", "purpur_slab", tags=["stone"]),
-    # --- copper (waxed so it never oxidizes) ------------------------------
-    _m("waxed_cut_copper",           (191,106, 80), "waxed_cut_copper_stairs", "waxed_cut_copper_slab", tags=["metal"]),
-    _m("waxed_exposed_cut_copper",   (154,121,101), "waxed_exposed_cut_copper_stairs", "waxed_exposed_cut_copper_slab", tags=["metal"]),
-    _m("waxed_weathered_cut_copper", (109,145,107), "waxed_weathered_cut_copper_stairs", "waxed_weathered_cut_copper_slab", tags=["metal","roof"]),
-    _m("waxed_oxidized_cut_copper",  ( 79,153,126), "waxed_oxidized_cut_copper_stairs", "waxed_oxidized_cut_copper_slab", tags=["metal","roof"]),
-    # --- wood -------------------------------------------------------------
-    _m("oak_planks",     (162,131, 79), "oak_stairs", "oak_slab", tags=["wood"]),
-    _m("spruce_planks",  (115, 85, 49), "spruce_stairs", "spruce_slab", tags=["wood"]),
-    _m("birch_planks",   (192,175,121), "birch_stairs", "birch_slab", tags=["wood"]),
-    _m("jungle_planks",  (160,115, 81), "jungle_stairs", "jungle_slab", tags=["wood"]),
-    _m("acacia_planks",  (168, 90, 50), "acacia_stairs", "acacia_slab", tags=["wood"]),
-    _m("dark_oak_planks",( 67, 43, 20), "dark_oak_stairs", "dark_oak_slab", tags=["wood"]),
-    _m("mangrove_planks",(118, 54, 49), "mangrove_stairs", "mangrove_slab", tags=["wood"]),
-    _m("cherry_planks",  (226,178,172), "cherry_stairs", "cherry_slab", tags=["wood"]),
-    _m("bamboo_planks",  (194,173, 80), "bamboo_stairs", "bamboo_slab", tags=["wood"]),
-    _m("crimson_planks", (101, 49, 71), "crimson_stairs", "crimson_slab", tags=["wood"]),
-    _m("warped_planks",  ( 43,105, 99), "warped_stairs", "warped_slab", tags=["wood"]),
-    # --- full-only color blocks (no stairs/slabs exist) --------------------
-    _m("white_concrete",      (207,213,214), tags=["color"]),
-    _m("light_gray_concrete", (125,125,115), tags=["color"]),
-    _m("gray_concrete",       ( 55, 58, 62), tags=["color"]),
-    _m("black_concrete",      (  8, 10, 15), tags=["color"]),
-    _m("brown_concrete",      ( 96, 60, 32), tags=["color"]),
-    _m("red_concrete",        (142, 33, 33), tags=["color"]),
-    _m("orange_concrete",     (224, 97,  1), tags=["color"]),
-    _m("yellow_concrete",     (241,175, 21), tags=["color"]),
-    _m("lime_concrete",       ( 94,169, 25), tags=["color"]),
-    _m("green_concrete",      ( 73, 91, 36), tags=["color"]),
-    _m("cyan_concrete",       ( 21,119,136), tags=["color"]),
-    _m("light_blue_concrete", ( 36,137,199), tags=["color"]),
-    _m("blue_concrete",       ( 45, 47,143), tags=["color"]),
-    _m("purple_concrete",     (100, 32,156), tags=["color"]),
-    _m("magenta_concrete",    (169, 48,159), tags=["color"]),
-    _m("pink_concrete",       (214,101,143), tags=["color"]),
-    _m("terracotta",              (152, 94, 68), tags=["color","earth"]),
-    _m("white_terracotta",        (210,178,161), tags=["color","earth"]),
-    _m("light_gray_terracotta",   (135,107, 98), tags=["color","earth"]),
-    _m("gray_terracotta",         ( 58, 42, 36), tags=["color","earth"]),
-    _m("brown_terracotta",        ( 77, 51, 36), tags=["color","earth"]),
-    _m("red_terracotta",          (143, 61, 47), tags=["color","earth"]),
-    _m("orange_terracotta",       (162, 84, 38), tags=["color","earth"]),
-    _m("yellow_terracotta",       (186,133, 35), tags=["color","earth"]),
-    _m("cyan_terracotta",         ( 87, 91, 91), tags=["color","earth"]),
-    _m("light_blue_terracotta",   (113,109,138), tags=["color","earth"]),
-    _m("green_terracotta",        ( 76, 83, 42), tags=["color","earth"]),
-    _m("iron_block",  (220,220,220), tags=["metal"]),
-    _m("gold_block",  (246,208, 62), tags=["metal"]),
-    # --- detail blocks: only placed on purpose (windows, trim), never chosen
-    #     by colour matching unless asked for with --materials detail
-    _m("glass",                    (176,214,219), tags=["detail"]),
-    _m("white_stained_glass",      (255,255,255), tags=["detail"]),
-    _m("light_gray_stained_glass", (153,153,153), tags=["detail"]),
-    _m("gray_stained_glass",       ( 76, 76, 76), tags=["detail"]),
-    _m("black_stained_glass",      ( 25, 25, 25), tags=["detail"]),
-    _m("light_blue_stained_glass", (102,153,216), tags=["detail"]),
-    _m("cyan_stained_glass",       ( 76,127,153), tags=["detail"]),
-    _m("blue_stained_glass",       ( 51, 76,178), tags=["detail"]),
-    _m("brown_stained_glass",      (102, 76, 51), tags=["detail"]),
-    _m("chiseled_stone_bricks",    (119,118,119), tags=["detail"]),
-    _m("chiseled_sandstone",       (216,202,155), tags=["detail"]),
-    _m("chiseled_quartz_block",    (231,226,218), tags=["detail"]),
-    _m("quartz_pillar",            (235,230,222), tags=["detail"]),
-    _m("glowstone",                (171,131, 84), tags=["detail"]),
-    _m("sea_lantern",              (172,199,190), tags=["detail"]),
-    _m("snow_block",               (249,254,254), tags=["detail"]),
-    _m("grass_block",              ( 95,159, 53), tags=["detail"]),
-    _m("water",                    ( 63,118,228), tags=["detail"]),
-]
-# fmt: on
-
+MATERIALS: list[Material] = _load()
 BY_NAME = {m.name: m for m in MATERIALS}
+
+
+def for_version(m: Material, target: str = "latest") -> Material | None:
+    """The material as it exists in the target version (None if it doesn't)."""
+    if target == "latest":
+        return m
+    if m.since[0] == "26":
+        return None
+    return Material(m.name, m.full, m.rgb, m.stairs if m.since[1] == "1.21" else None,
+                    m.slab if m.since[2] == "1.21" else None, m.tags, m.top, m.contrast, m.since)
 
 
 # --------------------------------------------------------------------------
@@ -156,42 +85,111 @@ def srgb_to_lab(rgb: np.ndarray) -> np.ndarray:
     return np.stack([L, a, b], axis=-1)
 
 
+def delta_e2000(lab1, lab2):
+    """CIEDE2000 colour difference (the standard 'how different does it look').
+    ~1 = just noticeable, <5 = close match, >10 = clearly different."""
+    L1, a1, b1 = lab1.T; L2, a2, b2 = lab2.T
+    C1, C2 = np.hypot(a1, b1), np.hypot(a2, b2)
+    Cm = (C1 + C2) / 2
+    G = 0.5 * (1 - np.sqrt(Cm**7 / (Cm**7 + 25**7)))
+    a1p, a2p = (1 + G) * a1, (1 + G) * a2
+    C1p, C2p = np.hypot(a1p, b1), np.hypot(a2p, b2)
+    h1p = np.degrees(np.arctan2(b1, a1p)) % 360
+    h2p = np.degrees(np.arctan2(b2, a2p)) % 360
+    dL, dC = L2 - L1, C2p - C1p
+    dh = h2p - h1p
+    dh = np.where(dh > 180, dh - 360, np.where(dh < -180, dh + 360, dh))
+    dh = np.where(C1p * C2p == 0, 0, dh)
+    dH = 2 * np.sqrt(C1p * C2p) * np.sin(np.radians(dh / 2))
+    Lm, Cpm = (L1 + L2) / 2, (C1p + C2p) / 2
+    hs = h1p + h2p
+    hm = np.where(C1p * C2p == 0, hs, np.where(np.abs(h1p - h2p) > 180,
+                  np.where(hs < 360, (hs + 360) / 2, (hs - 360) / 2), hs / 2))
+    T = (1 - 0.17 * np.cos(np.radians(hm - 30)) + 0.24 * np.cos(np.radians(2 * hm))
+         + 0.32 * np.cos(np.radians(3 * hm + 6)) - 0.20 * np.cos(np.radians(4 * hm - 63)))
+    dth = 30 * np.exp(-(((hm - 275) / 25) ** 2))
+    Rc = 2 * np.sqrt(Cpm**7 / (Cpm**7 + 25**7))
+    Sl = 1 + 0.015 * (Lm - 50) ** 2 / np.sqrt(20 + (Lm - 50) ** 2)
+    Sc, Sh = 1 + 0.045 * Cpm, 1 + 0.015 * Cpm * T
+    Rt = -np.sin(np.radians(2 * dth)) * Rc
+    return np.sqrt((dL / Sl) ** 2 + (dC / Sc) ** 2 + (dH / Sh) ** 2 + Rt * (dC / Sc) * (dH / Sh))
+
+
+def lab_to_linear(lab):
+    """CIELAB -> linear-light RGB (0..1), for mixing colours physically."""
+    L, a, b = np.moveaxis(np.asarray(lab, float), -1, 0)
+    fy = (L + 16) / 116
+    fx, fz = fy + a / 500, fy - b / 200
+    e, k = 216 / 24389, 24389 / 27
+    xr = np.where(fx**3 > e, fx**3, (116 * fx - 16) / k)
+    yr = np.where(L > k * e, fy**3, L / k)
+    zr = np.where(fz**3 > e, fz**3, (116 * fz - 16) / k)
+    xyz = np.stack([xr * 0.95047, yr, zr * 1.08883], -1)
+    m = np.array([[3.2404542, -1.5371385, -0.4985314],
+                  [-0.9692660, 1.8760108, 0.0415560],
+                  [0.0556434, -0.2040259, 1.0572252]])
+    return np.clip(xyz @ m.T, 0, 1)
+
+
+def linear_to_lab(lin):
+    c = np.clip(lin, 0, 1)
+    srgb = np.where(c <= 0.0031308, 12.92 * c, 1.055 * c ** (1 / 2.4) - 0.055)
+    return srgb_to_lab(srgb * 255)
+
+
 class Palette:
     """A (possibly restricted) set of materials with fast nearest-color lookup."""
 
     def __init__(self, materials: list[Material] | None = None,
                  include_tags: set[str] | None = None,
-                 exclude: set[str] | None = None):
-        mats = list(materials or MATERIALS)
+                 exclude: set[str] | None = None, target: str = "latest"):
+        src = list(materials) if materials is not None else list(MATERIALS)
+        mats = [x for x in (for_version(m, target) for m in src) if x is not None]
         if include_tags:
             mats = [m for m in mats if m.tags & include_tags]
         elif materials is None:
-            mats = [m for m in mats if "detail" not in m.tags]
+            mats = [m for m in mats if not m.tags & {"detail", "wool"}]
         if exclude:
             mats = [m for m in mats if m.name not in exclude]
         if not mats:
             raise ValueError("palette is empty after filtering")
+        self.target = target
         self.materials = mats
         self.lab = srgb_to_lab(np.array([m.rgb for m in mats]))
+        self.lab_top = srgb_to_lab(np.array([m.top_rgb for m in mats]))
         self.has_stairs = np.array([m.stairs is not None for m in mats])
         self.has_slab = np.array([m.slab is not None for m in mats])
+        # builder's prior, in ΔE: real builds use stone, wood and metal; flat
+        # dyed blocks only win when they are clearly the better colour match
+        self.prior = np.array([4.0 if "color" in m.tags else 0.0 for m in mats])
 
-    def distances(self, lab: np.ndarray) -> np.ndarray:
-        """(N, M) perceptual distance. Lightness weighted a bit less than
-        chroma: builds read better with the right hue and slightly-off
-        brightness than the reverse."""
-        w = np.array([0.8, 1.0, 1.0])
-        return np.sqrt((((lab[:, None, :] - self.lab[None, :, :]) * w) ** 2).sum(-1))
+    def distances(self, lab: np.ndarray, top: np.ndarray | None = None) -> np.ndarray:
+        """(N, M) CIEDE2000 distance. `top` (N,) bool: compare that row
+        against the materials' TOP face instead of the side face.
+        Colours are deduplicated (0.5 ΔE grid) so millions of surface samples
+        cost about as much as a few thousand."""
+        lab = np.asarray(lab, float)
+        top = np.zeros(len(lab), bool) if top is None else np.asarray(top, bool)
+        key = np.c_[np.round(lab * 2), top]
+        uk, inv = np.unique(key, axis=0, return_inverse=True)
+        ulab, utop = uk[:, :3] / 2, uk[:, 3].astype(bool)
+        M = len(self.materials)
+        d = np.empty((len(uk), M))
+        for ref, sel in ((self.lab, ~utop), (self.lab_top, utop)):
+            if sel.any():
+                q = ulab[sel]
+                d[sel] = delta_e2000(np.repeat(q, M, 0), np.tile(ref, (len(q), 1))).reshape(len(q), M)
+        return d[inv.ravel()]
 
     def nearest(self, lab: np.ndarray, mask: np.ndarray | None = None,
-                shaped_bonus: float = 0.0) -> np.ndarray:
+                shaped_bonus: float = 0.0, top: np.ndarray | None = None) -> np.ndarray:
         """Index of the nearest material for each Lab color (N,3).
 
         shaped_bonus (in ΔE units) favours families that have stairs AND
         slabs, so walls and roofs can use the same material as their sloped
         and half-height parts.
         """
-        d = self.distances(lab)
+        d = self.distances(lab, top) + self.prior
         if shaped_bonus:
             d = d + shaped_bonus * ~(self.has_stairs & self.has_slab)
         if mask is not None:
@@ -199,34 +197,4 @@ class Palette:
         return np.argmin(d, axis=1)
 
     def restrict_to(self, indices) -> "Palette":
-        return Palette([self.materials[i] for i in sorted(set(indices))])
-
-
-def calibrate_from_textures(texture_dir: str) -> None:
-    """Replace palette colors with exact averages from a resource pack.
-
-    Point it at assets/minecraft/textures/block from a Minecraft jar
-    (unzip the client .jar). Uses the side texture when one exists.
-    """
-    import os
-    from PIL import Image
-    global MATERIALS, BY_NAME
-    out = []
-    for m in MATERIALS:
-        tex = None
-        for cand in (m.full, m.full.replace("waxed_", ""), m.full + "_side",
-                     m.full.replace("_block", ""), m.full.replace("_planks", "_planks")):
-            p = os.path.join(texture_dir, cand + ".png")
-            if os.path.exists(p):
-                tex = p
-                break
-        if tex is None:
-            out.append(m)
-            continue
-        im = np.asarray(Image.open(tex).convert("RGBA"), dtype=np.float64)[:16, :16]
-        a = im[..., 3:] / 255
-        rgb = tuple(int(v) for v in (im[..., :3] * a).sum((0, 1)) / max(a.sum(), 1e-6))
-        out.append(Material(m.name, m.full, rgb, m.stairs, m.slab, m.tags))
-    MATERIALS[:] = out
-    BY_NAME.clear()
-    BY_NAME.update({m.name: m for m in MATERIALS})
+        return Palette([self.materials[i] for i in sorted(set(indices))], target=self.target)
