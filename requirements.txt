@@ -1,0 +1,9 @@
+numpy
+scipy
+trimesh
+pillow
+shapely
+mapbox-earcut
+matplotlib
+anthropic
+nbtlib  # tests only

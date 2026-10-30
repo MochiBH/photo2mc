@@ -1,0 +1,342 @@
+{
+ "name": "Big Ben (Elizabeth Tower)",
+ "height_m": 96,
+ "recommended_block_size": 0.5,
+ "camera": {
+  "azimuth_deg": 25,
+  "elevation_deg": 8
+ },
+ "notes": "96 m tall, 12 m square, dials 6.9 m across centred 54.9 m up (Wikipedia / UK Parliament). Stage heights above the clock estimated from photos.",
+ "parts": [
+  {
+   "shape": "box",
+   "size": [
+    12,
+    50,
+    12
+   ],
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "material": "sandstone",
+   "label": "shaft"
+  },
+  {
+   "shape": "box",
+   "size": [
+    13,
+    1,
+    13
+   ],
+   "at": [
+    0,
+    49,
+    0
+   ],
+   "material": "sandstone",
+   "label": "cornice"
+  },
+  {
+   "shape": "box",
+   "size": [
+    12.6,
+    11,
+    12.6
+   ],
+   "at": [
+    0,
+    50,
+    0
+   ],
+   "material": "sandstone",
+   "label": "clock stage"
+  },
+  {
+   "shape": "box",
+   "size": [
+    13.4,
+    1,
+    13.4
+   ],
+   "at": [
+    0,
+    61,
+    0
+   ],
+   "material": "sandstone",
+   "label": "clock-stage cornice"
+  },
+  {
+   "shape": "box",
+   "size": [
+    11.6,
+    10,
+    11.6
+   ],
+   "at": [
+    0,
+    62,
+    0
+   ],
+   "material": "sandstone",
+   "label": "belfry"
+  },
+  {
+   "shape": "arch",
+   "width": 2.2,
+   "height": 7,
+   "depth": 2,
+   "at": [
+    -2.8,
+    63,
+    5.8
+   ],
+   "mode": "carve",
+   "repeat": {
+    "count": 3,
+    "step": [
+     2.8,
+     0,
+     0
+    ]
+   },
+   "mirror": "z",
+   "label": "belfry openings"
+  },
+  {
+   "shape": "arch",
+   "width": 2.2,
+   "height": 7,
+   "depth": 2,
+   "axis": "x",
+   "at": [
+    5.8,
+    63,
+    -2.8
+   ],
+   "mode": "carve",
+   "repeat": {
+    "count": 3,
+    "step": [
+     0,
+     0,
+     2.8
+    ]
+   },
+   "mirror": "x",
+   "label": "belfry openings"
+  },
+  {
+   "shape": "box",
+   "size": [
+    12.4,
+    1.2,
+    12.4
+   ],
+   "at": [
+    0,
+    72,
+    0
+   ],
+   "material": "sandstone",
+   "label": "belfry parapet"
+  },
+  {
+   "shape": "pyramid",
+   "size": [
+    11,
+    16,
+    11
+   ],
+   "at": [
+    0,
+    73,
+    0
+   ],
+   "material": "deepslate_tiles",
+   "label": "spire roof"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 8,
+   "radius": 1.6,
+   "height": 3,
+   "at": [
+    0,
+    84,
+    0
+   ],
+   "material": "gold_block",
+   "label": "Ayrton light lantern"
+  },
+  {
+   "shape": "cone",
+   "sides": 8,
+   "radius": 1.4,
+   "height": 8,
+   "at": [
+    0,
+    87,
+    0
+   ],
+   "material": "deepslate_tiles",
+   "label": "finial"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.5,
+   "height": 2,
+   "at": [
+    0,
+    94,
+    0
+   ],
+   "material": "gold_block",
+   "label": "cross/finial tip"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 3.6,
+   "height": 1.6,
+   "tilt": [
+    90,
+    0
+   ],
+   "at": [
+    0,
+    51.3,
+    5.5
+   ],
+   "material": "gold_block",
+   "mode": "paint",
+   "mirror": "z",
+   "label": "gilded dial surround"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 3.0,
+   "height": 1.6,
+   "tilt": [
+    90,
+    0
+   ],
+   "at": [
+    0,
+    51.9,
+    5.5
+   ],
+   "material": "white_stained_glass",
+   "mode": "paint",
+   "mirror": "z",
+   "label": "clock dial"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 3.6,
+   "height": 1.6,
+   "tilt": [
+    0,
+    -90
+   ],
+   "at": [
+    5.5,
+    54.9,
+    0
+   ],
+   "material": "gold_block",
+   "mode": "paint",
+   "mirror": "x",
+   "label": "gilded dial surround"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 3.0,
+   "height": 1.6,
+   "tilt": [
+    0,
+    -90
+   ],
+   "at": [
+    5.5,
+    54.9,
+    0
+   ],
+   "material": "white_stained_glass",
+   "mode": "paint",
+   "mirror": "x",
+   "label": "clock dial"
+  },
+  {
+   "shape": "box",
+   "size": [
+    1.2,
+    3,
+    1.4
+   ],
+   "at": [
+    -2.5,
+    8,
+    6
+   ],
+   "material": "gray_stained_glass_pane",
+   "mode": "paint",
+   "repeat": {
+    "count": [
+     3,
+     10
+    ],
+    "step": [
+     [
+      2.5,
+      0,
+      0
+     ],
+     [
+      0,
+      4,
+      0
+     ]
+    ]
+   },
+   "mirror": "z",
+   "label": "shaft windows"
+  },
+  {
+   "shape": "box",
+   "size": [
+    1.4,
+    3,
+    1.2
+   ],
+   "at": [
+    6,
+    8,
+    -2.5
+   ],
+   "material": "gray_stained_glass_pane",
+   "mode": "paint",
+   "repeat": {
+    "count": [
+     3,
+     10
+    ],
+    "step": [
+     [
+      0,
+      0,
+      2.5
+     ],
+     [
+      0,
+      4,
+      0
+     ]
+    ]
+   },
+   "mirror": "x",
+   "label": "shaft windows"
+  }
+ ]
+}

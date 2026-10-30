@@ -1,0 +1,273 @@
+<title>/*TITLE*/</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a build sheet — layer plan on top (left on desktop) with its legend beside it, materials and gathering list below. */
+:root {
+  --bg: #eef0ec; --panel: #f8f9f6; --ink: #1f2420; --muted: #5d665f; --line: #d3d8d1;
+  --grid: #e2e6df; --ghost: rgba(31, 36, 32, .10); --accent: #4f7d2f; --accent-ink: #ffffff; --mark: #ffffff;
+  --display: "Pixelify Sans", "Courier New", monospace;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #161a17; --panel: #1e2320; --ink: #e6ebe4; --muted: #9aa59b; --line: #323a34;
+  --grid: #262c28; --ghost: rgba(230, 235, 228, .10); --accent: #7fb653; --accent-ink: #10150f; --mark: #ffffff; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #161a17; --panel: #1e2320; --ink: #e6ebe4; --muted: #9aa59b; --line: #323a34;
+  --grid: #262c28; --ghost: rgba(230, 235, 228, .10); --accent: #7fb653; --accent-ink: #10150f; --mark: #ffffff; color-scheme: dark }
+
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.45;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 1180px; margin: 0 auto; padding-block: 18px 32px; display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr) 320px; }
+@media (max-width: 860px) { .wrap { grid-template-columns: minmax(0, 1fr); } }
+header { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 4px; }
+h1 { font-family: var(--display); font-weight: 600; font-size: 1.7rem; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--display); font-weight: 500; font-size: 1.15rem; margin: 0; }
+.sub { margin: 0; color: var(--muted); max-width: 70ch; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.label { font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.stats { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0; }
+.stats div { display: flex; flex-direction: column; }
+.stats dt { font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.stats dd { margin: 0; font: 500 16px var(--mono); font-variant-numeric: tabular-nums; }
+
+.layerbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.layerbar input[type=range] { flex: 1 1 160px; min-width: 0; accent-color: var(--accent); }
+button { font: 500 14px var(--body); padding: 7px 12px; border-radius: 4px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
+button:hover { border-color: var(--muted); }
+button:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ynum { font: 600 18px var(--mono); font-variant-numeric: tabular-nums; min-width: 9ch; }
+.done { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); }
+.done input { accent-color: var(--accent); width: 18px; height: 18px; }
+.plan { overflow: auto; max-height: 70vh; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); touch-action: pan-x pan-y; }
+.plan canvas { display: block; }
+.info { font: 13px var(--mono); color: var(--muted); min-height: 1.4em; overflow-wrap: anywhere; }
+.compass { font: 12px var(--mono); color: var(--muted); }
+
+.legend, .list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.legend { max-height: 52vh; overflow-y: auto; }
+.legend li, .list li { display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--line); }
+.list li { grid-template-columns: 18px 14px minmax(0, 1fr) auto; }
+.legend li:last-child, .list li:last-child { border-bottom: 0; }
+.sw { width: 14px; height: 14px; border-radius: 2px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.25); }
+.nm { font: 13px var(--mono); overflow-wrap: anywhere; }
+.ct { font: 13px var(--mono); font-variant-numeric: tabular-nums; color: var(--muted); text-align: right; }
+.ct b { color: var(--ink); font-weight: 500; }
+.list input { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
+.list li.got .nm { text-decoration: line-through; color: var(--muted); }
+.mats { grid-column: 1 / -1; display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 760px) { .mats { grid-template-columns: minmax(0, 1fr); } }
+details summary { cursor: pointer; font-weight: 500; }
+.steps { font: 13px var(--mono); margin: 8px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 3px; }
+.key { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--muted); }
+.key span { display: inline-flex; align-items: center; gap: 6px; }
+.key canvas { border-radius: 2px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1 id="name"></h1>
+    <p class="sub">Build it layer by layer from the bottom. North is up, x runs east (right), z runs south (down). Stand at the north-west bottom corner, which is (0, 0, 0) here, the same spot the datapack builds from.</p>
+  </header>
+
+  <section class="card">
+    <dl class="stats" id="stats"></dl>
+    <div class="layerbar">
+      <button id="prev" type="button" aria-label="Previous layer">▼ Down</button>
+      <span class="ynum" id="ynum"></span>
+      <button id="next" type="button" aria-label="Next layer">▲ Up</button>
+      <input id="layer" type="range" min="0" max="0" value="0" aria-label="Layer">
+      <label class="done"><input type="checkbox" id="done"> Layer done</label>
+    </div>
+    <div class="layerbar">
+      <button id="zout" type="button" aria-label="Zoom out">−</button>
+      <button id="zin" type="button" aria-label="Zoom in">+</button>
+      <span class="compass">↑ N &nbsp;·&nbsp; faint outline = layer below</span>
+    </div>
+    <div class="plan" id="plan"><canvas id="cv"></canvas></div>
+    <div class="info" id="info">Tap a block to see what goes there.</div>
+    <div class="key" id="key"></div>
+  </section>
+
+  <aside class="card">
+    <span class="label">This layer</span>
+    <ul class="legend" id="legend"></ul>
+  </aside>
+
+  <div class="mats">
+    <section class="card">
+      <h2>Blocks to place</h2>
+      <span class="label">Stacks of 64 · shulker = 27 stacks</span>
+      <ul class="list" id="place"></ul>
+    </section>
+    <section class="card">
+      <h2>What to gather</h2>
+      <span class="label">Raw resources after crafting, smelting and stonecutting</span>
+      <ul class="list" id="raw"></ul>
+      <details>
+        <summary>Crafting steps</summary>
+        <ol class="steps" id="steps"></ol>
+      </details>
+    </section>
+  </div>
+</div>
+
+<script>
+const D = /*DATA*/null;
+const $ = id => document.getElementById(id);
+const fmt = n => n.toLocaleString("en-US");
+function stacks(n) {
+  const sh = Math.floor(n / 1728), rem = n % 1728, st = Math.floor(rem / 64), r = rem % 64, p = [];
+  if (sh) p.push(sh + (sh > 1 ? " shulkers" : " shulker"));
+  if (st) p.push(st + (st > 1 ? " stacks" : " stack"));
+  if (r || !p.length) p.push(String(r));
+  return p.join(" + ");
+}
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("p2m-guide:" + D.name + ":" + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem("p2m-guide:" + D.name + ":" + k, JSON.stringify(v)); } catch (e) {} }
+};
+const doneLayers = new Set(store.get("done", []));
+const got = new Set(store.get("got", []));
+let y = 0, zoom = 1;
+
+$("name").textContent = D.name;
+const total = D.place.reduce((a, r) => a + r[2], 0);
+$("stats").innerHTML = [["Size X×Y×Z", D.size.join("×")], ["Blocks", fmt(total)], ["Layers", D.size[1]], ["Block types", D.place.length]]
+  .map(([a, v]) => `<div><dt>${a}</dt><dd>${v}</dd></div>`).join("");
+
+// ---- drawing --------------------------------------------------------------
+const cv = $("cv"), ctx = cv.getContext("2d");
+const DIRV = { north: [0, -1], south: [0, 1], east: [1, 0], west: [-1, 0] };
+function cellSize() {
+  const w = $("plan").clientWidth - 2;
+  return Math.max(3, Math.min(32, Math.floor(w / D.size[0]))) * zoom;
+}
+function drawMark(st, px, pz, c) {
+  const [, , kind, a, b, cc] = st;
+  const mid = [px + c / 2, pz + c / 2];
+  ctx.strokeStyle = ctx.fillStyle = "rgba(255,255,255,.9)";
+  ctx.lineWidth = Math.max(1, c / 10);
+  if (kind === "st" && c >= 6) {                 // stairs: arrow toward the tall side
+    const [dx, dz] = DIRV[a]; const r = c * 0.32;
+    ctx.beginPath();
+    ctx.moveTo(mid[0] + dx * r, mid[1] + dz * r);
+    ctx.lineTo(mid[0] - dx * r * 0.6 - dz * r * 0.8, mid[1] - dz * r * 0.6 + dx * r * 0.8);
+    ctx.lineTo(mid[0] - dx * r * 0.6 + dz * r * 0.8, mid[1] - dz * r * 0.6 - dx * r * 0.8);
+    ctx.closePath();
+    b === "top" ? ctx.stroke() : ctx.fill();
+  } else if (kind === "s" && c >= 6) {          // slab: bar at bottom or top of cell
+    const h = Math.max(1.5, c * 0.18);
+    ctx.fillRect(px + c * 0.18, a === "top" ? pz + c * 0.18 : pz + c - c * 0.18 - h, c * 0.64, h);
+  }
+}
+function draw() {
+  const c = cellSize(), [X, , Z] = D.size;
+  cv.width = X * c; cv.height = Z * c;
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  const css = getComputedStyle(document.documentElement);
+  if (c >= 7) {
+    ctx.strokeStyle = css.getPropertyValue("--grid"); ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let x = 0; x <= X; x++) { ctx.moveTo(x * c + .5, 0); ctx.lineTo(x * c + .5, Z * c); }
+    for (let z = 0; z <= Z; z++) { ctx.moveTo(0, z * c + .5); ctx.lineTo(X * c, z * c + .5); }
+    ctx.stroke();
+  }
+  if (y > 0) {                                    // ghost of the layer below
+    ctx.fillStyle = css.getPropertyValue("--ghost");
+    for (const [x, z] of D.layers[y - 1]) ctx.fillRect(x * c, z * c, c, c);
+  }
+  for (const [x, z, si] of D.layers[y]) {
+    const st = D.states[si], col = "#" + st[1], kind = st[2];
+    const px = x * c, pz = z * c;
+    if (kind === "p" || kind === "w") {         // thin: post + arms toward connections
+      const t = kind === "w" ? 0.5 : 0.25;
+      ctx.fillStyle = col;
+      ctx.fillRect(px + c * (0.5 - t / 2), pz + c * (0.5 - t / 2), c * t, c * t);
+      const con = st[3] || "";
+      if (con.includes("n")) ctx.fillRect(px + c * (0.5 - t / 2.6), pz, c * t / 1.3, c / 2);
+      if (con.includes("s")) ctx.fillRect(px + c * (0.5 - t / 2.6), pz + c / 2, c * t / 1.3, c / 2);
+      if (con.includes("e")) ctx.fillRect(px + c / 2, pz + c * (0.5 - t / 2.6), c / 2, c * t / 1.3);
+      if (con.includes("w")) ctx.fillRect(px, pz + c * (0.5 - t / 2.6), c / 2, c * t / 1.3);
+      continue;
+    }
+    ctx.fillStyle = col; ctx.fillRect(px, pz, c, c);
+    drawMark(st, px, pz, c);
+  }
+}
+function legend() {
+  const n = {};
+  for (const [, , si] of D.layers[y]) { const id = D.states[si][0]; n[id] = (n[id] || 0) + 1; }
+  const hex = {}; for (const s of D.states) hex[s[0]] = s[1];
+  const rows = Object.entries(n).sort((a, b) => b[1] - a[1]);
+  $("legend").innerHTML = rows.length ? rows.map(([id, k]) =>
+    `<li><span class="sw" style="background:#${hex[id]}"></span><span class="nm">${id}</span><span class="ct"><b>${fmt(k)}</b></span></li>`).join("")
+    : `<li><span></span><span class="nm">Empty layer</span><span></span></li>`;
+}
+function setLayer(v) {
+  y = Math.max(0, Math.min(D.size[1] - 1, v));
+  $("layer").value = y;
+  $("ynum").textContent = `y ${y} / ${D.size[1] - 1}`;
+  $("done").checked = doneLayers.has(y);
+  draw(); legend(); $("info").textContent = "Tap a block to see what goes there.";
+  store.set("y", y);
+}
+$("layer").max = D.size[1] - 1;
+$("layer").addEventListener("input", e => setLayer(+e.target.value));
+$("prev").onclick = () => setLayer(y - 1);
+$("next").onclick = () => setLayer(y + 1);
+$("zin").onclick = () => { zoom = Math.min(4, zoom * 1.5); draw(); };
+$("zout").onclick = () => { zoom = Math.max(0.5, zoom / 1.5); draw(); };
+$("done").onchange = e => { e.target.checked ? doneLayers.add(y) : doneLayers.delete(y); store.set("done", [...doneLayers]); };
+cv.addEventListener("click", e => {
+  const r = cv.getBoundingClientRect(), c = cellSize();
+  const x = Math.floor((e.clientX - r.left) / c), z = Math.floor((e.clientY - r.top) / c);
+  const hit = D.layers[y].find(b => b[0] === x && b[1] === z);
+  if (!hit) { $("info").textContent = `x ${x}, y ${y}, z ${z} — air`; return; }
+  const st = D.states[hit[2]];
+  const extra = st[2] === "st" ? ` (facing ${st[3]}, ${st[4]}${st[5] && st[5] !== "straight" ? ", " + st[5].replace("_", " ") : ""})`
+    : st[2] === "s" ? ` (${st[3]} slab)` : "";
+  $("info").textContent = `x ${x}, y ${y}, z ${z} — ${st[0]}${extra}`;
+});
+new ResizeObserver(() => draw()).observe($("plan"));
+
+// key for the symbols
+(function key() {
+  const items = [["full block", "f"], ["stairs (arrow = tall side, outline = upside-down)", "st"], ["slab (bar = bottom or top)", "s"], ["pane / fence / wall", "p"]];
+  $("key").innerHTML = "";
+  for (const [label, k] of items) {
+    const sp = document.createElement("span"), c = document.createElement("canvas");
+    c.width = c.height = 16; const g = c.getContext("2d");
+    g.fillStyle = "#8a8f88";
+    if (k === "p") { g.fillRect(6, 0, 4, 16); } else g.fillRect(0, 0, 16, 16);
+    g.fillStyle = "rgba(255,255,255,.9)";
+    if (k === "st") { g.beginPath(); g.moveTo(8, 2); g.lineTo(3, 11); g.lineTo(13, 11); g.fill(); }
+    if (k === "s") g.fillRect(3, 11, 10, 3);
+    sp.append(c, document.createTextNode(label)); $("key").append(sp);
+  }
+})();
+
+// ---- materials -------------------------------------------------------------
+function list(el, rows, kind) {
+  el.innerHTML = rows.map(([id, hex, n]) => {
+    const key = kind + ":" + id, on = got.has(key);
+    return `<li class="${on ? "got" : ""}"><input type="checkbox" data-k="${key}" ${on ? "checked" : ""} aria-label="Got ${id}">` +
+      `<span class="sw" style="background:${hex ? "#" + hex : "transparent"};${hex ? "" : "box-shadow:none"}"></span>` +
+      `<span class="nm">${id.replaceAll("_", " ")}</span><span class="ct"><b>${fmt(n)}</b> · ${stacks(n)}</span></li>`;
+  }).join("");
+}
+list($("place"), D.place, "p");
+list($("raw"), D.raw.map(([id, n]) => [id, "", n]), "r");
+document.querySelectorAll(".list").forEach(ul => ul.addEventListener("change", e => {
+  const k = e.target.dataset.k; if (!k) return;
+  e.target.checked ? got.add(k) : got.delete(k);
+  e.target.closest("li").classList.toggle("got", e.target.checked);
+  store.set("got", [...got]);
+}));
+$("steps").innerHTML = D.steps.map(([item, made, station, ins]) =>
+  `<li>${fmt(made)} ${item.replaceAll("_", " ")} — ${station}: ${ins}</li>`).join("");
+
+setLayer(store.get("y", 0));
+</script>

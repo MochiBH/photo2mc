@@ -1,0 +1,40 @@
+{
+  "name": "Taj Mahal",
+  "notes": "Hand-written test spec in the same format Claude produces from a photo. Real dimensions in meters; front (south) facade faces +z.",
+  "height_m": 73,
+  "parts": [
+    {"shape": "box", "size": [96, 7, 96], "at": [0, 0, 0], "material": "smooth_quartz"},
+    {"shape": "box", "size": [100, 1, 100], "at": [0, 0, 0], "material": "smooth_red_sandstone"},
+
+    {"shape": "extrude", "height": 30, "at": [0, 7, 0], "material": "smooth_quartz",
+     "footprint": [[-20, -28], [20, -28], [28, -20], [28, 20], [20, 28], [-20, 28], [-28, 20], [-28, -20]]},
+    {"shape": "extrude", "height": 1.5, "at": [0, 37, 0], "material": "quartz_block",
+     "footprint": [[-20.5, -28.5], [20.5, -28.5], [28.5, -20.5], [28.5, 20.5], [20.5, 28.5], [-20.5, 28.5], [-28.5, 20.5], [-28.5, -20.5]]},
+
+    {"shape": "arch", "width": 12, "height": 24, "depth": 6, "at": [0, 9, 28], "mode": "carve", "mirror": "z"},
+    {"shape": "arch", "width": 12, "height": 24, "depth": 6, "axis": "x", "at": [28, 9, 0], "mode": "carve", "mirror": "x"},
+    {"shape": "arch", "width": 5, "height": 9, "depth": 1.5, "at": [0, 9, 25], "material": "dark_oak_planks", "mode": "paint", "mirror": "z"},
+    {"shape": "arch", "width": 5, "height": 9, "depth": 1.5, "axis": "x", "at": [25, 9, 0], "material": "dark_oak_planks", "mode": "paint", "mirror": "x"},
+    {"shape": "arch", "width": 5, "height": 9, "depth": 3, "at": [-17, 11, 28], "mode": "carve", "mirror": "xz",
+     "repeat": {"count": 2, "step": [0, 12, 0]}},
+    {"shape": "arch", "width": 5, "height": 9, "depth": 3, "axis": "x", "at": [28, 11, -17], "mode": "carve", "mirror": "xz",
+     "repeat": {"count": 2, "step": [0, 12, 0]}},
+
+    {"shape": "cylinder", "radius": 9.5, "height": 7, "at": [0, 37, 0], "material": "smooth_quartz"},
+    {"shape": "revolve", "at": [0, 0, 0], "material": "quartz_block",
+     "profile": [[9.5, 44], [10.8, 46], [11.6, 49], [11.6, 52], [10.8, 56], [9, 59.5], [6.5, 62.5], [3.8, 65], [1.5, 67], [0.6, 68.5]]},
+    {"shape": "cylinder", "radius": 0.6, "height": 5, "at": [0, 68, 0], "material": "gold_block"},
+
+    {"shape": "cylinder", "radius": 3.5, "height": 5, "sides": 8, "at": [17, 38, 17], "material": "smooth_quartz", "mirror": "xz"},
+    {"shape": "dome", "radius": 3.6, "height": 4, "at": [17, 43, 17], "material": "quartz_block", "mirror": "xz"},
+    {"shape": "cylinder", "radius": 0.5, "height": 1.5, "at": [17, 47, 17], "material": "gold_block", "mirror": "xz"},
+
+    {"shape": "cylinder", "radius": 2.8, "radius_top": 2.3, "height": 37, "sides": 8, "at": [44, 7, 44], "material": "smooth_quartz", "mirror": "xz"},
+    {"shape": "cylinder", "radius": 3.6, "height": 1, "sides": 8, "at": [44, 19, 44], "material": "quartz_block", "mirror": "xz",
+     "repeat": {"count": 3, "step": [0, 12, 0]}},
+    {"shape": "cylinder", "radius": 2.6, "height": 3, "sides": 8, "at": [44, 44, 44], "material": "smooth_quartz", "mirror": "xz"},
+    {"shape": "dome", "radius": 2.8, "height": 3, "at": [44, 47, 44], "material": "quartz_block", "mirror": "xz"},
+
+    {"shape": "box", "size": [3.5, 7, 1.2], "at": [-17, 11.5, 26.5], "material": "black_stained_glass", "mode": "paint", "mirror": "xz"}
+  ]
+}

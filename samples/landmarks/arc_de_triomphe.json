@@ -1,0 +1,116 @@
+{
+ "name": "Arc de Triomphe",
+ "height_m": 50,
+ "recommended_block_size": 0.5,
+ "camera": {
+  "azimuth_deg": 30,
+  "elevation_deg": 10
+ },
+ "notes": "50 m tall, 45 m wide, 22 m deep; main arch 29.19 x 14.62 m; transverse arches 18.68 x 8.44 m.",
+ "parts": [
+  {
+   "shape": "box",
+   "size": [
+    45,
+    44,
+    22
+   ],
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "material": "quartz_block",
+   "label": "main mass"
+  },
+  {
+   "shape": "box",
+   "size": [
+    46,
+    1.5,
+    23
+   ],
+   "at": [
+    0,
+    37,
+    0
+   ],
+   "material": "quartz_block",
+   "label": "frieze cornice"
+  },
+  {
+   "shape": "box",
+   "size": [
+    45,
+    6,
+    22
+   ],
+   "at": [
+    0,
+    44,
+    0
+   ],
+   "material": "quartz_block",
+   "label": "attic"
+  },
+  {
+   "shape": "box",
+   "size": [
+    46.2,
+    1,
+    23.2
+   ],
+   "at": [
+    0,
+    49,
+    0
+   ],
+   "material": "quartz_block",
+   "label": "top cornice"
+  },
+  {
+   "shape": "arch",
+   "width": 14.62,
+   "height": 29.19,
+   "depth": 24,
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "mode": "carve",
+   "label": "great arch"
+  },
+  {
+   "shape": "arch",
+   "width": 8.44,
+   "height": 18.68,
+   "depth": 47,
+   "axis": "x",
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "mode": "carve",
+   "label": "side arch"
+  },
+  {
+   "shape": "box",
+   "size": [
+    5,
+    9,
+    1.4
+   ],
+   "at": [
+    -15.5,
+    6,
+    11.0
+   ],
+   "material": "chiseled_sandstone",
+   "mode": "paint",
+   "mirror": "xz",
+   "label": "sculpture groups"
+  }
+ ]
+}

@@ -1,0 +1,6562 @@
+{
+"source": "Minecraft block textures, measured by tools/gen_palette.py",
+"versions": {
+"latest": "repo",
+"compat": "1.21.1"
+},
+"materials": [
+{
+"name": "acacia_planks",
+"full": "acacia_planks",
+"stairs": "acacia_stairs",
+"slab": "acacia_slab",
+"tags": [
+"wood"
+],
+"side": [
+170,
+91,
+51
+],
+"top": [
+170,
+91,
+51
+],
+"contrast": 0.051,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "acacia_wood",
+"full": "acacia_wood",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+105,
+98,
+88
+],
+"top": [
+105,
+98,
+88
+],
+"contrast": 0.056,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "amethyst_block",
+"full": "amethyst_block",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+140,
+104,
+194
+],
+"top": [
+140,
+104,
+194
+],
+"contrast": 0.122,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "andesite",
+"full": "andesite",
+"stairs": "andesite_stairs",
+"slab": "andesite_slab",
+"tags": [
+"stone"
+],
+"side": [
+137,
+137,
+138
+],
+"top": [
+137,
+137,
+138
+],
+"contrast": 0.063,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "bamboo_block",
+"full": "bamboo_block",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+130,
+147,
+59
+],
+"top": [
+145,
+146,
+67
+],
+"contrast": 0.106,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "bamboo_mosaic",
+"full": "bamboo_mosaic",
+"stairs": "bamboo_mosaic_stairs",
+"slab": "bamboo_mosaic_slab",
+"tags": [
+"detail"
+],
+"side": [
+193,
+172,
+79
+],
+"top": [
+193,
+172,
+79
+],
+"contrast": 0.094,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "birch_planks",
+"full": "birch_planks",
+"stairs": "birch_stairs",
+"slab": "birch_slab",
+"tags": [
+"wood"
+],
+"side": [
+194,
+177,
+122
+],
+"top": [
+194,
+177,
+122
+],
+"contrast": 0.08,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "birch_wood",
+"full": "birch_wood",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+224,
+223,
+219
+],
+"top": [
+224,
+223,
+219
+],
+"contrast": 0.21,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "black_concrete",
+"full": "black_concrete",
+"stairs": "black_concrete_stairs",
+"slab": "black_concrete_slab",
+"tags": [
+"color"
+],
+"side": [
+8,
+10,
+15
+],
+"top": [
+8,
+10,
+15
+],
+"contrast": 0.004,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "black_stained_glass",
+"full": "black_stained_glass",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+25,
+25,
+25
+],
+"top": [
+25,
+25,
+25
+],
+"contrast": 0.0,
+"opacity": 0.46,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "black_terracotta",
+"full": "black_terracotta",
+"stairs": null,
+"slab": null,
+"tags": [
+"color",
+"earth"
+],
+"side": [
+37,
+23,
+16
+],
+"top": [
+37,
+23,
+16
+],
+"contrast": 0.004,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "black_wool",
+"full": "black_wool",
+"stairs": "black_wool_stairs",
+"slab": "black_wool_slab",
+"tags": [
+"wool"
+],
+"side": [
+22,
+22,
+27
+],
+"top": [
+22,
+22,
+27
+],
+"contrast": 0.03,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "blackstone",
+"full": "blackstone",
+"stairs": "blackstone_stairs",
+"slab": "blackstone_slab",
+"tags": [
+"stone"
+],
+"side": [
+44,
+39,
+46
+],
+"top": [
+44,
+39,
+47
+],
+"contrast": 0.06,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "blue_concrete",
+"full": "blue_concrete",
+"stairs": "blue_concrete_stairs",
+"slab": "blue_concrete_slab",
+"tags": [
+"color"
+],
+"side": [
+45,
+47,
+143
+],
+"top": [
+45,
+47,
+143
+],
+"contrast": 0.002,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "blue_ice",
+"full": "blue_ice",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+117,
+168,
+253
+],
+"top": [
+117,
+168,
+253
+],
+"contrast": 0.039,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "blue_stained_glass",
+"full": "blue_stained_glass",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+51,
+76,
+178
+],
+"top": [
+51,
+76,
+178
+],
+"contrast": 0.0,
+"opacity": 0.46,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "blue_terracotta",
+"full": "blue_terracotta",
+"stairs": null,
+"slab": null,
+"tags": [
+"color",
+"earth"
+],
+"side": [
+74,
+60,
+91
+],
+"top": [
+74,
+60,
+91
+],
+"contrast": 0.006,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "blue_wool",
+"full": "blue_wool",
+"stairs": "blue_wool_stairs",
+"slab": "blue_wool_slab",
+"tags": [
+"wool"
+],
+"side": [
+53,
+58,
+158
+],
+"top": [
+53,
+58,
+158
+],
+"contrast": 0.029,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "bookshelf",
+"full": "bookshelf",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+134,
+108,
+78
+],
+"top": [
+165,
+134,
+81
+],
+"contrast": 0.133,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "bricks",
+"full": "bricks",
+"stairs": "brick_stairs",
+"slab": "brick_slab",
+"tags": [
+"stone",
+"roof"
+],
+"side": [
+153,
+101,
+89
+],
+"top": [
+153,
+101,
+89
+],
+"contrast": 0.088,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "brown_concrete",
+"full": "brown_concrete",
+"stairs": "brown_concrete_stairs",
+"slab": "brown_concrete_slab",
+"tags": [
+"color"
+],
+"side": [
+96,
+60,
+32
+],
+"top": [
+96,
+60,
+32
+],
+"contrast": 0.002,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "brown_stained_glass",
+"full": "brown_stained_glass",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+102,
+76,
+51
+],
+"top": [
+102,
+76,
+51
+],
+"contrast": 0.0,
+"opacity": 0.46,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "brown_terracotta",
+"full": "brown_terracotta",
+"stairs": null,
+"slab": null,
+"tags": [
+"color",
+"earth"
+],
+"side": [
+77,
+51,
+36
+],
+"top": [
+77,
+51,
+36
+],
+"contrast": 0.006,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "brown_wool",
+"full": "brown_wool",
+"stairs": "brown_wool_stairs",
+"slab": "brown_wool_slab",
+"tags": [
+"wool"
+],
+"side": [
+115,
+72,
+41
+],
+"top": [
+115,
+72,
+41
+],
+"contrast": 0.031,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "calcite",
+"full": "calcite",
+"stairs": null,
+"slab": null,
+"tags": [
+"stone"
+],
+"side": [
+225,
+226,
+222
+],
+"top": [
+225,
+226,
+222
+],
+"contrast": 0.075,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "cherry_planks",
+"full": "cherry_planks",
+"stairs": "cherry_stairs",
+"slab": "cherry_slab",
+"tags": [
+"wood"
+],
+"side": [
+227,
+180,
+174
+],
+"top": [
+227,
+180,
+174
+],
+"contrast": 0.07,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "cherry_wood",
+"full": "cherry_wood",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+56,
+34,
+45
+],
+"top": [
+56,
+34,
+45
+],
+"contrast": 0.036,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "chiseled_cinnabar",
+"full": "chiseled_cinnabar",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+150,
+58,
+58
+],
+"top": [
+150,
+58,
+58
+],
+"contrast": 0.078,
+"opacity": 1.0,
+"since": {
+"full": "26",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "chiseled_deepslate",
+"full": "chiseled_deepslate",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+57,
+57,
+58
+],
+"top": [
+57,
+57,
+58
+],
+"contrast": 0.062,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "chiseled_nether_bricks",
+"full": "chiseled_nether_bricks",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail",
+"roof"
+],
+"side": [
+49,
+24,
+29
+],
+"top": [
+49,
+24,
+29
+],
+"contrast": 0.037,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "chiseled_polished_blackstone",
+"full": "chiseled_polished_blackstone",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+57,
+53,
+62
+],
+"top": [
+57,
+53,
+62
+],
+"contrast": 0.076,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "chiseled_quartz_block",
+"full": "chiseled_quartz_block",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+232,
+227,
+218
+],
+"top": [
+232,
+227,
+218
+],
+"contrast": 0.031,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "chiseled_red_sandstone",
+"full": "chiseled_red_sandstone",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+184,
+98,
+30
+],
+"top": [
+182,
+98,
+32
+],
+"contrast": 0.041,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "chiseled_resin_bricks",
+"full": "chiseled_resin_bricks",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail",
+"roof"
+],
+"side": [
+203,
+91,
+28
+],
+"top": [
+203,
+91,
+28
+],
+"contrast": 0.113,
+"opacity": 1.0,
+"since": {
+"full": "26",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "chiseled_sandstone",
+"full": "chiseled_sandstone",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+217,
+204,
+158
+],
+"top": [
+224,
+214,
+171
+],
+"contrast": 0.048,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "chiseled_stone_bricks",
+"full": "chiseled_stone_bricks",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail",
+"roof"
+],
+"side": [
+122,
+121,
+122
+],
+"top": [
+122,
+121,
+122
+],
+"contrast": 0.087,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "chiseled_sulfur",
+"full": "chiseled_sulfur",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+189,
+174,
+92
+],
+"top": [
+189,
+174,
+92
+],
+"contrast": 0.113,
+"opacity": 1.0,
+"since": {
+"full": "26",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "chiseled_tuff",
+"full": "chiseled_tuff",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+92,
+97,
+90
+],
+"top": [
+97,
+101,
+94
+],
+"contrast": 0.077,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "chiseled_tuff_bricks",
+"full": "chiseled_tuff_bricks",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail",
+"roof"
+],
+"side": [
+102,
+105,
+98
+],
+"top": [
+113,
+115,
+108
+],
+"contrast": 0.071,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "cinnabar",
+"full": "cinnabar",
+"stairs": "cinnabar_stairs",
+"slab": "cinnabar_slab",
+"tags": [
+"stone"
+],
+"side": [
+153,
+84,
+80
+],
+"top": [
+153,
+84,
+80
+],
+"contrast": 0.052,
+"opacity": 1.0,
+"since": {
+"full": "26",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "cinnabar_bricks",
+"full": "cinnabar_bricks",
+"stairs": "cinnabar_brick_stairs",
+"slab": "cinnabar_brick_slab",
+"tags": [
+"stone",
+"roof"
+],
+"side": [
+151,
+58,
+56
+],
+"top": [
+151,
+58,
+56
+],
+"contrast": 0.066,
+"opacity": 1.0,
+"since": {
+"full": "26",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "clay",
+"full": "clay",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+161,
+167,
+180
+],
+"top": [
+161,
+167,
+180
+],
+"contrast": 0.026,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "coal_block",
+"full": "coal_block",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+18,
+17,
+17
+],
+"top": [
+18,
+17,
+17
+],
+"contrast": 0.033,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "coarse_dirt",
+"full": "coarse_dirt",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+125,
+90,
+63
+],
+"top": [
+125,
+90,
+63
+],
+"contrast": 0.1,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "cobbled_deepslate",
+"full": "cobbled_deepslate",
+"stairs": "cobbled_deepslate_stairs",
+"slab": "cobbled_deepslate_slab",
+"tags": [
+"stone"
+],
+"side": [
+81,
+81,
+83
+],
+"top": [
+81,
+81,
+83
+],
+"contrast": 0.082,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "cobblestone",
+"full": "cobblestone",
+"stairs": "cobblestone_stairs",
+"slab": "cobblestone_slab",
+"tags": [
+"stone"
+],
+"side": [
+132,
+132,
+132
+],
+"top": [
+132,
+132,
+132
+],
+"contrast": 0.115,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "cracked_deepslate_bricks",
+"full": "cracked_deepslate_bricks",
+"stairs": null,
+"slab": null,
+"tags": [
+"stone",
+"roof"
+],
+"side": [
+69,
+69,
+70
+],
+"top": [
+69,
+69,
+70
+],
+"contrast": 0.089,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "cracked_deepslate_tiles",
+"full": "cracked_deepslate_tiles",
+"stairs": null,
+"slab": null,
+"tags": [
+"stone",
+"roof"
+],
+"side": [
+55,
+55,
+55
+],
+"top": [
+55,
+55,
+55
+],
+"contrast": 0.058,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "cracked_nether_bricks",
+"full": "cracked_nether_bricks",
+"stairs": null,
+"slab": null,
+"tags": [
+"stone",
+"roof"
+],
+"side": [
+43,
+21,
+25
+],
+"top": [
+43,
+21,
+25
+],
+"contrast": 0.033,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "cracked_polished_blackstone_bricks",
+"full": "cracked_polished_blackstone_bricks",
+"stairs": null,
+"slab": null,
+"tags": [
+"stone",
+"roof"
+],
+"side": [
+47,
+42,
+50
+],
+"top": [
+47,
+42,
+50
+],
+"contrast": 0.071,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "cracked_stone_bricks",
+"full": "cracked_stone_bricks",
+"stairs": null,
+"slab": null,
+"tags": [
+"stone",
+"roof"
+],
+"side": [
+120,
+119,
+120
+],
+"top": [
+120,
+119,
+120
+],
+"contrast": 0.073,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "crimson_hyphae",
+"full": "crimson_hyphae",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+98,
+29,
+37
+],
+"top": [
+98,
+29,
+37
+],
+"contrast": 0.034,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "crimson_planks",
+"full": "crimson_planks",
+"stairs": "crimson_stairs",
+"slab": "crimson_slab",
+"tags": [
+"wood"
+],
+"side": [
+105,
+50,
+73
+],
+"top": [
+105,
+50,
+73
+],
+"contrast": 0.055,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "cut_red_sandstone",
+"full": "cut_red_sandstone",
+"stairs": null,
+"slab": "cut_red_sandstone_slab",
+"tags": [
+"stone"
+],
+"side": [
+190,
+103,
+33
+],
+"top": [
+182,
+98,
+32
+],
+"contrast": 0.036,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": "1.21"
+}
+},
+{
+"name": "cut_sandstone",
+"full": "cut_sandstone",
+"stairs": null,
+"slab": "cut_sandstone_slab",
+"tags": [
+"stone"
+],
+"side": [
+218,
+207,
+162
+],
+"top": [
+224,
+214,
+171
+],
+"contrast": 0.042,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": "1.21"
+}
+},
+{
+"name": "cyan_concrete",
+"full": "cyan_concrete",
+"stairs": "cyan_concrete_stairs",
+"slab": "cyan_concrete_slab",
+"tags": [
+"color"
+],
+"side": [
+21,
+119,
+136
+],
+"top": [
+21,
+119,
+136
+],
+"contrast": 0.003,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "cyan_stained_glass",
+"full": "cyan_stained_glass",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+76,
+127,
+153
+],
+"top": [
+76,
+127,
+153
+],
+"contrast": 0.0,
+"opacity": 0.46,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "cyan_terracotta",
+"full": "cyan_terracotta",
+"stairs": null,
+"slab": null,
+"tags": [
+"color",
+"earth"
+],
+"side": [
+87,
+91,
+91
+],
+"top": [
+87,
+91,
+91
+],
+"contrast": 0.008,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "cyan_wool",
+"full": "cyan_wool",
+"stairs": "cyan_wool_stairs",
+"slab": "cyan_wool_slab",
+"tags": [
+"wool"
+],
+"side": [
+21,
+138,
+145
+],
+"top": [
+21,
+138,
+145
+],
+"contrast": 0.032,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "dark_oak_planks",
+"full": "dark_oak_planks",
+"stairs": "dark_oak_stairs",
+"slab": "dark_oak_slab",
+"tags": [
+"wood"
+],
+"side": [
+68,
+44,
+21
+],
+"top": [
+68,
+44,
+21
+],
+"contrast": 0.04,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "dark_oak_wood",
+"full": "dark_oak_wood",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+62,
+47,
+27
+],
+"top": [
+62,
+47,
+27
+],
+"contrast": 0.036,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "dark_prismarine",
+"full": "dark_prismarine",
+"stairs": "dark_prismarine_stairs",
+"slab": "dark_prismarine_slab",
+"tags": [
+"stone",
+"roof"
+],
+"side": [
+53,
+95,
+78
+],
+"top": [
+53,
+95,
+78
+],
+"contrast": 0.076,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "deepslate_bricks",
+"full": "deepslate_bricks",
+"stairs": "deepslate_brick_stairs",
+"slab": "deepslate_brick_slab",
+"tags": [
+"stone",
+"roof"
+],
+"side": [
+75,
+75,
+75
+],
+"top": [
+75,
+75,
+75
+],
+"contrast": 0.086,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "deepslate_tiles",
+"full": "deepslate_tiles",
+"stairs": "deepslate_tile_stairs",
+"slab": "deepslate_tile_slab",
+"tags": [
+"stone",
+"roof"
+],
+"side": [
+57,
+57,
+57
+],
+"top": [
+57,
+57,
+57
+],
+"contrast": 0.058,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "diamond_block",
+"full": "diamond_block",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+113,
+238,
+229
+],
+"top": [
+113,
+238,
+229
+],
+"contrast": 0.097,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "diorite",
+"full": "diorite",
+"stairs": "diorite_stairs",
+"slab": "diorite_slab",
+"tags": [
+"stone"
+],
+"side": [
+193,
+193,
+193
+],
+"top": [
+193,
+193,
+193
+],
+"contrast": 0.136,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "dirt",
+"full": "dirt",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+138,
+99,
+70
+],
+"top": [
+138,
+99,
+70
+],
+"contrast": 0.09,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "dripstone_block",
+"full": "dripstone_block",
+"stairs": null,
+"slab": null,
+"tags": [
+"stone"
+],
+"side": [
+136,
+110,
+94
+],
+"top": [
+136,
+110,
+94
+],
+"contrast": 0.079,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "emerald_block",
+"full": "emerald_block",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+57,
+206,
+99
+],
+"top": [
+57,
+206,
+99
+],
+"contrast": 0.119,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "end_stone",
+"full": "end_stone",
+"stairs": null,
+"slab": null,
+"tags": [
+"stone"
+],
+"side": [
+220,
+224,
+159
+],
+"top": [
+220,
+224,
+159
+],
+"contrast": 0.07,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "end_stone_bricks",
+"full": "end_stone_bricks",
+"stairs": "end_stone_brick_stairs",
+"slab": "end_stone_brick_slab",
+"tags": [
+"stone",
+"roof"
+],
+"side": [
+220,
+226,
+164
+],
+"top": [
+220,
+226,
+164
+],
+"contrast": 0.094,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "glass",
+"full": "glass",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+180,
+215,
+220
+],
+"top": [
+180,
+215,
+220
+],
+"contrast": 0.089,
+"opacity": 0.254,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "glowstone",
+"full": "glowstone",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+184,
+151,
+111
+],
+"top": [
+184,
+151,
+111
+],
+"contrast": 0.248,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "gold_block",
+"full": "gold_block",
+"stairs": null,
+"slab": null,
+"tags": [
+"metal"
+],
+"side": [
+247,
+211,
+69
+],
+"top": [
+247,
+211,
+69
+],
+"contrast": 0.096,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "granite",
+"full": "granite",
+"stairs": "granite_stairs",
+"slab": "granite_slab",
+"tags": [
+"stone"
+],
+"side": [
+152,
+106,
+89
+],
+"top": [
+152,
+106,
+89
+],
+"contrast": 0.083,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "gray_concrete",
+"full": "gray_concrete",
+"stairs": "gray_concrete_stairs",
+"slab": "gray_concrete_slab",
+"tags": [
+"color"
+],
+"side": [
+55,
+58,
+62
+],
+"top": [
+55,
+58,
+62
+],
+"contrast": 0.002,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "gray_stained_glass",
+"full": "gray_stained_glass",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+76,
+76,
+76
+],
+"top": [
+76,
+76,
+76
+],
+"contrast": 0.0,
+"opacity": 0.46,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "gray_terracotta",
+"full": "gray_terracotta",
+"stairs": null,
+"slab": null,
+"tags": [
+"color",
+"earth"
+],
+"side": [
+58,
+42,
+36
+],
+"top": [
+58,
+42,
+36
+],
+"contrast": 0.004,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "gray_wool",
+"full": "gray_wool",
+"stairs": "gray_wool_stairs",
+"slab": "gray_wool_slab",
+"tags": [
+"wool"
+],
+"side": [
+63,
+69,
+72
+],
+"top": [
+63,
+69,
+72
+],
+"contrast": 0.024,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "green_concrete",
+"full": "green_concrete",
+"stairs": "green_concrete_stairs",
+"slab": "green_concrete_slab",
+"tags": [
+"color"
+],
+"side": [
+73,
+91,
+36
+],
+"top": [
+73,
+91,
+36
+],
+"contrast": 0.002,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "green_stained_glass",
+"full": "green_stained_glass",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+102,
+127,
+51
+],
+"top": [
+102,
+127,
+51
+],
+"contrast": 0.0,
+"opacity": 0.46,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "green_terracotta",
+"full": "green_terracotta",
+"stairs": null,
+"slab": null,
+"tags": [
+"color",
+"earth"
+],
+"side": [
+76,
+83,
+42
+],
+"top": [
+76,
+83,
+42
+],
+"contrast": 0.005,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "green_wool",
+"full": "green_wool",
+"stairs": "green_wool_stairs",
+"slab": "green_wool_slab",
+"tags": [
+"wool"
+],
+"side": [
+85,
+110,
+28
+],
+"top": [
+85,
+110,
+28
+],
+"contrast": 0.037,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "hay_block",
+"full": "hay_block",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+168,
+141,
+39
+],
+"top": [
+167,
+141,
+13
+],
+"contrast": 0.088,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "honeycomb_block",
+"full": "honeycomb_block",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+231,
+155,
+51
+],
+"top": [
+231,
+155,
+51
+],
+"contrast": 0.136,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "iron_block",
+"full": "iron_block",
+"stairs": null,
+"slab": null,
+"tags": [
+"metal"
+],
+"side": [
+221,
+221,
+221
+],
+"top": [
+221,
+221,
+221
+],
+"contrast": 0.07,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "jungle_planks",
+"full": "jungle_planks",
+"stairs": "jungle_stairs",
+"slab": "jungle_slab",
+"tags": [
+"wood"
+],
+"side": [
+164,
+118,
+84
+],
+"top": [
+164,
+118,
+84
+],
+"contrast": 0.093,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "jungle_wood",
+"full": "jungle_wood",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+87,
+69,
+26
+],
+"top": [
+87,
+69,
+26
+],
+"contrast": 0.051,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "lapis_block",
+"full": "lapis_block",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+31,
+69,
+141
+],
+"top": [
+31,
+69,
+141
+],
+"contrast": 0.038,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "light_blue_concrete",
+"full": "light_blue_concrete",
+"stairs": "light_blue_concrete_stairs",
+"slab": "light_blue_concrete_slab",
+"tags": [
+"color"
+],
+"side": [
+36,
+137,
+199
+],
+"top": [
+36,
+137,
+199
+],
+"contrast": 0.003,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "light_blue_stained_glass",
+"full": "light_blue_stained_glass",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+102,
+153,
+216
+],
+"top": [
+102,
+153,
+216
+],
+"contrast": 0.0,
+"opacity": 0.46,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "light_blue_terracotta",
+"full": "light_blue_terracotta",
+"stairs": null,
+"slab": null,
+"tags": [
+"color",
+"earth"
+],
+"side": [
+114,
+109,
+138
+],
+"top": [
+114,
+109,
+138
+],
+"contrast": 0.006,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "light_blue_wool",
+"full": "light_blue_wool",
+"stairs": "light_blue_wool_stairs",
+"slab": "light_blue_wool_slab",
+"tags": [
+"wool"
+],
+"side": [
+60,
+176,
+218
+],
+"top": [
+60,
+176,
+218
+],
+"contrast": 0.062,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "light_gray_concrete",
+"full": "light_gray_concrete",
+"stairs": "light_gray_concrete_stairs",
+"slab": "light_gray_concrete_slab",
+"tags": [
+"color"
+],
+"side": [
+125,
+125,
+115
+],
+"top": [
+125,
+125,
+115
+],
+"contrast": 0.003,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "light_gray_stained_glass",
+"full": "light_gray_stained_glass",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+153,
+153,
+153
+],
+"top": [
+153,
+153,
+153
+],
+"contrast": 0.0,
+"opacity": 0.46,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "light_gray_terracotta",
+"full": "light_gray_terracotta",
+"stairs": null,
+"slab": null,
+"tags": [
+"color",
+"earth"
+],
+"side": [
+135,
+107,
+98
+],
+"top": [
+135,
+107,
+98
+],
+"contrast": 0.006,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "light_gray_wool",
+"full": "light_gray_wool",
+"stairs": "light_gray_wool_stairs",
+"slab": "light_gray_wool_slab",
+"tags": [
+"wool"
+],
+"side": [
+142,
+143,
+135
+],
+"top": [
+142,
+143,
+135
+],
+"contrast": 0.038,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "lime_concrete",
+"full": "lime_concrete",
+"stairs": "lime_concrete_stairs",
+"slab": "lime_concrete_slab",
+"tags": [
+"color"
+],
+"side": [
+94,
+169,
+25
+],
+"top": [
+94,
+169,
+25
+],
+"contrast": 0.004,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "lime_stained_glass",
+"full": "lime_stained_glass",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+127,
+204,
+25
+],
+"top": [
+127,
+204,
+25
+],
+"contrast": 0.0,
+"opacity": 0.46,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "lime_terracotta",
+"full": "lime_terracotta",
+"stairs": null,
+"slab": null,
+"tags": [
+"color",
+"earth"
+],
+"side": [
+104,
+118,
+53
+],
+"top": [
+104,
+118,
+53
+],
+"contrast": 0.008,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "lime_wool",
+"full": "lime_wool",
+"stairs": "lime_wool_stairs",
+"slab": "lime_wool_slab",
+"tags": [
+"wool"
+],
+"side": [
+113,
+186,
+26
+],
+"top": [
+113,
+186,
+26
+],
+"contrast": 0.037,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "magenta_concrete",
+"full": "magenta_concrete",
+"stairs": "magenta_concrete_stairs",
+"slab": "magenta_concrete_slab",
+"tags": [
+"color"
+],
+"side": [
+169,
+48,
+159
+],
+"top": [
+169,
+48,
+159
+],
+"contrast": 0.004,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "magenta_stained_glass",
+"full": "magenta_stained_glass",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+178,
+76,
+216
+],
+"top": [
+178,
+76,
+216
+],
+"contrast": 0.0,
+"opacity": 0.46,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "magenta_terracotta",
+"full": "magenta_terracotta",
+"stairs": null,
+"slab": null,
+"tags": [
+"color",
+"earth"
+],
+"side": [
+150,
+88,
+109
+],
+"top": [
+150,
+88,
+109
+],
+"contrast": 0.009,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "magenta_wool",
+"full": "magenta_wool",
+"stairs": "magenta_wool_stairs",
+"slab": "magenta_wool_slab",
+"tags": [
+"wool"
+],
+"side": [
+190,
+70,
+181
+],
+"top": [
+190,
+70,
+181
+],
+"contrast": 0.051,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "magma_block",
+"full": "magma_block",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+162,
+77,
+35
+],
+"top": [
+162,
+77,
+35
+],
+"contrast": 0.17,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "mangrove_planks",
+"full": "mangrove_planks",
+"stairs": "mangrove_stairs",
+"slab": "mangrove_slab",
+"tags": [
+"wood"
+],
+"side": [
+119,
+56,
+50
+],
+"top": [
+119,
+56,
+50
+],
+"contrast": 0.056,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "mangrove_wood",
+"full": "mangrove_wood",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+85,
+68,
+41
+],
+"top": [
+85,
+68,
+41
+],
+"contrast": 0.04,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "moss_block",
+"full": "moss_block",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+91,
+111,
+46
+],
+"top": [
+91,
+111,
+46
+],
+"contrast": 0.06,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "mossy_cobblestone",
+"full": "mossy_cobblestone",
+"stairs": "mossy_cobblestone_stairs",
+"slab": "mossy_cobblestone_slab",
+"tags": [
+"detail"
+],
+"side": [
+114,
+121,
+103
+],
+"top": [
+114,
+121,
+103
+],
+"contrast": 0.09,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "mossy_stone_bricks",
+"full": "mossy_stone_bricks",
+"stairs": "mossy_stone_brick_stairs",
+"slab": "mossy_stone_brick_slab",
+"tags": [
+"detail",
+"roof"
+],
+"side": [
+118,
+123,
+110
+],
+"top": [
+118,
+123,
+110
+],
+"contrast": 0.069,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "mud",
+"full": "mud",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+61,
+58,
+61
+],
+"top": [
+61,
+58,
+61
+],
+"contrast": 0.027,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "mud_bricks",
+"full": "mud_bricks",
+"stairs": "mud_brick_stairs",
+"slab": "mud_brick_slab",
+"tags": [
+"stone",
+"roof"
+],
+"side": [
+139,
+105,
+80
+],
+"top": [
+139,
+105,
+80
+],
+"contrast": 0.068,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "mycelium",
+"full": "mycelium",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+119,
+92,
+78
+],
+"top": [
+112,
+99,
+102
+],
+"contrast": 0.065,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "nether_bricks",
+"full": "nether_bricks",
+"stairs": "nether_brick_stairs",
+"slab": "nether_brick_slab",
+"tags": [
+"stone",
+"roof"
+],
+"side": [
+46,
+23,
+27
+],
+"top": [
+46,
+23,
+27
+],
+"contrast": 0.032,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "nether_wart_block",
+"full": "nether_wart_block",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+117,
+4,
+3
+],
+"top": [
+117,
+4,
+3
+],
+"contrast": 0.035,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "netherite_block",
+"full": "netherite_block",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+68,
+64,
+66
+],
+"top": [
+68,
+64,
+66
+],
+"contrast": 0.06,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "netherrack",
+"full": "netherrack",
+"stairs": null,
+"slab": null,
+"tags": [
+"stone"
+],
+"side": [
+99,
+40,
+40
+],
+"top": [
+99,
+40,
+40
+],
+"contrast": 0.052,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "oak_planks",
+"full": "oak_planks",
+"stairs": "oak_stairs",
+"slab": "oak_slab",
+"tags": [
+"wood"
+],
+"side": [
+165,
+134,
+81
+],
+"top": [
+165,
+134,
+81
+],
+"contrast": 0.097,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "oak_wood",
+"full": "oak_wood",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+113,
+88,
+52
+],
+"top": [
+113,
+88,
+52
+],
+"contrast": 0.084,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "obsidian",
+"full": "obsidian",
+"stairs": null,
+"slab": null,
+"tags": [
+"stone"
+],
+"side": [
+21,
+14,
+35
+],
+"top": [
+21,
+14,
+35
+],
+"contrast": 0.056,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "ochre_froglight",
+"full": "ochre_froglight",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+246,
+235,
+189
+],
+"top": [
+251,
+246,
+211
+],
+"contrast": 0.077,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "orange_concrete",
+"full": "orange_concrete",
+"stairs": "orange_concrete_stairs",
+"slab": "orange_concrete_slab",
+"tags": [
+"color"
+],
+"side": [
+224,
+97,
+1
+],
+"top": [
+224,
+97,
+1
+],
+"contrast": 0.003,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "orange_stained_glass",
+"full": "orange_stained_glass",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+216,
+127,
+51
+],
+"top": [
+216,
+127,
+51
+],
+"contrast": 0.0,
+"opacity": 0.46,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "orange_terracotta",
+"full": "orange_terracotta",
+"stairs": null,
+"slab": null,
+"tags": [
+"color",
+"earth"
+],
+"side": [
+162,
+84,
+38
+],
+"top": [
+162,
+84,
+38
+],
+"contrast": 0.008,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "orange_wool",
+"full": "orange_wool",
+"stairs": "orange_wool_stairs",
+"slab": "orange_wool_slab",
+"tags": [
+"wool"
+],
+"side": [
+241,
+119,
+22
+],
+"top": [
+241,
+119,
+22
+],
+"contrast": 0.048,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "packed_ice",
+"full": "packed_ice",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+143,
+180,
+251
+],
+"top": [
+143,
+180,
+251
+],
+"contrast": 0.046,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "packed_mud",
+"full": "packed_mud",
+"stairs": null,
+"slab": null,
+"tags": [
+"stone"
+],
+"side": [
+143,
+107,
+80
+],
+"top": [
+143,
+107,
+80
+],
+"contrast": 0.041,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "pale_oak_planks",
+"full": "pale_oak_planks",
+"stairs": "pale_oak_stairs",
+"slab": "pale_oak_slab",
+"tags": [
+"wood"
+],
+"side": [
+229,
+219,
+218
+],
+"top": [
+229,
+219,
+218
+],
+"contrast": 0.094,
+"opacity": 1.0,
+"since": {
+"full": "26",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "pale_oak_wood",
+"full": "pale_oak_wood",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+90,
+80,
+77
+],
+"top": [
+90,
+80,
+77
+],
+"contrast": 0.065,
+"opacity": 1.0,
+"since": {
+"full": "26",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "pearlescent_froglight",
+"full": "pearlescent_froglight",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+237,
+228,
+230
+],
+"top": [
+246,
+241,
+241
+],
+"contrast": 0.093,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "pink_concrete",
+"full": "pink_concrete",
+"stairs": "pink_concrete_stairs",
+"slab": "pink_concrete_slab",
+"tags": [
+"color"
+],
+"side": [
+214,
+101,
+143
+],
+"top": [
+214,
+101,
+143
+],
+"contrast": 0.003,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "pink_stained_glass",
+"full": "pink_stained_glass",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+242,
+127,
+165
+],
+"top": [
+242,
+127,
+165
+],
+"contrast": 0.0,
+"opacity": 0.46,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "pink_terracotta",
+"full": "pink_terracotta",
+"stairs": null,
+"slab": null,
+"tags": [
+"color",
+"earth"
+],
+"side": [
+162,
+78,
+79
+],
+"top": [
+162,
+78,
+79
+],
+"contrast": 0.009,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "pink_wool",
+"full": "pink_wool",
+"stairs": "pink_wool_stairs",
+"slab": "pink_wool_slab",
+"tags": [
+"wool"
+],
+"side": [
+238,
+144,
+173
+],
+"top": [
+238,
+144,
+173
+],
+"contrast": 0.073,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "podzol",
+"full": "podzol",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+128,
+92,
+62
+],
+"top": [
+95,
+65,
+24
+],
+"contrast": 0.075,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "polished_andesite",
+"full": "polished_andesite",
+"stairs": "polished_andesite_stairs",
+"slab": "polished_andesite_slab",
+"tags": [
+"stone"
+],
+"side": [
+135,
+137,
+136
+],
+"top": [
+135,
+137,
+136
+],
+"contrast": 0.082,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "polished_blackstone",
+"full": "polished_blackstone",
+"stairs": "polished_blackstone_stairs",
+"slab": "polished_blackstone_slab",
+"tags": [
+"stone"
+],
+"side": [
+55,
+51,
+60
+],
+"top": [
+55,
+51,
+60
+],
+"contrast": 0.058,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "polished_blackstone_bricks",
+"full": "polished_blackstone_bricks",
+"stairs": "polished_blackstone_brick_stairs",
+"slab": "polished_blackstone_brick_slab",
+"tags": [
+"stone",
+"roof"
+],
+"side": [
+51,
+46,
+55
+],
+"top": [
+51,
+46,
+55
+],
+"contrast": 0.066,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "polished_cinnabar",
+"full": "polished_cinnabar",
+"stairs": "polished_cinnabar_stairs",
+"slab": "polished_cinnabar_slab",
+"tags": [
+"stone"
+],
+"side": [
+155,
+60,
+57
+],
+"top": [
+155,
+60,
+57
+],
+"contrast": 0.062,
+"opacity": 1.0,
+"since": {
+"full": "26",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "polished_deepslate",
+"full": "polished_deepslate",
+"stairs": "polished_deepslate_stairs",
+"slab": "polished_deepslate_slab",
+"tags": [
+"stone"
+],
+"side": [
+76,
+76,
+76
+],
+"top": [
+76,
+76,
+76
+],
+"contrast": 0.079,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "polished_diorite",
+"full": "polished_diorite",
+"stairs": "polished_diorite_stairs",
+"slab": "polished_diorite_slab",
+"tags": [
+"stone"
+],
+"side": [
+197,
+197,
+198
+],
+"top": [
+197,
+197,
+198
+],
+"contrast": 0.132,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "polished_granite",
+"full": "polished_granite",
+"stairs": "polished_granite_stairs",
+"slab": "polished_granite_slab",
+"tags": [
+"stone"
+],
+"side": [
+156,
+109,
+92
+],
+"top": [
+156,
+109,
+92
+],
+"contrast": 0.084,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "polished_sulfur",
+"full": "polished_sulfur",
+"stairs": "polished_sulfur_stairs",
+"slab": "polished_sulfur_slab",
+"tags": [
+"stone"
+],
+"side": [
+189,
+173,
+92
+],
+"top": [
+189,
+173,
+92
+],
+"contrast": 0.095,
+"opacity": 1.0,
+"since": {
+"full": "26",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "polished_tuff",
+"full": "polished_tuff",
+"stairs": "polished_tuff_stairs",
+"slab": "polished_tuff_slab",
+"tags": [
+"stone"
+],
+"side": [
+99,
+105,
+101
+],
+"top": [
+99,
+105,
+101
+],
+"contrast": 0.049,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "poplar_planks",
+"full": "poplar_planks",
+"stairs": "poplar_stairs",
+"slab": "poplar_slab",
+"tags": [
+"wood"
+],
+"side": [
+151,
+139,
+128
+],
+"top": [
+151,
+139,
+128
+],
+"contrast": 0.074,
+"opacity": 1.0,
+"since": {
+"full": "26",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "prismarine",
+"full": "prismarine",
+"stairs": "prismarine_stairs",
+"slab": "prismarine_slab",
+"tags": [
+"stone"
+],
+"side": [
+104,
+165,
+150
+],
+"top": [
+104,
+165,
+150
+],
+"contrast": 0.104,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "prismarine_bricks",
+"full": "prismarine_bricks",
+"stairs": "prismarine_brick_stairs",
+"slab": "prismarine_brick_slab",
+"tags": [
+"stone",
+"roof"
+],
+"side": [
+102,
+173,
+161
+],
+"top": [
+102,
+173,
+161
+],
+"contrast": 0.086,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "purple_concrete",
+"full": "purple_concrete",
+"stairs": "purple_concrete_stairs",
+"slab": "purple_concrete_slab",
+"tags": [
+"color"
+],
+"side": [
+100,
+32,
+156
+],
+"top": [
+100,
+32,
+156
+],
+"contrast": 0.003,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "purple_stained_glass",
+"full": "purple_stained_glass",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+127,
+63,
+178
+],
+"top": [
+127,
+63,
+178
+],
+"contrast": 0.0,
+"opacity": 0.46,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "purple_terracotta",
+"full": "purple_terracotta",
+"stairs": null,
+"slab": null,
+"tags": [
+"color",
+"earth"
+],
+"side": [
+118,
+70,
+86
+],
+"top": [
+118,
+70,
+86
+],
+"contrast": 0.008,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "purple_wool",
+"full": "purple_wool",
+"stairs": "purple_wool_stairs",
+"slab": "purple_wool_slab",
+"tags": [
+"wool"
+],
+"side": [
+123,
+43,
+173
+],
+"top": [
+123,
+43,
+173
+],
+"contrast": 0.04,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "purpur_block",
+"full": "purpur_block",
+"stairs": "purpur_stairs",
+"slab": "purpur_slab",
+"tags": [
+"stone"
+],
+"side": [
+171,
+128,
+171
+],
+"top": [
+171,
+128,
+171
+],
+"contrast": 0.072,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "purpur_pillar",
+"full": "purpur_pillar",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+173,
+132,
+173
+],
+"top": [
+173,
+130,
+172
+],
+"contrast": 0.075,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "quartz_block",
+"full": "quartz_block",
+"stairs": "quartz_stairs",
+"slab": "quartz_slab",
+"tags": [
+"stone"
+],
+"side": [
+236,
+230,
+223
+],
+"top": [
+236,
+230,
+223
+],
+"contrast": 0.022,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "quartz_bricks",
+"full": "quartz_bricks",
+"stairs": null,
+"slab": null,
+"tags": [
+"stone",
+"roof"
+],
+"side": [
+235,
+229,
+222
+],
+"top": [
+235,
+229,
+222
+],
+"contrast": 0.027,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "quartz_pillar",
+"full": "quartz_pillar",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+236,
+231,
+224
+],
+"top": [
+235,
+230,
+223
+],
+"contrast": 0.027,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "raw_gold_block",
+"full": "raw_gold_block",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+224,
+177,
+61
+],
+"top": [
+224,
+177,
+61
+],
+"contrast": 0.154,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "raw_iron_block",
+"full": "raw_iron_block",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+173,
+142,
+116
+],
+"top": [
+173,
+142,
+116
+],
+"contrast": 0.147,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "red_concrete",
+"full": "red_concrete",
+"stairs": "red_concrete_stairs",
+"slab": "red_concrete_slab",
+"tags": [
+"color"
+],
+"side": [
+142,
+33,
+33
+],
+"top": [
+142,
+33,
+33
+],
+"contrast": 0.003,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "red_nether_bricks",
+"full": "red_nether_bricks",
+"stairs": "red_nether_brick_stairs",
+"slab": "red_nether_brick_slab",
+"tags": [
+"stone",
+"roof"
+],
+"side": [
+74,
+8,
+10
+],
+"top": [
+74,
+8,
+10
+],
+"contrast": 0.041,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "red_sandstone",
+"full": "red_sandstone",
+"stairs": "red_sandstone_stairs",
+"slab": "red_sandstone_slab",
+"tags": [
+"stone"
+],
+"side": [
+188,
+100,
+31
+],
+"top": [
+182,
+98,
+32
+],
+"contrast": 0.039,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "red_stained_glass",
+"full": "red_stained_glass",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+153,
+51,
+51
+],
+"top": [
+153,
+51,
+51
+],
+"contrast": 0.0,
+"opacity": 0.46,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "red_terracotta",
+"full": "red_terracotta",
+"stairs": null,
+"slab": null,
+"tags": [
+"color",
+"earth"
+],
+"side": [
+143,
+61,
+47
+],
+"top": [
+143,
+61,
+47
+],
+"contrast": 0.008,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "red_wool",
+"full": "red_wool",
+"stairs": "red_wool_stairs",
+"slab": "red_wool_slab",
+"tags": [
+"wool"
+],
+"side": [
+161,
+40,
+35
+],
+"top": [
+161,
+40,
+35
+],
+"contrast": 0.025,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "redstone_block",
+"full": "redstone_block",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+182,
+26,
+5
+],
+"top": [
+182,
+26,
+5
+],
+"contrast": 0.056,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "resin_bricks",
+"full": "resin_bricks",
+"stairs": "resin_brick_stairs",
+"slab": "resin_brick_slab",
+"tags": [
+"stone",
+"roof"
+],
+"side": [
+208,
+95,
+28
+],
+"top": [
+208,
+95,
+28
+],
+"contrast": 0.112,
+"opacity": 1.0,
+"since": {
+"full": "26",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "rooted_dirt",
+"full": "rooted_dirt",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+148,
+107,
+82
+],
+"top": [
+148,
+107,
+82
+],
+"contrast": 0.102,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "sandstone",
+"full": "sandstone",
+"stairs": "sandstone_stairs",
+"slab": "sandstone_slab",
+"tags": [
+"stone"
+],
+"side": [
+217,
+204,
+158
+],
+"top": [
+224,
+214,
+171
+],
+"contrast": 0.046,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "sea_lantern",
+"full": "sea_lantern",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+184,
+206,
+197
+],
+"top": [
+184,
+206,
+197
+],
+"contrast": 0.178,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "shroomlight",
+"full": "shroomlight",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+242,
+157,
+93
+],
+"top": [
+242,
+157,
+93
+],
+"contrast": 0.166,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "smooth_basalt",
+"full": "smooth_basalt",
+"stairs": null,
+"slab": null,
+"tags": [
+"stone"
+],
+"side": [
+75,
+75,
+79
+],
+"top": [
+75,
+75,
+79
+],
+"contrast": 0.066,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "smooth_quartz",
+"full": "smooth_quartz",
+"stairs": "smooth_quartz_stairs",
+"slab": "smooth_quartz_slab",
+"tags": [
+"stone"
+],
+"side": [
+237,
+230,
+224
+],
+"top": [
+237,
+230,
+224
+],
+"contrast": 0.012,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "smooth_red_sandstone",
+"full": "smooth_red_sandstone",
+"stairs": "smooth_red_sandstone_stairs",
+"slab": "smooth_red_sandstone_slab",
+"tags": [
+"stone"
+],
+"side": [
+182,
+98,
+32
+],
+"top": [
+182,
+98,
+32
+],
+"contrast": 0.023,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "smooth_sandstone",
+"full": "smooth_sandstone",
+"stairs": "smooth_sandstone_stairs",
+"slab": "smooth_sandstone_slab",
+"tags": [
+"stone"
+],
+"side": [
+224,
+214,
+171
+],
+"top": [
+224,
+214,
+171
+],
+"contrast": 0.023,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "smooth_stone",
+"full": "smooth_stone",
+"stairs": null,
+"slab": "smooth_stone_slab",
+"tags": [
+"stone"
+],
+"side": [
+160,
+160,
+160
+],
+"top": [
+160,
+160,
+160
+],
+"contrast": 0.071,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": "1.21"
+}
+},
+{
+"name": "snow_block",
+"full": "snow_block",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+249,
+254,
+254
+],
+"top": [
+249,
+254,
+254
+],
+"contrast": 0.008,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "soul_soil",
+"full": "soul_soil",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+78,
+59,
+48
+],
+"top": [
+78,
+59,
+48
+],
+"contrast": 0.051,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "spruce_planks",
+"full": "spruce_planks",
+"stairs": "spruce_stairs",
+"slab": "spruce_slab",
+"tags": [
+"wood"
+],
+"side": [
+117,
+86,
+49
+],
+"top": [
+117,
+86,
+49
+],
+"contrast": 0.056,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "spruce_wood",
+"full": "spruce_wood",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+60,
+39,
+18
+],
+"top": [
+60,
+39,
+18
+],
+"contrast": 0.038,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "stone",
+"full": "stone",
+"stairs": "stone_stairs",
+"slab": "stone_slab",
+"tags": [
+"stone"
+],
+"side": [
+126,
+126,
+126
+],
+"top": [
+126,
+126,
+126
+],
+"contrast": 0.042,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "stone_bricks",
+"full": "stone_bricks",
+"stairs": "stone_brick_stairs",
+"slab": "stone_brick_slab",
+"tags": [
+"stone",
+"roof"
+],
+"side": [
+124,
+124,
+124
+],
+"top": [
+124,
+124,
+124
+],
+"contrast": 0.073,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "stripped_acacia_wood",
+"full": "stripped_acacia_wood",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+175,
+93,
+60
+],
+"top": [
+175,
+93,
+60
+],
+"contrast": 0.019,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "stripped_birch_wood",
+"full": "stripped_birch_wood",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+197,
+177,
+119
+],
+"top": [
+197,
+177,
+119
+],
+"contrast": 0.043,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "stripped_cherry_wood",
+"full": "stripped_cherry_wood",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+215,
+145,
+149
+],
+"top": [
+215,
+145,
+149
+],
+"contrast": 0.027,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "stripped_crimson_hyphae",
+"full": "stripped_crimson_hyphae",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+138,
+58,
+90
+],
+"top": [
+138,
+58,
+90
+],
+"contrast": 0.024,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "stripped_dark_oak_wood",
+"full": "stripped_dark_oak_wood",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+73,
+57,
+36
+],
+"top": [
+73,
+57,
+36
+],
+"contrast": 0.019,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "stripped_jungle_wood",
+"full": "stripped_jungle_wood",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+172,
+133,
+85
+],
+"top": [
+172,
+133,
+85
+],
+"contrast": 0.031,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "stripped_mangrove_wood",
+"full": "stripped_mangrove_wood",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+120,
+55,
+48
+],
+"top": [
+120,
+55,
+48
+],
+"contrast": 0.019,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "stripped_oak_wood",
+"full": "stripped_oak_wood",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+178,
+145,
+87
+],
+"top": [
+178,
+145,
+87
+],
+"contrast": 0.048,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "stripped_pale_oak_wood",
+"full": "stripped_pale_oak_wood",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+246,
+238,
+237
+],
+"top": [
+246,
+238,
+237
+],
+"contrast": 0.035,
+"opacity": 1.0,
+"since": {
+"full": "26",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "stripped_spruce_wood",
+"full": "stripped_spruce_wood",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+116,
+90,
+53
+],
+"top": [
+116,
+90,
+53
+],
+"contrast": 0.024,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "stripped_warped_hyphae",
+"full": "stripped_warped_hyphae",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+58,
+151,
+148
+],
+"top": [
+58,
+151,
+148
+],
+"contrast": 0.036,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "sulfur",
+"full": "sulfur",
+"stairs": "sulfur_stairs",
+"slab": "sulfur_slab",
+"tags": [
+"stone"
+],
+"side": [
+190,
+176,
+102
+],
+"top": [
+190,
+176,
+102
+],
+"contrast": 0.056,
+"opacity": 1.0,
+"since": {
+"full": "26",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "sulfur_bricks",
+"full": "sulfur_bricks",
+"stairs": "sulfur_brick_stairs",
+"slab": "sulfur_brick_slab",
+"tags": [
+"stone",
+"roof"
+],
+"side": [
+188,
+171,
+92
+],
+"top": [
+188,
+171,
+92
+],
+"contrast": 0.107,
+"opacity": 1.0,
+"since": {
+"full": "26",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "terracotta",
+"full": "terracotta",
+"stairs": null,
+"slab": null,
+"tags": [
+"color",
+"earth"
+],
+"side": [
+152,
+94,
+68
+],
+"top": [
+152,
+94,
+68
+],
+"contrast": 0.006,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "tinted_glass",
+"full": "tinted_glass",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+45,
+39,
+48
+],
+"top": [
+45,
+39,
+48
+],
+"contrast": 0.035,
+"opacity": 0.514,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "tuff",
+"full": "tuff",
+"stairs": "tuff_stairs",
+"slab": "tuff_slab",
+"tags": [
+"stone"
+],
+"side": [
+111,
+111,
+105
+],
+"top": [
+111,
+111,
+105
+],
+"contrast": 0.08,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "tuff_bricks",
+"full": "tuff_bricks",
+"stairs": "tuff_brick_stairs",
+"slab": "tuff_brick_slab",
+"tags": [
+"stone",
+"roof"
+],
+"side": [
+102,
+105,
+98
+],
+"top": [
+102,
+105,
+98
+],
+"contrast": 0.084,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "verdant_froglight",
+"full": "verdant_froglight",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+215,
+236,
+213
+],
+"top": [
+231,
+245,
+231
+],
+"contrast": 0.085,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "warped_hyphae",
+"full": "warped_hyphae",
+"stairs": null,
+"slab": null,
+"tags": [
+"wood"
+],
+"side": [
+63,
+69,
+81
+],
+"top": [
+63,
+69,
+81
+],
+"contrast": 0.076,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "warped_planks",
+"full": "warped_planks",
+"stairs": "warped_stairs",
+"slab": "warped_slab",
+"tags": [
+"wood"
+],
+"side": [
+45,
+109,
+104
+],
+"top": [
+45,
+109,
+104
+],
+"contrast": 0.098,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "warped_wart_block",
+"full": "warped_wart_block",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+23,
+122,
+122
+],
+"top": [
+23,
+122,
+122
+],
+"contrast": 0.052,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "waxed_chiseled_copper",
+"full": "waxed_chiseled_copper",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+187,
+103,
+76
+],
+"top": [
+187,
+103,
+76
+],
+"contrast": 0.08,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "waxed_copper_block",
+"full": "waxed_copper_block",
+"stairs": null,
+"slab": null,
+"tags": [
+"metal"
+],
+"side": [
+194,
+109,
+82
+],
+"top": [
+194,
+109,
+82
+],
+"contrast": 0.071,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "waxed_cut_copper",
+"full": "waxed_cut_copper",
+"stairs": "waxed_cut_copper_stairs",
+"slab": "waxed_cut_copper_slab",
+"tags": [
+"metal"
+],
+"side": [
+193,
+109,
+83
+],
+"top": [
+193,
+109,
+83
+],
+"contrast": 0.077,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "waxed_exposed_chiseled_copper",
+"full": "waxed_exposed_chiseled_copper",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+158,
+120,
+102
+],
+"top": [
+158,
+120,
+102
+],
+"contrast": 0.065,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "waxed_exposed_copper",
+"full": "waxed_exposed_copper",
+"stairs": null,
+"slab": null,
+"tags": [
+"metal"
+],
+"side": [
+164,
+126,
+105
+],
+"top": [
+164,
+126,
+105
+],
+"contrast": 0.052,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "waxed_exposed_cut_copper",
+"full": "waxed_exposed_cut_copper",
+"stairs": "waxed_exposed_cut_copper_stairs",
+"slab": "waxed_exposed_cut_copper_slab",
+"tags": [
+"metal"
+],
+"side": [
+158,
+123,
+103
+],
+"top": [
+158,
+123,
+103
+],
+"contrast": 0.061,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "waxed_oxidized_chiseled_copper",
+"full": "waxed_oxidized_chiseled_copper",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail",
+"roof"
+],
+"side": [
+85,
+165,
+135
+],
+"top": [
+85,
+165,
+135
+],
+"contrast": 0.098,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "waxed_oxidized_copper",
+"full": "waxed_oxidized_copper",
+"stairs": null,
+"slab": null,
+"tags": [
+"metal",
+"roof"
+],
+"side": [
+84,
+165,
+135
+],
+"top": [
+84,
+165,
+135
+],
+"contrast": 0.085,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "waxed_oxidized_cut_copper",
+"full": "waxed_oxidized_cut_copper",
+"stairs": "waxed_oxidized_cut_copper_stairs",
+"slab": "waxed_oxidized_cut_copper_slab",
+"tags": [
+"metal",
+"roof"
+],
+"side": [
+82,
+157,
+129
+],
+"top": [
+82,
+157,
+129
+],
+"contrast": 0.099,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "waxed_weathered_chiseled_copper",
+"full": "waxed_weathered_chiseled_copper",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail",
+"roof"
+],
+"side": [
+106,
+154,
+115
+],
+"top": [
+106,
+154,
+115
+],
+"contrast": 0.09,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "waxed_weathered_copper",
+"full": "waxed_weathered_copper",
+"stairs": null,
+"slab": null,
+"tags": [
+"metal",
+"roof"
+],
+"side": [
+109,
+155,
+113
+],
+"top": [
+109,
+155,
+113
+],
+"contrast": 0.065,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "waxed_weathered_cut_copper",
+"full": "waxed_weathered_cut_copper",
+"stairs": "waxed_weathered_cut_copper_stairs",
+"slab": "waxed_weathered_cut_copper_slab",
+"tags": [
+"metal",
+"roof"
+],
+"side": [
+111,
+148,
+110
+],
+"top": [
+111,
+148,
+110
+],
+"contrast": 0.075,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "1.21",
+"slab": "1.21"
+}
+},
+{
+"name": "white_concrete",
+"full": "white_concrete",
+"stairs": "white_concrete_stairs",
+"slab": "white_concrete_slab",
+"tags": [
+"color"
+],
+"side": [
+207,
+213,
+214
+],
+"top": [
+207,
+213,
+214
+],
+"contrast": 0.003,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "white_stained_glass",
+"full": "white_stained_glass",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+255,
+255,
+255
+],
+"top": [
+255,
+255,
+255
+],
+"contrast": 0.0,
+"opacity": 0.46,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "white_terracotta",
+"full": "white_terracotta",
+"stairs": null,
+"slab": null,
+"tags": [
+"color",
+"earth"
+],
+"side": [
+210,
+178,
+161
+],
+"top": [
+210,
+178,
+161
+],
+"contrast": 0.009,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "white_wool",
+"full": "white_wool",
+"stairs": "white_wool_stairs",
+"slab": "white_wool_slab",
+"tags": [
+"wool"
+],
+"side": [
+234,
+237,
+237
+],
+"top": [
+234,
+237,
+237
+],
+"contrast": 0.049,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "yellow_concrete",
+"full": "yellow_concrete",
+"stairs": "yellow_concrete_stairs",
+"slab": "yellow_concrete_slab",
+"tags": [
+"color"
+],
+"side": [
+241,
+175,
+21
+],
+"top": [
+241,
+175,
+21
+],
+"contrast": 0.004,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+},
+{
+"name": "yellow_stained_glass",
+"full": "yellow_stained_glass",
+"stairs": null,
+"slab": null,
+"tags": [
+"detail"
+],
+"side": [
+229,
+229,
+51
+],
+"top": [
+229,
+229,
+51
+],
+"contrast": 0.0,
+"opacity": 0.46,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "yellow_terracotta",
+"full": "yellow_terracotta",
+"stairs": null,
+"slab": null,
+"tags": [
+"color",
+"earth"
+],
+"side": [
+186,
+133,
+35
+],
+"top": [
+186,
+133,
+35
+],
+"contrast": 0.009,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": null,
+"slab": null
+}
+},
+{
+"name": "yellow_wool",
+"full": "yellow_wool",
+"stairs": "yellow_wool_stairs",
+"slab": "yellow_wool_slab",
+"tags": [
+"wool"
+],
+"side": [
+249,
+198,
+41
+],
+"top": [
+249,
+198,
+41
+],
+"contrast": 0.04,
+"opacity": 1.0,
+"since": {
+"full": "1.21",
+"stairs": "26",
+"slab": "26"
+}
+}
+],
+"connectables": [
+{
+"id": "acacia_fence",
+"kind": "fence",
+"base": "acacia_planks",
+"rgb": [
+170,
+91,
+51
+],
+"since": "1.21"
+},
+{
+"id": "andesite_wall",
+"kind": "wall",
+"base": "andesite",
+"rgb": [
+137,
+137,
+138
+],
+"since": "1.21"
+},
+{
+"id": "bamboo_fence",
+"kind": "fence",
+"base": "bamboo",
+"rgb": [
+208,
+188,
+91
+],
+"since": "1.21"
+},
+{
+"id": "birch_fence",
+"kind": "fence",
+"base": "birch_planks",
+"rgb": [
+194,
+177,
+122
+],
+"since": "1.21"
+},
+{
+"id": "black_stained_glass_pane",
+"kind": "pane",
+"base": "black_stained_glass",
+"rgb": [
+25,
+25,
+25
+],
+"since": "1.21"
+},
+{
+"id": "blackstone_wall",
+"kind": "wall",
+"base": "blackstone",
+"rgb": [
+44,
+39,
+46
+],
+"since": "1.21"
+},
+{
+"id": "blue_stained_glass_pane",
+"kind": "pane",
+"base": "blue_stained_glass",
+"rgb": [
+51,
+76,
+178
+],
+"since": "1.21"
+},
+{
+"id": "brick_wall",
+"kind": "wall",
+"base": "bricks",
+"rgb": [
+153,
+101,
+89
+],
+"since": "1.21"
+},
+{
+"id": "brown_stained_glass_pane",
+"kind": "pane",
+"base": "brown_stained_glass",
+"rgb": [
+102,
+76,
+51
+],
+"since": "1.21"
+},
+{
+"id": "cherry_fence",
+"kind": "fence",
+"base": "cherry_planks",
+"rgb": [
+227,
+180,
+174
+],
+"since": "1.21"
+},
+{
+"id": "cinnabar_brick_wall",
+"kind": "wall",
+"base": "cinnabar_bricks",
+"rgb": [
+151,
+58,
+56
+],
+"since": "26"
+},
+{
+"id": "cinnabar_wall",
+"kind": "wall",
+"base": "cinnabar",
+"rgb": [
+153,
+84,
+80
+],
+"since": "26"
+},
+{
+"id": "cobbled_deepslate_wall",
+"kind": "wall",
+"base": "cobbled_deepslate",
+"rgb": [
+81,
+81,
+83
+],
+"since": "1.21"
+},
+{
+"id": "cobblestone_wall",
+"kind": "wall",
+"base": "cobblestone",
+"rgb": [
+132,
+132,
+132
+],
+"since": "1.21"
+},
+{
+"id": "crimson_fence",
+"kind": "fence",
+"base": "crimson_planks",
+"rgb": [
+105,
+50,
+73
+],
+"since": "1.21"
+},
+{
+"id": "cyan_stained_glass_pane",
+"kind": "pane",
+"base": "cyan_stained_glass",
+"rgb": [
+76,
+127,
+153
+],
+"since": "1.21"
+},
+{
+"id": "dark_oak_fence",
+"kind": "fence",
+"base": "dark_oak_planks",
+"rgb": [
+68,
+44,
+21
+],
+"since": "1.21"
+},
+{
+"id": "deepslate_brick_wall",
+"kind": "wall",
+"base": "deepslate_bricks",
+"rgb": [
+75,
+75,
+75
+],
+"since": "1.21"
+},
+{
+"id": "deepslate_tile_wall",
+"kind": "wall",
+"base": "deepslate_tiles",
+"rgb": [
+57,
+57,
+57
+],
+"since": "1.21"
+},
+{
+"id": "diorite_wall",
+"kind": "wall",
+"base": "diorite",
+"rgb": [
+193,
+193,
+193
+],
+"since": "1.21"
+},
+{
+"id": "end_stone_brick_wall",
+"kind": "wall",
+"base": "end_stone_bricks",
+"rgb": [
+220,
+226,
+164
+],
+"since": "1.21"
+},
+{
+"id": "glass_pane",
+"kind": "pane",
+"base": "glass",
+"rgb": [
+180,
+215,
+220
+],
+"since": "1.21"
+},
+{
+"id": "granite_wall",
+"kind": "wall",
+"base": "granite",
+"rgb": [
+152,
+106,
+89
+],
+"since": "1.21"
+},
+{
+"id": "gray_stained_glass_pane",
+"kind": "pane",
+"base": "gray_stained_glass",
+"rgb": [
+76,
+76,
+76
+],
+"since": "1.21"
+},
+{
+"id": "green_stained_glass_pane",
+"kind": "pane",
+"base": "green_stained_glass",
+"rgb": [
+102,
+127,
+51
+],
+"since": "1.21"
+},
+{
+"id": "iron_bars",
+"kind": "bars",
+"base": null,
+"rgb": [
+142,
+144,
+141
+],
+"since": "1.21"
+},
+{
+"id": "jungle_fence",
+"kind": "fence",
+"base": "jungle_planks",
+"rgb": [
+164,
+118,
+84
+],
+"since": "1.21"
+},
+{
+"id": "light_blue_stained_glass_pane",
+"kind": "pane",
+"base": "light_blue_stained_glass",
+"rgb": [
+102,
+153,
+216
+],
+"since": "1.21"
+},
+{
+"id": "light_gray_stained_glass_pane",
+"kind": "pane",
+"base": "light_gray_stained_glass",
+"rgb": [
+153,
+153,
+153
+],
+"since": "1.21"
+},
+{
+"id": "lime_stained_glass_pane",
+"kind": "pane",
+"base": "lime_stained_glass",
+"rgb": [
+127,
+204,
+25
+],
+"since": "1.21"
+},
+{
+"id": "magenta_stained_glass_pane",
+"kind": "pane",
+"base": "magenta_stained_glass",
+"rgb": [
+178,
+76,
+216
+],
+"since": "1.21"
+},
+{
+"id": "mangrove_fence",
+"kind": "fence",
+"base": "mangrove_planks",
+"rgb": [
+119,
+56,
+50
+],
+"since": "1.21"
+},
+{
+"id": "mossy_cobblestone_wall",
+"kind": "wall",
+"base": "mossy_cobblestone",
+"rgb": [
+114,
+121,
+103
+],
+"since": "1.21"
+},
+{
+"id": "mossy_stone_brick_wall",
+"kind": "wall",
+"base": "mossy_stone_bricks",
+"rgb": [
+118,
+123,
+110
+],
+"since": "1.21"
+},
+{
+"id": "mud_brick_wall",
+"kind": "wall",
+"base": "mud_bricks",
+"rgb": [
+139,
+105,
+80
+],
+"since": "1.21"
+},
+{
+"id": "nether_brick_fence",
+"kind": "fence",
+"base": "nether_bricks",
+"rgb": [
+46,
+23,
+27
+],
+"since": "1.21"
+},
+{
+"id": "nether_brick_wall",
+"kind": "wall",
+"base": "nether_bricks",
+"rgb": [
+46,
+23,
+27
+],
+"since": "1.21"
+},
+{
+"id": "oak_fence",
+"kind": "fence",
+"base": "oak_planks",
+"rgb": [
+165,
+134,
+81
+],
+"since": "1.21"
+},
+{
+"id": "orange_stained_glass_pane",
+"kind": "pane",
+"base": "orange_stained_glass",
+"rgb": [
+216,
+127,
+51
+],
+"since": "1.21"
+},
+{
+"id": "pale_oak_fence",
+"kind": "fence",
+"base": "pale_oak_planks",
+"rgb": [
+229,
+219,
+218
+],
+"since": "26"
+},
+{
+"id": "pink_stained_glass_pane",
+"kind": "pane",
+"base": "pink_stained_glass",
+"rgb": [
+242,
+127,
+165
+],
+"since": "1.21"
+},
+{
+"id": "polished_blackstone_brick_wall",
+"kind": "wall",
+"base": "polished_blackstone_bricks",
+"rgb": [
+51,
+46,
+55
+],
+"since": "1.21"
+},
+{
+"id": "polished_blackstone_wall",
+"kind": "wall",
+"base": "polished_blackstone",
+"rgb": [
+55,
+51,
+60
+],
+"since": "1.21"
+},
+{
+"id": "polished_cinnabar_wall",
+"kind": "wall",
+"base": "polished_cinnabar",
+"rgb": [
+155,
+60,
+57
+],
+"since": "26"
+},
+{
+"id": "polished_deepslate_wall",
+"kind": "wall",
+"base": "polished_deepslate",
+"rgb": [
+76,
+76,
+76
+],
+"since": "1.21"
+},
+{
+"id": "polished_sulfur_wall",
+"kind": "wall",
+"base": "polished_sulfur",
+"rgb": [
+189,
+173,
+92
+],
+"since": "26"
+},
+{
+"id": "polished_tuff_wall",
+"kind": "wall",
+"base": "polished_tuff",
+"rgb": [
+99,
+105,
+101
+],
+"since": "1.21"
+},
+{
+"id": "poplar_fence",
+"kind": "fence",
+"base": "poplar_planks",
+"rgb": [
+151,
+139,
+128
+],
+"since": "26"
+},
+{
+"id": "prismarine_wall",
+"kind": "wall",
+"base": "prismarine",
+"rgb": [
+104,
+165,
+150
+],
+"since": "1.21"
+},
+{
+"id": "purple_stained_glass_pane",
+"kind": "pane",
+"base": "purple_stained_glass",
+"rgb": [
+127,
+63,
+178
+],
+"since": "1.21"
+},
+{
+"id": "red_nether_brick_wall",
+"kind": "wall",
+"base": "red_nether_bricks",
+"rgb": [
+74,
+8,
+10
+],
+"since": "1.21"
+},
+{
+"id": "red_sandstone_wall",
+"kind": "wall",
+"base": "red_sandstone",
+"rgb": [
+188,
+100,
+31
+],
+"since": "1.21"
+},
+{
+"id": "red_stained_glass_pane",
+"kind": "pane",
+"base": "red_stained_glass",
+"rgb": [
+153,
+51,
+51
+],
+"since": "1.21"
+},
+{
+"id": "resin_brick_wall",
+"kind": "wall",
+"base": "resin_bricks",
+"rgb": [
+208,
+95,
+28
+],
+"since": "26"
+},
+{
+"id": "sandstone_wall",
+"kind": "wall",
+"base": "sandstone",
+"rgb": [
+217,
+204,
+158
+],
+"since": "1.21"
+},
+{
+"id": "spruce_fence",
+"kind": "fence",
+"base": "spruce_planks",
+"rgb": [
+117,
+86,
+49
+],
+"since": "1.21"
+},
+{
+"id": "stone_brick_wall",
+"kind": "wall",
+"base": "stone_bricks",
+"rgb": [
+124,
+124,
+124
+],
+"since": "1.21"
+},
+{
+"id": "sulfur_brick_wall",
+"kind": "wall",
+"base": "sulfur_bricks",
+"rgb": [
+188,
+171,
+92
+],
+"since": "26"
+},
+{
+"id": "sulfur_wall",
+"kind": "wall",
+"base": "sulfur",
+"rgb": [
+190,
+176,
+102
+],
+"since": "26"
+},
+{
+"id": "tuff_brick_wall",
+"kind": "wall",
+"base": "tuff_bricks",
+"rgb": [
+102,
+105,
+98
+],
+"since": "1.21"
+},
+{
+"id": "tuff_wall",
+"kind": "wall",
+"base": "tuff",
+"rgb": [
+111,
+111,
+105
+],
+"since": "1.21"
+},
+{
+"id": "warped_fence",
+"kind": "fence",
+"base": "warped_planks",
+"rgb": [
+45,
+109,
+104
+],
+"since": "1.21"
+},
+{
+"id": "white_stained_glass_pane",
+"kind": "pane",
+"base": "white_stained_glass",
+"rgb": [
+255,
+255,
+255
+],
+"since": "1.21"
+},
+{
+"id": "yellow_stained_glass_pane",
+"kind": "pane",
+"base": "yellow_stained_glass",
+"rgb": [
+229,
+229,
+51
+],
+"since": "1.21"
+}
+]
+}

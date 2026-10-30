@@ -1,0 +1,449 @@
+{
+ "name": "Eiffel Tower",
+ "height_m": 330,
+ "recommended_block_size": 1.3,
+ "camera": {
+  "azimuth_deg": 35,
+  "elevation_deg": 10
+ },
+ "notes": "Heights 330 m total, floors at 57/115/276 m, 125 m square base, 25 m legs (toureiffel.paris key figures). Taper profile between floors estimated from photos. Ironwork lattice is represented as open sections with solid piers.",
+ "parts": [
+  {
+   "shape": "cylinder",
+   "sides": 4,
+   "radius": 62.5,
+   "radius_top": 48,
+   "height": 25,
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "material": "mud_bricks",
+   "label": "body 0-25 m"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 4,
+   "radius": 48,
+   "radius_top": 35,
+   "height": 32,
+   "at": [
+    0,
+    25,
+    0
+   ],
+   "material": "mud_bricks",
+   "label": "body 25-57 m"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 4,
+   "radius": 35,
+   "radius_top": 25,
+   "height": 33,
+   "at": [
+    0,
+    57,
+    0
+   ],
+   "material": "mud_bricks",
+   "label": "body 57-90 m"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 4,
+   "radius": 25,
+   "radius_top": 19,
+   "height": 25,
+   "at": [
+    0,
+    90,
+    0
+   ],
+   "material": "mud_bricks",
+   "label": "body 90-115 m"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 4,
+   "radius": 19,
+   "radius_top": 13,
+   "height": 45,
+   "at": [
+    0,
+    115,
+    0
+   ],
+   "material": "mud_bricks",
+   "label": "body 115-160 m"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 4,
+   "radius": 13,
+   "radius_top": 8.5,
+   "height": 60,
+   "at": [
+    0,
+    160,
+    0
+   ],
+   "material": "mud_bricks",
+   "label": "body 160-220 m"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 4,
+   "radius": 8.5,
+   "radius_top": 5.5,
+   "height": 56,
+   "at": [
+    0,
+    220,
+    0
+   ],
+   "material": "mud_bricks",
+   "label": "body 220-276 m"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 4,
+   "radius": 5.5,
+   "radius_top": 3,
+   "height": 24,
+   "at": [
+    0,
+    276,
+    0
+   ],
+   "material": "mud_bricks",
+   "label": "body 276-300 m"
+  },
+  {
+   "shape": "arch",
+   "width": 75,
+   "height": 52,
+   "depth": 140,
+   "axis": "z",
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "mode": "carve",
+   "label": "ground arch"
+  },
+  {
+   "shape": "arch",
+   "width": 75,
+   "height": 52,
+   "depth": 140,
+   "axis": "x",
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "mode": "carve",
+   "label": "ground arch"
+  },
+  {
+   "shape": "box",
+   "size": [
+    40,
+    14,
+    90
+   ],
+   "at": [
+    0,
+    62,
+    0
+   ],
+   "mode": "carve",
+   "label": "open middle section"
+  },
+  {
+   "shape": "box",
+   "size": [
+    90,
+    14,
+    40
+   ],
+   "at": [
+    0,
+    62,
+    0
+   ],
+   "mode": "carve",
+   "label": "open middle section"
+  },
+  {
+   "shape": "box",
+   "size": [
+    32,
+    14,
+    90
+   ],
+   "at": [
+    0,
+    76,
+    0
+   ],
+   "mode": "carve",
+   "label": "open middle section"
+  },
+  {
+   "shape": "box",
+   "size": [
+    90,
+    14,
+    32
+   ],
+   "at": [
+    0,
+    76,
+    0
+   ],
+   "mode": "carve",
+   "label": "open middle section"
+  },
+  {
+   "shape": "box",
+   "size": [
+    24,
+    12,
+    90
+   ],
+   "at": [
+    0,
+    90,
+    0
+   ],
+   "mode": "carve",
+   "label": "open middle section"
+  },
+  {
+   "shape": "box",
+   "size": [
+    90,
+    12,
+    24
+   ],
+   "at": [
+    0,
+    90,
+    0
+   ],
+   "mode": "carve",
+   "label": "open middle section"
+  },
+  {
+   "shape": "box",
+   "size": [
+    18,
+    9,
+    90
+   ],
+   "at": [
+    0,
+    102,
+    0
+   ],
+   "mode": "carve",
+   "label": "open middle section"
+  },
+  {
+   "shape": "box",
+   "size": [
+    90,
+    9,
+    18
+   ],
+   "at": [
+    0,
+    102,
+    0
+   ],
+   "mode": "carve",
+   "label": "open middle section"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 4,
+   "radius": 14,
+   "radius_top": 5,
+   "height": 105,
+   "at": [
+    0,
+    120,
+    0
+   ],
+   "mode": "carve",
+   "label": "hollow upper core"
+  },
+  {
+   "shape": "box",
+   "size": [
+    12,
+    50,
+    60
+   ],
+   "at": [
+    0,
+    122,
+    0
+   ],
+   "mode": "carve",
+   "label": "upper lattice gaps"
+  },
+  {
+   "shape": "box",
+   "size": [
+    60,
+    50,
+    12
+   ],
+   "at": [
+    0,
+    122,
+    0
+   ],
+   "mode": "carve",
+   "label": "upper lattice gaps"
+  },
+  {
+   "shape": "box",
+   "size": [
+    8,
+    50,
+    60
+   ],
+   "at": [
+    0,
+    172,
+    0
+   ],
+   "mode": "carve",
+   "label": "upper lattice gaps"
+  },
+  {
+   "shape": "box",
+   "size": [
+    60,
+    50,
+    8
+   ],
+   "at": [
+    0,
+    172,
+    0
+   ],
+   "mode": "carve",
+   "label": "upper lattice gaps"
+  },
+  {
+   "shape": "box",
+   "size": [
+    72,
+    5,
+    72
+   ],
+   "at": [
+    0,
+    54,
+    0
+   ],
+   "material": "mud_bricks",
+   "label": "1st floor"
+  },
+  {
+   "shape": "box",
+   "size": [
+    40,
+    4,
+    40
+   ],
+   "at": [
+    0,
+    113,
+    0
+   ],
+   "material": "mud_bricks",
+   "label": "2nd floor"
+  },
+  {
+   "shape": "box",
+   "size": [
+    17,
+    4,
+    17
+   ],
+   "at": [
+    0,
+    274,
+    0
+   ],
+   "material": "mud_bricks",
+   "label": "top floor"
+  },
+  {
+   "shape": "cylinder",
+   "sides": 4,
+   "radius": 2.5,
+   "radius_top": 1,
+   "height": 24,
+   "at": [
+    0,
+    300,
+    0
+   ],
+   "material": "mud_bricks",
+   "label": "lighthouse/top"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.8,
+   "height": 6,
+   "at": [
+    0,
+    324,
+    0
+   ],
+   "material": "iron_block",
+   "label": "antenna"
+  },
+  {
+   "shape": "box",
+   "size": [
+    74,
+    1.2,
+    1.4
+   ],
+   "at": [
+    0,
+    52,
+    36
+   ],
+   "material": "iron_bars",
+   "mirror": "z",
+   "label": "1st floor railing"
+  },
+  {
+   "shape": "box",
+   "size": [
+    1.4,
+    1.2,
+    74
+   ],
+   "at": [
+    36,
+    52,
+    0
+   ],
+   "material": "iron_bars",
+   "mirror": "x",
+   "label": "1st floor railing"
+  }
+ ]
+}

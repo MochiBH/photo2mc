@@ -1,0 +1,778 @@
+{
+ "name": "Parthenon",
+ "height_m": 19.5,
+ "recommended_block_size": 0.5,
+ "camera": {
+  "azimuth_deg": 30,
+  "elevation_deg": 12
+ },
+ "notes": "Stylobate 69.5 x 30.9 m, 8 x 17 Doric columns 10.43 m tall, entablature 3.29 m (13.72 m above the stylobate). Shown as it stands: roof gone, cella reduced to low walls.",
+ "parts": [
+  {
+   "shape": "box",
+   "size": [
+    34.9,
+    0.55,
+    73.5
+   ],
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "material": "quartz_block",
+   "label": "step 1"
+  },
+  {
+   "shape": "box",
+   "size": [
+    32.9,
+    0.55,
+    71.5
+   ],
+   "at": [
+    0,
+    0.55,
+    0
+   ],
+   "material": "quartz_block",
+   "label": "step 2"
+  },
+  {
+   "shape": "box",
+   "size": [
+    30.9,
+    0.55,
+    69.5
+   ],
+   "at": [
+    0,
+    1.1,
+    0
+   ],
+   "material": "quartz_block",
+   "label": "stylobate"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -14.45,
+    1.65,
+    -33.75
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -10.32,
+    1.65,
+    -33.75
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -6.19,
+    1.65,
+    -33.75
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -2.06,
+    1.65,
+    -33.75
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    2.06,
+    1.65,
+    -33.75
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    6.19,
+    1.65,
+    -33.75
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    10.32,
+    1.65,
+    -33.75
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    14.45,
+    1.65,
+    -33.75
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -14.45,
+    1.65,
+    33.75
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -10.32,
+    1.65,
+    33.75
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -6.19,
+    1.65,
+    33.75
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -2.06,
+    1.65,
+    33.75
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    2.06,
+    1.65,
+    33.75
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    6.19,
+    1.65,
+    33.75
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    10.32,
+    1.65,
+    33.75
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    14.45,
+    1.65,
+    33.75
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -14.45,
+    1.65,
+    -29.53
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -14.45,
+    1.65,
+    -25.31
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -14.45,
+    1.65,
+    -21.09
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -14.45,
+    1.65,
+    -16.88
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -14.45,
+    1.65,
+    -12.66
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -14.45,
+    1.65,
+    -8.44
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -14.45,
+    1.65,
+    -4.22
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -14.45,
+    1.65,
+    0.0
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -14.45,
+    1.65,
+    4.22
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -14.45,
+    1.65,
+    8.44
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -14.45,
+    1.65,
+    12.66
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -14.45,
+    1.65,
+    16.88
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -14.45,
+    1.65,
+    21.09
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -14.45,
+    1.65,
+    25.31
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    -14.45,
+    1.65,
+    29.53
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    14.45,
+    1.65,
+    -29.53
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    14.45,
+    1.65,
+    -25.31
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    14.45,
+    1.65,
+    -21.09
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    14.45,
+    1.65,
+    -16.88
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    14.45,
+    1.65,
+    -12.66
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    14.45,
+    1.65,
+    -8.44
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    14.45,
+    1.65,
+    -4.22
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    14.45,
+    1.65,
+    0.0
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    14.45,
+    1.65,
+    4.22
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    14.45,
+    1.65,
+    8.44
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    14.45,
+    1.65,
+    12.66
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    14.45,
+    1.65,
+    16.88
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    14.45,
+    1.65,
+    21.09
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    14.45,
+    1.65,
+    25.31
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 0.95,
+   "radius_top": 0.75,
+   "height": 10.43,
+   "sides": 16,
+   "at": [
+    14.45,
+    1.65,
+    29.53
+   ],
+   "material": "quartz_block",
+   "label": "Doric column"
+  },
+  {
+   "shape": "box",
+   "size": [
+    30.9,
+    3.29,
+    69.5
+   ],
+   "at": [
+    0,
+    12.08,
+    0
+   ],
+   "material": "quartz_block",
+   "label": "entablature"
+  },
+  {
+   "shape": "box",
+   "size": [
+    25.9,
+    3.4,
+    64.5
+   ],
+   "at": [
+    0,
+    11.98,
+    0
+   ],
+   "mode": "carve",
+   "label": "open roof (lost)"
+  },
+  {
+   "shape": "gable_roof",
+   "size": [
+    30.9,
+    4.2,
+    2.2
+   ],
+   "ridge": "z",
+   "at": [
+    0,
+    15.370000000000001,
+    33.65
+   ],
+   "material": "quartz_block",
+   "mirror": "z",
+   "label": "pediment"
+  },
+  {
+   "shape": "box",
+   "size": [
+    19,
+    4,
+    49
+   ],
+   "at": [
+    0,
+    1.65,
+    0
+   ],
+   "material": "quartz_block",
+   "label": "ruined cella walls"
+  },
+  {
+   "shape": "box",
+   "size": [
+    17,
+    5,
+    47
+   ],
+   "at": [
+    0,
+    2.25,
+    0
+   ],
+   "mode": "carve",
+   "label": "cella interior"
+  }
+ ]
+}

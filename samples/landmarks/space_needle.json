@@ -1,0 +1,315 @@
+{
+ "name": "Space Needle",
+ "height_m": 184.4,
+ "recommended_block_size": 1.0,
+ "camera": {
+  "azimuth_deg": 25,
+  "elevation_deg": 6
+ },
+ "notes": "184.4 m to the spire tip, top floor 158 m, observation deck ~160 m, restaurant ~150 m, SkyLine level 30 m, 42 m wide, 37 m concrete base, three leg pairs; colours Astronaut White / Orbital Olive / Re-entry Red / Galaxy Gold (Wikipedia). Waist height and radius estimated from photos.",
+ "parts": [
+  {
+   "shape": "cylinder",
+   "radius": 3.2,
+   "height": 158,
+   "sides": 16,
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "material": "tuff",
+   "label": "elevator core"
+  },
+  {
+   "shape": "beam",
+   "from": [
+    15.88,
+    0,
+    -1.95
+   ],
+   "to": [
+    3.57,
+    113,
+    -0.44
+   ],
+   "radius": 0.9,
+   "material": "quartz_block",
+   "label": "lower leg"
+  },
+  {
+   "shape": "beam",
+   "from": [
+    3.57,
+    113,
+    -0.44
+   ],
+   "to": [
+    11.91,
+    148,
+    -1.46
+   ],
+   "radius": 0.8,
+   "material": "quartz_block",
+   "label": "upper leg"
+  },
+  {
+   "shape": "beam",
+   "from": [
+    15.88,
+    0,
+    1.95
+   ],
+   "to": [
+    3.57,
+    113,
+    0.44
+   ],
+   "radius": 0.9,
+   "material": "quartz_block",
+   "label": "lower leg"
+  },
+  {
+   "shape": "beam",
+   "from": [
+    3.57,
+    113,
+    0.44
+   ],
+   "to": [
+    11.91,
+    148,
+    1.46
+   ],
+   "radius": 0.8,
+   "material": "quartz_block",
+   "label": "upper leg"
+  },
+  {
+   "shape": "beam",
+   "from": [
+    -6.25,
+    0,
+    14.73
+   ],
+   "to": [
+    -1.41,
+    113,
+    3.31
+   ],
+   "radius": 0.9,
+   "material": "quartz_block",
+   "label": "lower leg"
+  },
+  {
+   "shape": "beam",
+   "from": [
+    -1.41,
+    113,
+    3.31
+   ],
+   "to": [
+    -4.69,
+    148,
+    11.05
+   ],
+   "radius": 0.8,
+   "material": "quartz_block",
+   "label": "upper leg"
+  },
+  {
+   "shape": "beam",
+   "from": [
+    -9.63,
+    0,
+    12.78
+   ],
+   "to": [
+    -2.17,
+    113,
+    2.88
+   ],
+   "radius": 0.9,
+   "material": "quartz_block",
+   "label": "lower leg"
+  },
+  {
+   "shape": "beam",
+   "from": [
+    -2.17,
+    113,
+    2.88
+   ],
+   "to": [
+    -7.22,
+    148,
+    9.58
+   ],
+   "radius": 0.8,
+   "material": "quartz_block",
+   "label": "upper leg"
+  },
+  {
+   "shape": "beam",
+   "from": [
+    -9.63,
+    0,
+    -12.78
+   ],
+   "to": [
+    -2.17,
+    113,
+    -2.88
+   ],
+   "radius": 0.9,
+   "material": "quartz_block",
+   "label": "lower leg"
+  },
+  {
+   "shape": "beam",
+   "from": [
+    -2.17,
+    113,
+    -2.88
+   ],
+   "to": [
+    -7.22,
+    148,
+    -9.58
+   ],
+   "radius": 0.8,
+   "material": "quartz_block",
+   "label": "upper leg"
+  },
+  {
+   "shape": "beam",
+   "from": [
+    -6.25,
+    0,
+    -14.73
+   ],
+   "to": [
+    -1.41,
+    113,
+    -3.31
+   ],
+   "radius": 0.9,
+   "material": "quartz_block",
+   "label": "lower leg"
+  },
+  {
+   "shape": "beam",
+   "from": [
+    -1.41,
+    113,
+    -3.31
+   ],
+   "to": [
+    -4.69,
+    148,
+    -11.05
+   ],
+   "radius": 0.8,
+   "material": "quartz_block",
+   "label": "upper leg"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 9,
+   "height": 1.2,
+   "at": [
+    0,
+    30,
+    0
+   ],
+   "material": "quartz_block",
+   "label": "SkyLine level (30 m)"
+  },
+  {
+   "shape": "revolve",
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "material": "bricks",
+   "label": "saucer (top house)",
+   "profile": [
+    [
+     12,
+     147
+    ],
+    [
+     17,
+     150
+    ],
+    [
+     21,
+     153.5
+    ],
+    [
+     21,
+     156
+    ],
+    [
+     17,
+     158
+    ]
+   ]
+  },
+  {
+   "shape": "revolve",
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "material": "red_sandstone",
+   "label": "Galaxy Gold roof",
+   "profile": [
+    [
+     17,
+     158
+    ],
+    [
+     13,
+     161
+    ],
+    [
+     7,
+     164
+    ],
+    [
+     3,
+     167
+    ]
+   ]
+  },
+  {
+   "shape": "cylinder",
+   "radius": 1.2,
+   "radius_top": 0.3,
+   "height": 17.4,
+   "at": [
+    0,
+    167,
+    0
+   ],
+   "material": "iron_block",
+   "label": "spire"
+  },
+  {
+   "shape": "cylinder",
+   "radius": 21.6,
+   "height": 2.2,
+   "at": [
+    0,
+    153.6,
+    0
+   ],
+   "material": "glass",
+   "mode": "paint",
+   "label": "observation glass band"
+  }
+ ]
+}

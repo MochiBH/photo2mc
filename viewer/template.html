@@ -1,0 +1,234 @@
+<title>photo2mc Build Viewer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one working surface — 3D stage on top (left on desktop), build controls + bill of materials beside it. */
+:root {
+  --bg: #eef0ec;        /* pale andesite */
+  --panel: #f8f9f6;
+  --ink: #1f2420;
+  --muted: #5d665f;
+  --line: #d3d8d1;
+  --stage: #c9dbe6;     /* overworld sky */
+  --accent: #4f7d2f;    /* grass top */
+  --accent-ink: #ffffff;
+  --display: "Pixelify Sans", "Courier New", monospace;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #161a17; --panel: #1e2320; --ink: #e6ebe4; --muted: #9aa59b; --line: #323a34;
+  --stage: #1d2a33; --accent: #7fb653; --accent-ink: #10150f; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #161a17; --panel: #1e2320; --ink: #e6ebe4; --muted: #9aa59b; --line: #323a34;
+  --stage: #1d2a33; --accent: #7fb653; --accent-ink: #10150f; color-scheme: dark }
+
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.45;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 1180px; margin: 0 auto; padding-block: 18px 28px; display: grid; gap: 16px;
+  grid-template-columns: minmax(0, 1fr) 340px; }
+@media (max-width: 860px) { .wrap { grid-template-columns: minmax(0, 1fr); } }
+header { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; }
+h1 { font-family: var(--display); font-weight: 600; font-size: 1.7rem; margin: 0; letter-spacing: .01em; text-wrap: balance; }
+header p { margin: 0; color: var(--muted); max-width: 60ch; }
+
+.stage { position: relative; background: var(--stage); border: 1px solid var(--line); border-radius: 6px; overflow: hidden;
+  aspect-ratio: 1 / 1; max-height: 78vh; width: 100%; max-width: 100%; min-width: 0; }
+@media (min-width: 861px) { .stage { aspect-ratio: auto; height: 640px; } }
+.stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+.hint { position: absolute; left: 10px; bottom: 8px; font: 12px var(--mono); color: var(--muted); pointer-events: none; }
+.views { position: absolute; right: 8px; top: 8px; display: flex; gap: 4px; }
+.views button { font: 500 12px var(--mono); padding: 5px 8px; border-radius: 4px; border: 1px solid var(--line);
+  background: var(--panel); color: var(--ink); cursor: pointer; }
+
+aside { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.label { font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.builds { display: flex; flex-wrap: wrap; gap: 6px; }
+.builds button { font: 500 14px var(--body); padding: 7px 12px; border-radius: 4px; border: 1px solid var(--line);
+  background: transparent; color: var(--ink); cursor: pointer; }
+.builds button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.desc { margin: 0; color: var(--muted); font-size: 14px; }
+
+.stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; margin: 0; }
+.stats div { display: flex; flex-direction: column; }
+.stats dt { font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.stats dd { margin: 0; font: 500 17px var(--mono); font-variant-numeric: tabular-nums; }
+
+.layer-row { display: flex; align-items: center; gap: 10px; }
+.layer-row input { flex: 1; min-width: 0; accent-color: var(--accent); }
+.layer-row output { font: 500 14px var(--mono); font-variant-numeric: tabular-nums; min-width: 7ch; text-align: right; }
+
+.bom { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; max-height: 360px; overflow-y: auto; }
+.bom li { display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--line); }
+.bom li:last-child { border-bottom: 0; }
+.sw { width: 14px; height: 14px; border-radius: 2px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.25); }
+.bom .nm { font: 13px var(--mono); overflow-wrap: anywhere; }
+.bom .ct { font: 13px var(--mono); font-variant-numeric: tabular-nums; color: var(--muted); text-align: right; white-space: nowrap; }
+.bom .ct b { color: var(--ink); font-weight: 500; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>photo2mc</h1>
+    <p>The landmark library: each built from a structure spec at real dimensions. Drag to orbit, pinch or scroll to zoom, and use the layer slider to see the build row by row the way you'd place it.</p>
+  </header>
+
+  <div class="stage" id="stage">
+    <div class="views" aria-label="Camera presets">
+      <button id="v-iso" type="button">Iso</button>
+      <button id="v-front" type="button">Front</button>
+      <button id="v-top" type="button">Top</button>
+    </div>
+    <div class="hint" id="hint">Loading 3D…</div>
+  </div>
+
+  <aside>
+    <section class="card">
+      <span class="label">Build</span>
+      <div class="builds" id="builds" role="group" aria-label="Choose build"></div>
+      <p class="desc" id="desc"></p>
+    </section>
+
+    <section class="card">
+      <dl class="stats" id="stats"></dl>
+      <div>
+        <span class="label">Layer</span>
+        <div class="layer-row">
+          <input id="layer" type="range" min="0" max="1" value="1" aria-label="Show layers up to">
+          <output id="layer-out" for="layer"></output>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <span class="label">Materials · stacks of 64</span>
+      <ul class="bom" id="bom"></ul>
+    </section>
+  </aside>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const DATA = /*DATA*/null;
+
+// ---- UI --------------------------------------------------------------------
+const $ = id => document.getElementById(id);
+const fmt = n => n.toLocaleString("en-US");
+function stacks(n) { const s = Math.floor(n / 64), r = n % 64; return s ? `${s} st${r ? " + " + r : ""}` : String(r); }
+
+let three = null, current = null;
+
+function renderPanels(b) {
+  $("desc").textContent = b.desc;
+  const k = b.kinds;
+  $("stats").innerHTML = [
+    ["Size (X×Y×Z)", b.size.join("×")],
+    ["Blocks", fmt(b.blocks.length)],
+    ["Stairs", fmt(k.stairs)],
+    ["Slabs", fmt(k.slabs)],
+  ].map(([a, v]) => `<div><dt>${a}</dt><dd>${v}</dd></div>`).join("");
+  $("bom").innerHTML = b.bom.map(([name, hex, n]) =>
+    `<li><span class="sw" style="background:#${hex}"></span><span class="nm">${name}</span><span class="ct"><b>${fmt(n)}</b> · ${stacks(n)}</span></li>`).join("");
+  const L = $("layer"); L.max = b.size[1]; L.value = b.size[1]; updateLayerLabel();
+}
+function updateLayerLabel() {
+  const v = +$("layer").value, max = +$("layer").max;
+  $("layer-out").textContent = v >= max ? "all" : `y ≤ ${v}`;
+}
+
+function selectBuild(i) {
+  current = DATA[i];
+  [...$("builds").children].forEach((btn, j) => btn.setAttribute("aria-pressed", String(j === i)));
+  renderPanels(current);
+  if (three) three.load(current);
+  try { localStorage.setItem("p2m-build", String(i)); } catch (e) {}
+}
+
+DATA.forEach((b, i) => {
+  const btn = document.createElement("button");
+  btn.type = "button"; btn.textContent = b.name; btn.onclick = () => selectBuild(i);
+  $("builds").appendChild(btn);
+});
+
+// ---- 3D --------------------------------------------------------------------
+function initThree() {
+  if (!window.THREE || !THREE.OrbitControls) { $("hint").textContent = "3D preview couldn't load. The material list still works."; return null; }
+  const stage = $("stage");
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  stage.prepend(renderer.domElement);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 5000);
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true; controls.dampingFactor = 0.12;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x6b6250, 0.75));
+  const sun = new THREE.DirectionalLight(0xffffff, 0.75); sun.position.set(0.6, 1, 0.35); scene.add(sun);
+  const fill = new THREE.DirectionalLight(0xffffff, 0.22); fill.position.set(-0.5, 0.3, -0.8); scene.add(fill);
+  const geo = new THREE.BoxGeometry(1, 1, 1);
+  const mat = new THREE.MeshLambertMaterial();
+  let mesh = null, ground = null, yCounts = [], size = [1, 1, 1];
+
+  function resize() {
+    const r = stage.getBoundingClientRect();
+    renderer.setSize(r.width, r.height, false);
+    camera.aspect = r.width / Math.max(r.height, 1); camera.updateProjectionMatrix();
+  }
+  new ResizeObserver(resize).observe(stage);
+
+  function view(kind) {
+    const [X, Y, Z] = size, R = Math.max(X, Y, Z) * 1.45;
+    const t = new THREE.Vector3(X / 2, Y * 0.42, Z / 2);
+    const d = { iso: [1, 0.85, 1.15], front: [0, 0.25, 1], top: [0.001, 1, 0.001] }[kind];
+    const v = new THREE.Vector3(...d).normalize().multiplyScalar(R);
+    camera.position.copy(t).add(v); controls.target.copy(t); controls.update();
+  }
+
+  function load(b) {
+    if (mesh) { scene.remove(mesh); mesh.dispose?.(); }
+    if (ground) scene.remove(ground);
+    size = b.size;
+    const boxes = [];
+    for (const [x, y, z, si, mi] of b.blocks) for (const bx of b.shapes[si]) boxes.push([x, y, z, bx, mi, y + bx[1]]);
+    boxes.sort((a, c) => a[5] - c[5]);
+    mesh = new THREE.InstancedMesh(geo, mat, boxes.length);
+    const m4 = new THREE.Matrix4(), col = new THREE.Color();
+    const cols = b.mats.map(([, hex]) => new THREE.Color("#" + hex));
+    yCounts = new Array(b.size[1] + 2).fill(0);
+    boxes.forEach(([x, y, z, [x0, y0, z0, x1, y1, z1], mi], i) => {
+      m4.makeScale(x1 - x0, y1 - y0, z1 - z0);
+      m4.setPosition(x + (x0 + x1) / 2, y + (y0 + y1) / 2, z + (z0 + z1) / 2);
+      mesh.setMatrixAt(i, m4);
+      mesh.setColorAt(i, col.copy(cols[mi]));
+      yCounts[y + 1] = i + 1;
+    });
+    for (let i = 1; i < yCounts.length; i++) yCounts[i] = Math.max(yCounts[i], yCounts[i - 1]);
+    mesh.instanceMatrix.needsUpdate = true; if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+    scene.add(mesh);
+    const g = new THREE.Mesh(new THREE.BoxGeometry(b.size[0] + 6, 0.2, b.size[2] + 6),
+      new THREE.MeshLambertMaterial({ color: 0x6d9a45 }));
+    g.position.set(b.size[0] / 2, -0.1, b.size[2] / 2); ground = g; scene.add(g);
+    setLayer(+$("layer").value);
+    view("iso");
+    $("hint").textContent = "Drag to orbit · pinch to zoom";
+  }
+  function setLayer(v) { if (mesh) mesh.count = v >= size[1] ? yCounts[yCounts.length - 1] : yCounts[Math.min(v + 1, yCounts.length - 1)]; }
+
+  (function loop() { requestAnimationFrame(loop); controls.update(); renderer.render(scene, camera); })();
+  resize();
+  return { load, view, setLayer };
+}
+
+$("layer").addEventListener("input", () => { updateLayerLabel(); three && three.setLayer(+$("layer").value); });
+["iso", "front", "top"].forEach(k => $("v-" + k).addEventListener("click", () => three && three.view(k)));
+
+three = initThree();
+let start = 0;
+try { const s = +localStorage.getItem("p2m-build"); if (s >= 0 && s < DATA.length) start = s; } catch (e) {}
+selectBuild(start);
+</script>
