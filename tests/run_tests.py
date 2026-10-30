@@ -145,5 +145,49 @@ with tempfile.TemporaryDirectory() as d:
 bs = apply_assignment(bc, rid, asg)
 check("semantic remap keeps stair shapes", any("waxed_oxidized_cut_copper_stairs[facing" in s_ for s_ in bs.states))
 
+# 15. whole-site pipeline on synthetic map + lidar, written as a world and read back
+from mcbuild.geo import Frame
+from mcbuild.site import Site, build_world, rotate_state
+from mcbuild.world import read_chunk
+fr = Frame(32.0, -96.0, 32.0006, -95.9993)            # ~66 x 66 m
+rng = np.random.default_rng(0)
+gx, gy = rng.uniform(0, fr.width, 60000), rng.uniform(0, fr.height, 60000)
+inb = (np.abs(gx - 25) < 8) & (np.abs(gy - 30) < 6)
+tree = np.hypot(gx - 50, gy - 45) < 4
+z = np.full(len(gx), 100.0) + 0.01 * gx
+z = np.where(inb, 112.0, z)
+z = np.where(tree, 100 + 10 - 1.5 * np.hypot(gx - 50, gy - 45), z)
+lid = {"x": gx.astype(np.float32), "y": gy.astype(np.float32), "z": z.astype(np.float32),
+       "cls": np.where(inb | tree, 1, 2).astype(np.uint8), "ret": np.ones(len(gx), np.uint8),
+       "nret": np.where(tree, 2, 1).astype(np.uint8)}
+sq = lambda x0, y0, x1, y1: np.array([[x0, y0], [x1, y0], [x1, y1], [x0, y1], [x0, y0]], float)
+feats = [{"kind": "area", "tags": {"building": "university", "name": "Test Hall"}, "pts": sq(17, 24, 33, 36), "holes": [], "id": "w1"},
+         {"kind": "area", "tags": {"amenity": "university"}, "pts": sq(0, 0, 66, 66), "holes": [], "id": "w2"},
+         {"kind": "way", "tags": {"highway": "residential"}, "pts": np.array([[0, 10], [66, 10]], float), "holes": [], "id": "w3"},
+         {"kind": "way", "tags": {"highway": "footway"}, "pts": np.array([[25, 10], [25, 24]], float), "holes": [], "id": "w4"},
+         {"kind": "node", "tags": {"amenity": "fountain"}, "pts": np.array([[50, 20]], float), "holes": [], "id": "n5"}]
+site = Site(fr, feats, lid, campus_id="w2", log=lambda *a: None)
+A, fluid = site.region(0, 0)
+names = {site.pal.states[i].split("[")[0].split(":")[1] for i in np.unique(A)}
+check("site: building, windows, roof, road, path", {"bricks", "gray_stained_glass_pane", "smooth_quartz", "smooth_stone",
+                                                   "gray_concrete"} <= names, str(sorted(names)))
+check("site: tree, fountain", {"oak_log", "water", "quartz_pillar"} & names >= {"water", "quartz_pillar"}
+      and any(n.endswith("_leaves") for n in names) and any(n.endswith("_log") for n in names) and len(fluid) == 1)
+k = next(i for i, B in enumerate(site.blds) if B["name"] == "Test Hall")
+top_y = site.yb(112.0)
+col = A[int(site.blds[k]["cz"]), int(site.blds[k]["cx"])]
+roof_y = np.flatnonzero(col)[-1] - 64
+check("site: roof at lidar height", abs(roof_y - top_y) <= 1, f"{roof_y} vs {top_y}")
+check("rotate_state", rotate_state("minecraft:oak_stairs[facing=north,half=top]", 1) == "minecraft:oak_stairs[facing=east,half=top]"
+      and rotate_state("minecraft:glass_pane[east=true,north=false,south=false,west=true]", 1)
+      == "minecraft:glass_pane[east=false,north=true,south=true,west=false]")
+with tempfile.TemporaryDirectory() as d:
+    img, stats = build_world(site, d, "test", "Test Hall", log=lambda *a: None)
+    c = read_chunk(os.path.join(d, "region", "r.0.0.mca"), 3, 3)
+    import nbtlib
+    lv = nbtlib.load(os.path.join(d, "level.dat"))
+    check("world: chunk + level.dat readable", c is not None and int(c["DataVersion"]) == 3955 and len(c["sections"]) >= 1
+          and str(lv["Data"]["LevelName"]) == "test" and stats["chunks"] > 0)
+
 print(f"\n{sum(results)}/{len(results)} passed")
 sys.exit(0 if all(results) else 1)

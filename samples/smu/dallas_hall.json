@@ -1,0 +1,4946 @@
+{
+ "name": "Dallas Hall",
+ "height_m": 29.4,
+ "is_known_landmark": true,
+ "camera": {
+  "azimuth_deg": 0,
+  "elevation_deg": 4
+ },
+ "analysis": "Dallas Hall (1915), SMU. Footprint and heights from the 2018 USGS lidar: wings 72 x 18 m, eave 15 m, ridge 18 m; rotunda drum ~23 m, copper dome to 29 m; south portico 20 m wide with six Corinthian columns; end porches 11 m. Details from Wikimedia Commons photos.",
+ "parts": [
+  {
+   "shape": "box",
+   "at": [
+    0,
+    0,
+    2.75
+   ],
+   "label": "wing basement",
+   "size": [
+    72,
+    3.6,
+    18.0
+   ],
+   "material": "calcite"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    3.6,
+    2.75
+   ],
+   "label": "wing",
+   "size": [
+    72,
+    10.6,
+    18.0
+   ],
+   "material": "bricks"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    3.3,
+    2.75
+   ],
+   "label": "basement string course",
+   "size": [
+    72.4,
+    0.35,
+    18.4
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    14.2,
+    2.75
+   ],
+   "label": "wing cornice",
+   "size": [
+    72.8,
+    0.8,
+    18.8
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "hip_roof",
+   "at": [
+    0,
+    15.0,
+    2.75
+   ],
+   "label": "wing slate roof",
+   "size": [
+    72.4,
+    3.3,
+    18.4
+   ],
+   "material": "deepslate_tiles"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    0,
+    -12.2
+   ],
+   "label": "rear wing basement",
+   "size": [
+    17,
+    3.6,
+    12
+   ],
+   "material": "calcite"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    3.6,
+    -12.2
+   ],
+   "label": "rear wing",
+   "size": [
+    17,
+    10.6,
+    12
+   ],
+   "material": "bricks"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    14.2,
+    -12.2
+   ],
+   "label": "rear wing cornice",
+   "size": [
+    17.8,
+    0.8,
+    12.8
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "hip_roof",
+   "at": [
+    0,
+    15.0,
+    -12.2
+   ],
+   "label": "rear wing roof",
+   "size": [
+    17.4,
+    3.0,
+    12.4
+   ],
+   "material": "deepslate_tiles"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    0,
+    1.0
+   ],
+   "label": "central basement",
+   "size": [
+    25,
+    3.6,
+    22
+   ],
+   "material": "calcite"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    3.6,
+    1.0
+   ],
+   "label": "central block",
+   "size": [
+    25,
+    14.9,
+    22
+   ],
+   "material": "bricks"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    14.2,
+    1.0
+   ],
+   "label": "central cornice",
+   "size": [
+    25.8,
+    0.8,
+    22.8
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    18.5,
+    12.0
+   ],
+   "label": "attic balustrade",
+   "size": [
+    25.4,
+    0.9,
+    0.5
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    18.5,
+    -10.0
+   ],
+   "label": "attic balustrade",
+   "size": [
+    25.4,
+    0.9,
+    0.5
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    12.5,
+    18.5,
+    1.0
+   ],
+   "label": "attic balustrade",
+   "size": [
+    0.5,
+    0.9,
+    22.4
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -12.5,
+    18.5,
+    1.0
+   ],
+   "label": "attic balustrade",
+   "size": [
+    0.5,
+    0.9,
+    22.4
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "cylinder",
+   "at": [
+    0,
+    18.5,
+    1.0
+   ],
+   "label": "drum",
+   "radius": 11.5,
+   "height": 4.0,
+   "material": "bricks"
+  },
+  {
+   "shape": "cylinder",
+   "at": [
+    0,
+    21.9,
+    1.0
+   ],
+   "label": "drum cornice",
+   "radius": 12.0,
+   "height": 0.7,
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "cylinder",
+   "at": [
+    0,
+    22.6,
+    1.0
+   ],
+   "label": "dome step",
+   "radius": 10.9,
+   "height": 0.5,
+   "material": "bricks"
+  },
+  {
+   "shape": "dome",
+   "at": [
+    0,
+    23.1,
+    1.0
+   ],
+   "label": "copper dome",
+   "radius": 10.4,
+   "height": 5.0,
+   "material": "waxed_oxidized_cut_copper"
+  },
+  {
+   "shape": "cylinder",
+   "at": [
+    0,
+    27.8,
+    1.0
+   ],
+   "label": "lantern",
+   "radius": 1.4,
+   "height": 0.9,
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "cone",
+   "at": [
+    0,
+    28.7,
+    1.0
+   ],
+   "label": "lantern cap",
+   "radius": 1.6,
+   "height": 0.8,
+   "material": "waxed_oxidized_cut_copper"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -5.5,
+    19.6,
+    11.5
+   ],
+   "label": "drum window frame",
+   "mode": "paint",
+   "size": [
+    1.4,
+    1.9,
+    2.0
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -5.5,
+    19.9,
+    11.5
+   ],
+   "label": "drum window",
+   "mode": "paint",
+   "size": [
+    0.8,
+    1.3,
+    2.0
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    5.5,
+    19.6,
+    11.5
+   ],
+   "label": "drum window frame",
+   "mode": "paint",
+   "size": [
+    1.4,
+    1.9,
+    2.0
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    5.5,
+    19.9,
+    11.5
+   ],
+   "label": "drum window",
+   "mode": "paint",
+   "size": [
+    0.8,
+    1.3,
+    2.0
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    0,
+    13.6
+   ],
+   "label": "portico podium",
+   "size": [
+    20.4,
+    3.6,
+    3.8
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    0,
+    15.75
+   ],
+   "label": "step 1",
+   "size": [
+    14.0,
+    3.6,
+    0.45
+   ],
+   "material": "smooth_stone"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    0,
+    16.17
+   ],
+   "label": "step 2",
+   "size": [
+    14.6,
+    3.0,
+    0.45
+   ],
+   "material": "smooth_stone"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    0,
+    16.59
+   ],
+   "label": "step 3",
+   "size": [
+    15.2,
+    2.4000000000000004,
+    0.45
+   ],
+   "material": "smooth_stone"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    0,
+    17.01
+   ],
+   "label": "step 4",
+   "size": [
+    15.8,
+    1.8000000000000003,
+    0.45
+   ],
+   "material": "smooth_stone"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    0,
+    17.43
+   ],
+   "label": "step 5",
+   "size": [
+    16.4,
+    1.2000000000000002,
+    0.45
+   ],
+   "material": "smooth_stone"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    0,
+    17.85
+   ],
+   "label": "step 6",
+   "size": [
+    17.0,
+    0.6000000000000001,
+    0.45
+   ],
+   "material": "smooth_stone"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -8.5,
+    3.6,
+    14.6
+   ],
+   "label": "column base",
+   "size": [
+    1.6,
+    0.45,
+    1.6
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "cylinder",
+   "at": [
+    -8.5,
+    4.05,
+    14.6
+   ],
+   "label": "column shaft",
+   "radius": 0.68,
+   "radius_top": 0.58,
+   "height": 10.4,
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -8.5,
+    14.45,
+    14.6
+   ],
+   "label": "Corinthian capital",
+   "size": [
+    1.7,
+    1.15,
+    1.7
+   ],
+   "material": "chiseled_quartz_block"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -5.1,
+    3.6,
+    14.6
+   ],
+   "label": "column base",
+   "size": [
+    1.6,
+    0.45,
+    1.6
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "cylinder",
+   "at": [
+    -5.1,
+    4.05,
+    14.6
+   ],
+   "label": "column shaft",
+   "radius": 0.68,
+   "radius_top": 0.58,
+   "height": 10.4,
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -5.1,
+    14.45,
+    14.6
+   ],
+   "label": "Corinthian capital",
+   "size": [
+    1.7,
+    1.15,
+    1.7
+   ],
+   "material": "chiseled_quartz_block"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -1.7,
+    3.6,
+    14.6
+   ],
+   "label": "column base",
+   "size": [
+    1.6,
+    0.45,
+    1.6
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "cylinder",
+   "at": [
+    -1.7,
+    4.05,
+    14.6
+   ],
+   "label": "column shaft",
+   "radius": 0.68,
+   "radius_top": 0.58,
+   "height": 10.4,
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -1.7,
+    14.45,
+    14.6
+   ],
+   "label": "Corinthian capital",
+   "size": [
+    1.7,
+    1.15,
+    1.7
+   ],
+   "material": "chiseled_quartz_block"
+  },
+  {
+   "shape": "box",
+   "at": [
+    1.7,
+    3.6,
+    14.6
+   ],
+   "label": "column base",
+   "size": [
+    1.6,
+    0.45,
+    1.6
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "cylinder",
+   "at": [
+    1.7,
+    4.05,
+    14.6
+   ],
+   "label": "column shaft",
+   "radius": 0.68,
+   "radius_top": 0.58,
+   "height": 10.4,
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    1.7,
+    14.45,
+    14.6
+   ],
+   "label": "Corinthian capital",
+   "size": [
+    1.7,
+    1.15,
+    1.7
+   ],
+   "material": "chiseled_quartz_block"
+  },
+  {
+   "shape": "box",
+   "at": [
+    5.1,
+    3.6,
+    14.6
+   ],
+   "label": "column base",
+   "size": [
+    1.6,
+    0.45,
+    1.6
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "cylinder",
+   "at": [
+    5.1,
+    4.05,
+    14.6
+   ],
+   "label": "column shaft",
+   "radius": 0.68,
+   "radius_top": 0.58,
+   "height": 10.4,
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    5.1,
+    14.45,
+    14.6
+   ],
+   "label": "Corinthian capital",
+   "size": [
+    1.7,
+    1.15,
+    1.7
+   ],
+   "material": "chiseled_quartz_block"
+  },
+  {
+   "shape": "box",
+   "at": [
+    8.5,
+    3.6,
+    14.6
+   ],
+   "label": "column base",
+   "size": [
+    1.6,
+    0.45,
+    1.6
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "cylinder",
+   "at": [
+    8.5,
+    4.05,
+    14.6
+   ],
+   "label": "column shaft",
+   "radius": 0.68,
+   "radius_top": 0.58,
+   "height": 10.4,
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    8.5,
+    14.45,
+    14.6
+   ],
+   "label": "Corinthian capital",
+   "size": [
+    1.7,
+    1.15,
+    1.7
+   ],
+   "material": "chiseled_quartz_block"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    15.6,
+    13.7
+   ],
+   "label": "portico entablature",
+   "size": [
+    21.0,
+    1.4,
+    4.2
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "gable_roof",
+   "at": [
+    0,
+    17.0,
+    13.7
+   ],
+   "label": "pediment",
+   "size": [
+    21.0,
+    3.0,
+    4.4
+   ],
+   "ridge": "z",
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    3.6,
+    11.75
+   ],
+   "label": "main door",
+   "mode": "paint",
+   "size": [
+    2.4,
+    4.6,
+    1.3
+   ],
+   "material": "dark_oak_planks"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    8.2,
+    11.75
+   ],
+   "label": "door surround",
+   "mode": "paint",
+   "size": [
+    3.4,
+    0.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    38.8,
+    0,
+    2.75
+   ],
+   "label": "end porch podium",
+   "size": [
+    5.6,
+    3.6,
+    10
+   ],
+   "mirror": "x",
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "cylinder",
+   "at": [
+    40.9,
+    3.6,
+    -1.4
+   ],
+   "label": "end porch column",
+   "radius": 0.42,
+   "height": 6.2,
+   "mirror": "x",
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "cylinder",
+   "at": [
+    40.9,
+    3.6,
+    1.6
+   ],
+   "label": "end porch column",
+   "radius": 0.42,
+   "height": 6.2,
+   "mirror": "x",
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "cylinder",
+   "at": [
+    40.9,
+    3.6,
+    4.6
+   ],
+   "label": "end porch column",
+   "radius": 0.42,
+   "height": 6.2,
+   "mirror": "x",
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "cylinder",
+   "at": [
+    40.9,
+    3.6,
+    7.2
+   ],
+   "label": "end porch column",
+   "radius": 0.42,
+   "height": 6.2,
+   "mirror": "x",
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    38.8,
+    9.8,
+    2.75
+   ],
+   "label": "end porch entablature",
+   "size": [
+    5.6,
+    1.0,
+    10
+   ],
+   "mirror": "x",
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    38.8,
+    10.8,
+    2.75
+   ],
+   "label": "end porch balustrade",
+   "size": [
+    5.6,
+    0.7,
+    10
+   ],
+   "mirror": "x",
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    13.9,
+    4.25,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    13.9,
+    4.6,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    17.15,
+    4.25,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    17.15,
+    4.6,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    20.4,
+    4.25,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    20.4,
+    4.6,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    23.65,
+    4.25,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    23.65,
+    4.6,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    26.9,
+    4.25,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    26.9,
+    4.6,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    30.15,
+    4.25,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    30.15,
+    4.6,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    33.4,
+    4.25,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    33.4,
+    4.6,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -13.9,
+    4.25,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -13.9,
+    4.6,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -17.15,
+    4.25,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -17.15,
+    4.6,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -20.4,
+    4.25,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -20.4,
+    4.6,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -23.65,
+    4.25,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -23.65,
+    4.6,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -26.9,
+    4.25,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -26.9,
+    4.6,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -30.15,
+    4.25,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -30.15,
+    4.6,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -33.4,
+    4.25,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -33.4,
+    4.6,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    13.9,
+    8.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    13.9,
+    8.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    17.15,
+    8.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    17.15,
+    8.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    20.4,
+    8.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    20.4,
+    8.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    23.65,
+    8.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    23.65,
+    8.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    26.9,
+    8.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    26.9,
+    8.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    30.15,
+    8.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    30.15,
+    8.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    33.4,
+    8.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    33.4,
+    8.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -13.9,
+    8.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -13.9,
+    8.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -17.15,
+    8.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -17.15,
+    8.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -20.4,
+    8.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -20.4,
+    8.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -23.65,
+    8.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -23.65,
+    8.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -26.9,
+    8.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -26.9,
+    8.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -30.15,
+    8.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -30.15,
+    8.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -33.4,
+    8.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -33.4,
+    8.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    13.9,
+    11.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    13.9,
+    11.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    17.15,
+    11.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    17.15,
+    11.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    20.4,
+    11.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    20.4,
+    11.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    23.65,
+    11.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    23.65,
+    11.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    26.9,
+    11.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    26.9,
+    11.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    30.15,
+    11.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    30.15,
+    11.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    33.4,
+    11.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    33.4,
+    11.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -13.9,
+    11.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -13.9,
+    11.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -17.15,
+    11.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -17.15,
+    11.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -20.4,
+    11.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -20.4,
+    11.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -23.65,
+    11.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -23.65,
+    11.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -26.9,
+    11.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -26.9,
+    11.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -30.15,
+    11.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -30.15,
+    11.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -33.4,
+    11.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -33.4,
+    11.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    13.9,
+    0.65,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.65,
+    2.0999999999999996,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    13.9,
+    1.0,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.0,
+    1.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    17.15,
+    0.65,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.65,
+    2.0999999999999996,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    17.15,
+    1.0,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.0,
+    1.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    20.4,
+    0.65,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.65,
+    2.0999999999999996,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    20.4,
+    1.0,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.0,
+    1.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    23.65,
+    0.65,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.65,
+    2.0999999999999996,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    23.65,
+    1.0,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.0,
+    1.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    26.9,
+    0.65,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.65,
+    2.0999999999999996,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    26.9,
+    1.0,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.0,
+    1.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    30.15,
+    0.65,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.65,
+    2.0999999999999996,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    30.15,
+    1.0,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.0,
+    1.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    33.4,
+    0.65,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.65,
+    2.0999999999999996,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    33.4,
+    1.0,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.0,
+    1.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -13.9,
+    0.65,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.65,
+    2.0999999999999996,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -13.9,
+    1.0,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.0,
+    1.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -17.15,
+    0.65,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.65,
+    2.0999999999999996,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -17.15,
+    1.0,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.0,
+    1.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -20.4,
+    0.65,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.65,
+    2.0999999999999996,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -20.4,
+    1.0,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.0,
+    1.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -23.65,
+    0.65,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.65,
+    2.0999999999999996,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -23.65,
+    1.0,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.0,
+    1.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -26.9,
+    0.65,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.65,
+    2.0999999999999996,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -26.9,
+    1.0,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.0,
+    1.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -30.15,
+    0.65,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.65,
+    2.0999999999999996,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -30.15,
+    1.0,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.0,
+    1.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -33.4,
+    0.65,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.65,
+    2.0999999999999996,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -33.4,
+    1.0,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.0,
+    1.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    10.4,
+    4.25,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    10.4,
+    4.6,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    13.65,
+    4.25,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    13.65,
+    4.6,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    16.9,
+    4.25,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    16.9,
+    4.6,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    20.15,
+    4.25,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    20.15,
+    4.6,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    23.4,
+    4.25,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    23.4,
+    4.6,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    26.65,
+    4.25,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    26.65,
+    4.6,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    29.9,
+    4.25,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    29.9,
+    4.6,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    33.15,
+    4.25,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    33.15,
+    4.6,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -10.4,
+    4.25,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -10.4,
+    4.6,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -13.65,
+    4.25,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -13.65,
+    4.6,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -16.9,
+    4.25,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -16.9,
+    4.6,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -20.15,
+    4.25,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -20.15,
+    4.6,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -23.4,
+    4.25,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -23.4,
+    4.6,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -26.65,
+    4.25,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -26.65,
+    4.6,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -29.9,
+    4.25,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -29.9,
+    4.6,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -33.15,
+    4.25,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -33.15,
+    4.6,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    10.4,
+    8.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    10.4,
+    8.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    13.65,
+    8.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    13.65,
+    8.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    16.9,
+    8.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    16.9,
+    8.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    20.15,
+    8.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    20.15,
+    8.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    23.4,
+    8.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    23.4,
+    8.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    26.65,
+    8.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    26.65,
+    8.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    29.9,
+    8.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    29.9,
+    8.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    33.15,
+    8.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    33.15,
+    8.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -10.4,
+    8.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -10.4,
+    8.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -13.65,
+    8.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -13.65,
+    8.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -16.9,
+    8.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -16.9,
+    8.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -20.15,
+    8.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -20.15,
+    8.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -23.4,
+    8.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -23.4,
+    8.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -26.65,
+    8.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -26.65,
+    8.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -29.9,
+    8.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -29.9,
+    8.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -33.15,
+    8.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -33.15,
+    8.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    10.4,
+    11.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    10.4,
+    11.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    13.65,
+    11.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    13.65,
+    11.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    16.9,
+    11.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    16.9,
+    11.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    20.15,
+    11.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    20.15,
+    11.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    23.4,
+    11.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    23.4,
+    11.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    26.65,
+    11.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    26.65,
+    11.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    29.9,
+    11.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    29.9,
+    11.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    33.15,
+    11.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    33.15,
+    11.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -10.4,
+    11.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -10.4,
+    11.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -13.65,
+    11.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -13.65,
+    11.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -16.9,
+    11.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -16.9,
+    11.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -20.15,
+    11.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -20.15,
+    11.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -23.4,
+    11.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -23.4,
+    11.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -26.65,
+    11.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -26.65,
+    11.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -29.9,
+    11.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -29.9,
+    11.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -33.15,
+    11.45,
+    -6.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -33.15,
+    11.8,
+    -6.25
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -5.0,
+    4.25,
+    -18.2
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -5.0,
+    4.6,
+    -18.2
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -1.7,
+    4.25,
+    -18.2
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -1.7,
+    4.6,
+    -18.2
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    1.7,
+    4.25,
+    -18.2
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    1.7,
+    4.6,
+    -18.2
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    5.0,
+    4.25,
+    -18.2
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.5,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    5.0,
+    4.6,
+    -18.2
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -5.0,
+    8.45,
+    -18.2
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -5.0,
+    8.8,
+    -18.2
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -1.7,
+    8.45,
+    -18.2
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -1.7,
+    8.8,
+    -18.2
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    1.7,
+    8.45,
+    -18.2
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    1.7,
+    8.8,
+    -18.2
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    5.0,
+    8.45,
+    -18.2
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    5.0,
+    8.8,
+    -18.2
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -5.0,
+    11.45,
+    -18.2
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -5.0,
+    11.8,
+    -18.2
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -1.7,
+    11.45,
+    -18.2
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -1.7,
+    11.8,
+    -18.2
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    1.7,
+    11.45,
+    -18.2
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    1.7,
+    11.8,
+    -18.2
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    5.0,
+    11.45,
+    -18.2
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    5.0,
+    11.8,
+    -18.2
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -9.4,
+    8.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -9.4,
+    8.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -6.5,
+    8.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -6.5,
+    8.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    6.5,
+    8.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    6.5,
+    8.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    9.4,
+    8.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.9000000000000004,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    9.4,
+    8.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.2,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -9.4,
+    11.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -9.4,
+    11.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -6.5,
+    11.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -6.5,
+    11.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    6.5,
+    11.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    6.5,
+    11.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    9.4,
+    11.45,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    2.4,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    9.4,
+    11.8,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    1.7,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -3.2,
+    9.25,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.0999999999999996,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -3.2,
+    9.6,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    3.2,
+    9.25,
+    11.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    1.9500000000000002,
+    3.0999999999999996,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    3.2,
+    9.6,
+    11.75
+   ],
+   "label": "window",
+   "mode": "paint",
+   "size": [
+    1.3,
+    2.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  }
+ ]
+}

@@ -1,0 +1,838 @@
+{
+ "name": "Perkins Chapel",
+ "height_m": 39.2,
+ "is_known_landmark": true,
+ "camera": {
+  "azimuth_deg": 90,
+  "elevation_deg": 8
+ },
+ "analysis": "Perkins Chapel (1951), SMU: Georgian brick chapel. From the 2018 USGS lidar: nave 35 x 16 m, ridge ~14 m; steeple at the east end, tower ~4 m square to 17 m, belfry to ~26 m, spire to 39 m; low wings at the west end. Steeple stages follow Georgian (Wren-Gibbs) practice; no photo was available for this one, so details are estimated.",
+ "parts": [
+  {
+   "shape": "box",
+   "at": [
+    -2.4,
+    0,
+    0.75
+   ],
+   "label": "nave base course",
+   "size": [
+    34.8,
+    0.9,
+    16.4
+   ],
+   "material": "calcite"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -2.4,
+    0.9,
+    0.75
+   ],
+   "label": "nave",
+   "size": [
+    34.8,
+    8.7,
+    16
+   ],
+   "material": "bricks"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -2.4,
+    9.6,
+    0.75
+   ],
+   "label": "nave cornice",
+   "size": [
+    35.4,
+    0.6,
+    16.8
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "gable_roof",
+   "at": [
+    -2.4,
+    10.2,
+    0.75
+   ],
+   "label": "nave slate roof",
+   "size": [
+    35.4,
+    3.6,
+    16.8
+   ],
+   "ridge": "x",
+   "material": "deepslate_tiles"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -13.0,
+    0,
+    -10.4
+   ],
+   "label": "north wing",
+   "size": [
+    10.5,
+    5.6,
+    5.6
+   ],
+   "material": "bricks"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -13.0,
+    5.6,
+    -10.4
+   ],
+   "label": "north wing cornice",
+   "size": [
+    11.0,
+    0.4,
+    6.0
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "hip_roof",
+   "at": [
+    -13.0,
+    6.0,
+    -10.4
+   ],
+   "label": "north wing roof",
+   "size": [
+    10.8,
+    1.8,
+    5.8
+   ],
+   "material": "deepslate_tiles"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -13.0,
+    0,
+    11.0
+   ],
+   "label": "south wing",
+   "size": [
+    10.5,
+    5.6,
+    5.6
+   ],
+   "material": "bricks"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -13.0,
+    5.6,
+    11.0
+   ],
+   "label": "south wing cornice",
+   "size": [
+    11.0,
+    0.4,
+    6.0
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "hip_roof",
+   "at": [
+    -13.0,
+    6.0,
+    11.0
+   ],
+   "label": "south wing roof",
+   "size": [
+    10.8,
+    1.8,
+    5.8
+   ],
+   "material": "deepslate_tiles"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -16.5,
+    2.2,
+    8.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    2.0,
+    5.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -16.5,
+    2.5,
+    8.75
+   ],
+   "label": "arched window",
+   "mode": "paint",
+   "size": [
+    1.4,
+    4.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -16.5,
+    2.2,
+    -7.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    2.0,
+    5.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -16.5,
+    2.5,
+    -7.25
+   ],
+   "label": "arched window",
+   "mode": "paint",
+   "size": [
+    1.4,
+    4.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -12.0,
+    2.2,
+    8.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    2.0,
+    5.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -12.0,
+    2.5,
+    8.75
+   ],
+   "label": "arched window",
+   "mode": "paint",
+   "size": [
+    1.4,
+    4.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -12.0,
+    2.2,
+    -7.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    2.0,
+    5.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -12.0,
+    2.5,
+    -7.25
+   ],
+   "label": "arched window",
+   "mode": "paint",
+   "size": [
+    1.4,
+    4.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -7.5,
+    2.2,
+    8.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    2.0,
+    5.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -7.5,
+    2.5,
+    8.75
+   ],
+   "label": "arched window",
+   "mode": "paint",
+   "size": [
+    1.4,
+    4.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -7.5,
+    2.2,
+    -7.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    2.0,
+    5.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -7.5,
+    2.5,
+    -7.25
+   ],
+   "label": "arched window",
+   "mode": "paint",
+   "size": [
+    1.4,
+    4.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -3.0,
+    2.2,
+    8.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    2.0,
+    5.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -3.0,
+    2.5,
+    8.75
+   ],
+   "label": "arched window",
+   "mode": "paint",
+   "size": [
+    1.4,
+    4.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -3.0,
+    2.2,
+    -7.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    2.0,
+    5.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -3.0,
+    2.5,
+    -7.25
+   ],
+   "label": "arched window",
+   "mode": "paint",
+   "size": [
+    1.4,
+    4.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    1.5,
+    2.2,
+    8.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    2.0,
+    5.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    1.5,
+    2.5,
+    8.75
+   ],
+   "label": "arched window",
+   "mode": "paint",
+   "size": [
+    1.4,
+    4.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    1.5,
+    2.2,
+    -7.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    2.0,
+    5.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    1.5,
+    2.5,
+    -7.25
+   ],
+   "label": "arched window",
+   "mode": "paint",
+   "size": [
+    1.4,
+    4.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    6.0,
+    2.2,
+    8.75
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    2.0,
+    5.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    6.0,
+    2.5,
+    8.75
+   ],
+   "label": "arched window",
+   "mode": "paint",
+   "size": [
+    1.4,
+    4.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    6.0,
+    2.2,
+    -7.25
+   ],
+   "label": "window frame",
+   "mode": "paint",
+   "size": [
+    2.0,
+    5.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    6.0,
+    2.5,
+    -7.25
+   ],
+   "label": "arched window",
+   "mode": "paint",
+   "size": [
+    1.4,
+    4.8,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    13.6,
+    0,
+    0.75
+   ],
+   "label": "narthex",
+   "size": [
+    5.2,
+    11.0,
+    14.0
+   ],
+   "material": "bricks"
+  },
+  {
+   "shape": "box",
+   "at": [
+    13.6,
+    10.6,
+    0.75
+   ],
+   "label": "narthex cornice",
+   "size": [
+    5.6,
+    0.5,
+    14.4
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    17.6,
+    0,
+    0.75
+   ],
+   "label": "portico floor",
+   "size": [
+    3.6,
+    0.6,
+    12.4
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "cylinder",
+   "at": [
+    18.6,
+    0.6,
+    -3.45
+   ],
+   "label": "portico column",
+   "radius": 0.45,
+   "radius_top": 0.38,
+   "height": 7.8,
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "cylinder",
+   "at": [
+    18.6,
+    0.6,
+    -0.65
+   ],
+   "label": "portico column",
+   "radius": 0.45,
+   "radius_top": 0.38,
+   "height": 7.8,
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "cylinder",
+   "at": [
+    18.6,
+    0.6,
+    2.15
+   ],
+   "label": "portico column",
+   "radius": 0.45,
+   "radius_top": 0.38,
+   "height": 7.8,
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "cylinder",
+   "at": [
+    18.6,
+    0.6,
+    4.95
+   ],
+   "label": "portico column",
+   "radius": 0.45,
+   "radius_top": 0.38,
+   "height": 7.8,
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    17.4,
+    8.4,
+    0.75
+   ],
+   "label": "portico entablature",
+   "size": [
+    4.2,
+    1.1,
+    12.6
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "gable_roof",
+   "at": [
+    17.4,
+    9.5,
+    0.75
+   ],
+   "label": "pediment",
+   "size": [
+    4.2,
+    3.0,
+    12.6
+   ],
+   "ridge": "x",
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    16.2,
+    0.6,
+    0.75
+   ],
+   "label": "front door",
+   "mode": "paint",
+   "size": [
+    1.3,
+    4.0,
+    2.4
+   ],
+   "material": "dark_oak_planks"
+  },
+  {
+   "shape": "box",
+   "at": [
+    14.4,
+    0,
+    0.75
+   ],
+   "label": "steeple tower",
+   "size": [
+    4.2,
+    17.0,
+    4.2
+   ],
+   "material": "bricks"
+  },
+  {
+   "shape": "box",
+   "at": [
+    14.4,
+    16.6,
+    0.75
+   ],
+   "label": "tower cornice",
+   "size": [
+    4.8,
+    0.6,
+    4.8
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    14.4,
+    17.2,
+    0.75
+   ],
+   "label": "belfry",
+   "size": [
+    3.6,
+    4.4,
+    3.6
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "arch",
+   "at": [
+    14.4,
+    17.6,
+    0.75
+   ],
+   "label": "belfry openings",
+   "mode": "carve",
+   "width": 1.4,
+   "height": 3.2,
+   "depth": 4.0
+  },
+  {
+   "shape": "arch",
+   "at": [
+    14.4,
+    17.6,
+    0.75
+   ],
+   "label": "belfry openings",
+   "mode": "carve",
+   "width": 1.4,
+   "height": 3.2,
+   "depth": 4.0,
+   "axis": "x"
+  },
+  {
+   "shape": "box",
+   "at": [
+    14.4,
+    21.6,
+    0.75
+   ],
+   "label": "belfry cornice",
+   "size": [
+    4.0,
+    0.5,
+    4.0
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "cylinder",
+   "at": [
+    14.4,
+    22.1,
+    0.75
+   ],
+   "label": "octagonal lantern",
+   "radius": 1.6,
+   "height": 3.2,
+   "sides": 8,
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "cylinder",
+   "at": [
+    14.4,
+    25.3,
+    0.75
+   ],
+   "label": "lantern cornice",
+   "radius": 1.8,
+   "height": 0.4,
+   "sides": 8,
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "cone",
+   "at": [
+    14.4,
+    25.7,
+    0.75
+   ],
+   "label": "spire",
+   "radius": 1.45,
+   "height": 12.3,
+   "sides": 8,
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "beam",
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "label": "finial",
+   "from": [
+    14.4,
+    37.8,
+    0.75
+   ],
+   "to": [
+    14.4,
+    39.2,
+    0.75
+   ],
+   "width": 0.2,
+   "material": "iron_bars"
+  }
+ ]
+}

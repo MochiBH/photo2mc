@@ -26,6 +26,11 @@ class _Tag:
         self.tid, self.val = tid, val
 
 
+def Byte(v): return _Tag(1, v)
+def Long(v): return _Tag(4, v)
+def Float(v): return _Tag(5, v)
+def Double(v): return _Tag(6, v)
+def LongArray(v): return _Tag(12, np.asarray(v, dtype=">i8"))
 def Int(v): return _Tag(3, v)
 def Short(v): return _Tag(2, v)
 def ByteArray(v): return _Tag(7, bytes(v))
@@ -36,8 +41,18 @@ def ListOf(tid, items): return _Tag(9, (tid, items))
 
 
 def _payload(t: _Tag, out: io.BytesIO):
-    if t.tid == 2:
+    if t.tid == 1:
+        out.write(struct.pack(">b", t.val))
+    elif t.tid == 2:
         out.write(struct.pack(">h", t.val))
+    elif t.tid == 4:
+        out.write(struct.pack(">q", t.val))
+    elif t.tid == 5:
+        out.write(struct.pack(">f", t.val))
+    elif t.tid == 6:
+        out.write(struct.pack(">d", t.val))
+    elif t.tid == 12:
+        out.write(struct.pack(">i", len(t.val))); out.write(t.val.tobytes())
     elif t.tid == 3:
         out.write(struct.pack(">i", t.val))
     elif t.tid == 7:

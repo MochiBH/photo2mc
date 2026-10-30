@@ -3,6 +3,7 @@
 
   photo   one or more photos  -> Claude writes a structure spec -> build
   spec    a structure spec (.json) -> build        (edit a spec and rebuild)
+  site    a whole place (campus, city blocks) from OpenStreetMap + USGS lidar -> playable world
   prompt  print the photo instructions, for writing a spec without an API key (e.g. in Claude Code)
   landmark  a ready-made landmark from the library (Eiffel Tower, Big Ben, ...)
   scan    a phone scan / photogrammetry mesh -> level, strip ground -> build
@@ -58,6 +59,38 @@ def write_all(b, out, title, desc):
     print(f"\nwrote {out}.schem, {out}_datapack.zip, {out}.html (3D), {out}_guide.html (survival guide), {out}.png")
 
 
+def run_site(a):
+    import shutil
+    import numpy as np
+    from mcbuild.geo import Frame, fetch_osm, parse_osm, fetch_lidar
+    from mcbuild.site import Site, build_world, add_hero
+    s, w, n, e = map(float, a.bbox.split(","))
+    frame = Frame(s, w, n, e)
+    data = os.path.join(HERE, "data", a.name)
+    os.makedirs(data, exist_ok=True)
+    print(f"area {frame.width:.0f} x {frame.height:.0f} m, {a.block_size:.3f} m per block")
+    feats = parse_osm(fetch_osm(frame, os.path.join(data, "osm.osm")), frame)
+    lid = fetch_lidar(frame, data)
+    print(f"{len(feats)} map features, {len(lid['x']):,} lidar points")
+    site = Site(frame, feats, lid, block=a.block_size, campus_id=a.campus)
+    del lid
+    if a.heroes:
+        base = os.path.dirname(os.path.abspath(a.heroes))
+        for h in json.load(open(a.heroes)):
+            spec = json.load(open(os.path.join(base, h["spec"])))
+            add_hero(site, h["building"], spec, h.get("quarter", 0))
+    world = a.out
+    if os.path.exists(world):
+        shutil.rmtree(world)
+    print(f"writing world {site.NX} x {site.NZ} blocks...")
+    img, stats = build_world(site, world, a.name.upper() if len(a.name) <= 4 else a.name, a.spawn)
+    img.save(world + "_map.png")
+    img.resize((img.width // 4, img.height // 4)).save(world + "_map_small.png")
+    shutil.make_archive(world, "zip", os.path.dirname(world) or ".", os.path.basename(world))
+    print(f"{stats['chunks']:,} chunks, {stats['blocks']:,} blocks; spawn at {stats['spawn']}")
+    print(f"wrote {world}/ (world folder), {world}.zip, {world}_map.png")
+
+
 def scale_args(p):
     p.add_argument("--height", type=int, help="target height in blocks")
     p.add_argument("--block-size", type=float, help="meters (model units) per block")
@@ -73,6 +106,16 @@ def main(argv=None):
     p.add_argument("--rounds", type=int, default=1, help="compare-and-correct rounds (0-3)")
     p.add_argument("--model", default=None, help="Claude model id")
     scale_args(p)
+
+    p = sp.add_parser("site", help="OpenStreetMap + USGS lidar area -> Minecraft world (US only)")
+    p.add_argument("--bbox", required=True, help="south,west,north,east in degrees")
+    p.add_argument("--name", required=True, help="site name; data is cached in data/<name>/")
+    p.add_argument("--campus", default=None, help="OSM id (e.g. w30894474) of the campus outline: buildings "
+                                                   "inside it get the campus style")
+    p.add_argument("--heroes", default=None, help="JSON list of {building, spec, quarter}: detailed specs that "
+                                                   "replace the lidar massing of named buildings")
+    p.add_argument("--spawn", default=None, help="name of a building to spawn in front of")
+    p.add_argument("--block-size", type=float, default=1 / 3)
 
     p = sp.add_parser("prompt", help="print the photo -> spec instructions (use without an API key)")
     scale_args(p)
@@ -110,6 +153,10 @@ def main(argv=None):
 
     a = ap.parse_args(argv)
     t0 = time.time()
+    if a.cmd == "site":
+        run_site(a)
+        print(f"done in {time.time() - t0:.0f}s")
+        return
     if a.cmd == "prompt":
         from mcbuild.vision import manual_prompt
         print(manual_prompt(a.block_size, a.height))
