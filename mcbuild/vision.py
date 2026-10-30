@@ -210,6 +210,8 @@ def validate(spec: dict) -> list[str]:
     for i, p in enumerate(parts):
         try:
             make_mesh(p)
+        except KeyError as e:
+            errs.append(f"part {i} ({p.get('label', p.get('shape'))}): missing field {e}")
         except Exception as e:  # noqa: BLE001
             errs.append(f"part {i} ({p.get('label', p.get('shape'))}): {e}")
     if not any(p.get("mode", "solid") == "solid" for p in parts):
@@ -250,18 +252,42 @@ class SpecWriter:
         content = [_image_block(p) for p in photos]
         content.append(_image_block(render_path))
         txt = ("The first image(s) are the photo(s). The LAST image is the Minecraft build made from your spec, "
-               "rendered from your reported camera angle. Compare them carefully: overall proportions, heights "
-               "of each tier, widths, roof pitch and position, towers, domes, openings, window rows, materials. "
-               f"Then check the detailing at this scale ({block_size:.2f} m per block): flat walls with no depth "
-               "layers, missing bases, capitals, cornices or surrounds, large areas of a single block, and details "
-               "too small to show. The render draws each block in its average colour, so related blocks such as "
-               "sandstone and smooth_sandstone look alike there; judge material variety from the spec. "
-               "List the differences in 'analysis', then submit the corrected COMPLETE spec. Keep what is right.\n\n"
+               "rendered from your reported camera angle. " + refine_checklist(block_size)
+               + " List the differences in 'analysis', then submit the corrected COMPLETE spec. Keep what is right.\n\n"
                "Current spec:\n" + json.dumps(spec))
         if hint:
             txt += f"\nUser's note: {hint}"
         content.append({"type": "text", "text": txt})
         return self._with_fixes(content, self._ask(content))
+
+
+def refine_checklist(block_size: float) -> str:
+    return ("Compare the build with the photo carefully: overall proportions, heights "
+            "of each tier, widths, roof pitch and position, towers, domes, openings, window rows, materials. "
+            f"Then check the detailing at this scale ({block_size:.2f} m per block): flat walls with no depth "
+            "layers, missing bases, capitals, cornices or surrounds, large areas of a single block, and details "
+            "too small to show. The render draws each block in its average colour, so related blocks such as "
+            "sandstone and smooth_sandstone look alike there; judge material variety from the spec.")
+
+
+def manual_prompt(block_size=None, height_blocks=None) -> str:
+    """The same instructions for an assistant that writes the spec file itself (no API key): e.g. Claude Code."""
+    fields = "\n".join(f'- "{k}": {v.get("description") or v["type"]}' + (" (required)" if k in TOOL["input_schema"]["required"] else "")
+                       for k, v in TOOL["input_schema"]["properties"].items() if k != "parts")
+    part = TOOL["input_schema"]["properties"]["parts"]["items"]["properties"]
+    return (SYSTEM.replace("Always deliver the spec by calling the submit_structure tool, with no other reply.",
+                           "Deliver the spec as a JSON file (format below).")
+            + "\nSPEC FILE: one JSON object with\n" + fields
+            + '\n- "recommended_block_size": meters per block from the build scale below; `spec` builds at it'
+            + '\n- "parts" (required): list of parts, each with "shape" (' + ", ".join(SHAPES) + '), "at", '
+            + "and the shape's own fields from SHAPES above, plus optional "
+            + ", ".join(k for k in part if k not in ("shape", "at")) + ", rotate, repeat, mirror, tilt.\n\n"
+            + _scale_note(block_size, height_blocks) + "\n\n"
+            + "LOOP\n1. Look at the photo(s) and write the spec file.\n"
+            + "2. Build it: python photo2mc.py spec <file> --out <out>. Fix any errors it prints.\n"
+            + "3. Open <out>_camera.png (the build from your reported camera angle) next to the photo. "
+            + refine_checklist(block_size or 0.33).replace("(0.33 m per block)", "(see the build scale above)")
+            + "\n4. Correct the spec and rebuild. One or two rounds fix most errors.\n")
 
 
 def photos_to_build(photos: list, rounds: int = 1, block_size: float | None = None,

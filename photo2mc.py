@@ -3,6 +3,7 @@
 
   photo   one or more photos  -> Claude writes a structure spec -> build
   spec    a structure spec (.json) -> build        (edit a spec and rebuild)
+  prompt  print the photo instructions, for writing a spec without an API key (e.g. in Claude Code)
   landmark  a ready-made landmark from the library (Eiffel Tower, Big Ben, ...)
   scan    a phone scan / photogrammetry mesh -> level, strip ground -> build
   model   any clean 3D model (.glb/.obj/...) -> build
@@ -73,6 +74,9 @@ def main(argv=None):
     p.add_argument("--model", default=None, help="Claude model id")
     scale_args(p)
 
+    p = sp.add_parser("prompt", help="print the photo -> spec instructions (use without an API key)")
+    scale_args(p)
+
     p = sp.add_parser("spec", help="structure spec JSON -> build")
     p.add_argument("spec")
     scale_args(p)
@@ -106,6 +110,10 @@ def main(argv=None):
 
     a = ap.parse_args(argv)
     t0 = time.time()
+    if a.cmd == "prompt":
+        from mcbuild.vision import manual_prompt
+        print(manual_prompt(a.block_size, a.height))
+        return
     if a.cmd == "landmark":
         lib = os.path.join(HERE, "samples", "landmarks")
         names = sorted(f[:-5] for f in os.listdir(lib) if f.endswith(".json"))
@@ -133,7 +141,11 @@ def main(argv=None):
                     json.dump(v, f, indent=1)
             print("\n" + spec.get("analysis", "")[:1200])
         else:
+            from mcbuild.vision import validate
             spec = json.load(open(a.spec))
+            errs = validate(spec)
+            if errs:
+                sys.exit("spec has errors:\n- " + "\n- ".join(errs))
             kw = {"block_size": a.block_size} if a.block_size else \
                  {"height_blocks": a.height} if a.height else \
                  {"block_size": spec.get("recommended_block_size") or _auto_block(spec)}
@@ -170,6 +182,11 @@ def main(argv=None):
         desc = f"Converted from {os.path.basename(a.mesh)}."
 
     write_all(b, a.out, title, desc)
+    if a.cmd in ("photo", "spec") and spec.get("camera"):
+        from mcbuild.render import render_iso
+        cam = spec["camera"]
+        render_iso(b, a.out + "_camera.png", azimuth=cam.get("azimuth_deg", 30), elevation=cam.get("elevation_deg", 15))
+        print(f"wrote {a.out}_camera.png (from the photo's camera angle, to compare with the photo)")
     print(f"done in {time.time() - t0:.1f}s")
 
 

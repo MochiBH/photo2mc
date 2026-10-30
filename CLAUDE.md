@@ -13,6 +13,7 @@ python photo2mc.py scan samples/fake_scan.glb --block-size 0.5 --out out/scan
 python photo2mc.py model samples/cottage.glb --block-size 0.5 --out out/cottage
 python photo2mc.py landmark eiffel_tower                    # library build + survival guide
 python photo2mc.py photo some_photo.jpg --out out/x         # needs ANTHROPIC_API_KEY
+python photo2mc.py prompt                                   # same instructions, for writing a spec without a key
 python tools/landmarks.py                                   # regenerate samples/landmarks/*.json
 python -I tools/gen_palette.py <26.x assets> <1.21.1 assets>  # re-measure block colours (sparse checkout of
                                                             # github.com/InventivetalentDev/minecraft-assets)
@@ -49,5 +50,6 @@ Outputs go in `out/` (git-ignored): `.schem`, `_datapack.zip`, `.html` viewer, `
 
 - Live Claude calls verified on `claude-opus-5-5` (env `PHOTO2MC_MODEL`): `photo` (Brandenburg Gate photo → 33-part spec, 1 refine round, ~2 min) and `model --semantic`. All calls go through `vision.ask_tool`: streaming (`call_claude`, falls back to `messages.create` for stub clients), `tool_choice` auto plus a prompt instruction and one nudge (current models reject forced tool choice), effort `high`.
 - Detailing: SYSTEM has a DETAILING section (role-based materials within one colour family, depth layers, bases/capitals/cornices, 40-200 parts); the request states the build scale (`_scale_note`), and refine checks detail. Default scale `_auto_block` ≈ 80 blocks tall (`DETAIL_BLOCKS`), 0.25-1 m per block; photo specs record `recommended_block_size`. The PNG/viewer draw average colours, so related textures (sandstone vs smooth_sandstone) look alike there — a textured preview would help judge detail.
+- No-API-key path: `photo2mc.py prompt` prints `vision.manual_prompt()` (SYSTEM + spec file format + LOOP); `spec` validates and writes `<out>_camera.png`; project skill `.claude/skills/build-from-photo` drives the loop in Claude Code.
 - Colour-match builds: `_dither` mixes two same-class blocks when best single ΔE > 5 (hash pattern, max pair ΔE 14). `Build.color_error` reports CIEDE2000 stats.
 - Ideas: image-to-3D provider clients (TRELLIS / Hunyuan3D / Tripo) feeding `model`, landmark fetch from Google Photorealistic 3D Tiles, verify 26.x stair recipes, more landmarks (Statue of Liberty, Sydney Opera House need freeform shapes).

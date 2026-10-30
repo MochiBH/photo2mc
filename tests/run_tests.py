@@ -78,6 +78,10 @@ with tempfile.TemporaryDirectory() as d:
     Image.new("RGB", (64, 64), "white").save(img)
     bb, final, vers = photos_to_build([img], rounds=1, client=client, workdir=d, log=lambda *a: None)
 check("vision loop (stub)", len(vers) == 2 and validate(final) == [])
+from mcbuild.vision import manual_prompt
+mp = manual_prompt(block_size=0.5)
+check("manual prompt (no API key)", "SPEC FILE" in mp and "0.5 m per block" in mp and "submit_structure tool" not in mp)
+check("validate names missing fields", validate({"parts": [{"shape": "box", "at": [0, 0, 0]}]}) == ["part 0 (box): missing field 'size'"])
 
 # 9. measured palette: real ids, versions, CIEDE2000 reference values
 from mcbuild.palette import MATERIALS, Palette, delta_e2000, srgb_to_lab
