@@ -106,11 +106,20 @@ MATERIALS — use these exact names. "(stairs+slab)" families are best for anyth
 {_thin_text()}
 Choose materials by what the surface IS (marble, brick, slate, copper, glass) more than its exact photographed color, since photos are tinted by light and weather. Windows: paint a glass pane material (e.g. glass_pane, gray_stained_glass_pane) onto the wall — this turns those wall blocks into inset panes. Doors: a dark wood. Oxidized copper roofs: waxed_oxidized_cut_copper. Prefer classic blocks; avoid exotic ones unless the surface really looks like them.
 
+DETAILING (what makes a build look crafted instead of a single-texture lump)
+- Give each architectural role its own block from one colour family, so the structure reads at a glance: walls, plinth/base courses, columns, bands and cornices, accents and reliefs. 3-5 related blocks for the main body. For example: pale stone → smooth_sandstone walls, cut_sandstone bands and copings, sandstone columns, chiseled_sandstone capitals and reliefs; white marble → smooth_quartz walls, quartz_bricks bands, quartz_pillar shafts, chiseled_quartz_block accents; brick → bricks walls with stone_bricks or polished_andesite trim; grey stone → stone_bricks, polished_andesite, smooth_stone, chiseled_stone_bricks.
+- Depth beats paint. Give every facade at least two depth layers: pilasters and columns stand proud of the wall; windows, doors and panels are recessed (carve one block deep, then paint the glass or wood onto the new back face); cornices, string courses and sills project half a block to a block beyond the wall below; plinths step out at the base.
+- Columns get a base and a capital wider than the shaft (short boxes or cylinders). A run of thin columns or balusters can use a wall material (e.g. sandstone_wall).
+- Frame corners, openings and wall tops with a contrasting trim block; cap walls, parapets and attics with a half-block coping.
+- Roofs get eaves that overhang the wall; ridges and hips can take a contrasting block.
+- Don't leave a large flat area as one texture: relief panels in a chiseled block, a band of cut stone, or a recessed panel break it up.
+- Stay faithful: detail follows the real building and stays in its colour family; never invent features it does not have.
+
 METHOD
 1. Identify the structure. If it is a known landmark, use its real documented dimensions (height, footprint, dome diameter, tower heights) — say which you used in "analysis". Otherwise estimate scale from cues: doors ~2.1 m tall, storeys ~3-3.5 m (commercial ~4 m), people ~1.7 m, cars ~4.5 m long, steps ~0.17 m.
 2. Break it into massing: base/plinth, main volumes, roofs, towers, domes, then secondary volumes, then openings and paint details.
 3. Assume symmetry and typical design for hidden sides; use "mirror".
-4. Detail: anything under ~1 m will mostly vanish at 1 block per meter, so spend parts on what reads at that scale. Typical: 15-80 parts.
+4. Detail to the build scale given in the request: anything smaller than about one block vanishes, and anything 1-3 blocks across reads as detail. Spend parts on bases, capitals, cornices, string courses, window and door surrounds, recesses, relief panels and railings (see DETAILING). Typical: 40-200 parts; use repeat and mirror to keep the spec compact.
 5. Double-check: every roof's "at" y equals the top of what it sits on; nothing floats; towers reach their real heights.
 
 WORKED EXAMPLES (real specs from the library — match this level of care):
@@ -227,21 +236,26 @@ class SpecWriter:
                 + "\n- ".join(errs) + "\n\nPrevious spec:\n" + json.dumps(spec)}])
         return spec
 
-    def from_photos(self, photos: list, hint: str = "") -> dict:
+    def from_photos(self, photos: list, hint: str = "", scale: str = "") -> dict:
         content = [_image_block(p) for p in photos]
         txt = "Write the structure spec for the structure in this photo." if len(photos) == 1 else \
               f"These {len(photos)} photos show the same structure from different angles; the FIRST photo defines the front (+z). Write its structure spec."
+        txt += "\n" + scale
         if hint:
             txt += f"\nUser's note: {hint}"
         content.append({"type": "text", "text": txt})
         return self._with_fixes(content, self._ask(content))
 
-    def refine(self, photos: list, spec: dict, render_path: str, hint: str = "") -> dict:
+    def refine(self, photos: list, spec: dict, render_path: str, hint: str = "", block_size: float = 1.0) -> dict:
         content = [_image_block(p) for p in photos]
         content.append(_image_block(render_path))
         txt = ("The first image(s) are the photo(s). The LAST image is the Minecraft build made from your spec, "
                "rendered from your reported camera angle. Compare them carefully: overall proportions, heights "
                "of each tier, widths, roof pitch and position, towers, domes, openings, window rows, materials. "
+               f"Then check the detailing at this scale ({block_size:.2f} m per block): flat walls with no depth "
+               "layers, missing bases, capitals, cornices or surrounds, large areas of a single block, and details "
+               "too small to show. The render draws each block in its average colour, so related blocks such as "
+               "sandstone and smooth_sandstone look alike there; judge material variety from the spec. "
                "List the differences in 'analysis', then submit the corrected COMPLETE spec. Keep what is right.\n\n"
                "Current spec:\n" + json.dumps(spec))
         if hint:
@@ -260,12 +274,20 @@ def photos_to_build(photos: list, rounds: int = 1, block_size: float | None = No
     workdir = workdir or tempfile.mkdtemp(prefix="photo2mc_")
     os.makedirs(workdir, exist_ok=True)
     log("reading photo(s)...")
-    spec = w.from_photos(photos, hint)
+    spec = w.from_photos(photos, hint, _scale_note(block_size, height_blocks))
     versions = [spec]
 
+    def bsize(sp):
+        if block_size:
+            return block_size
+        if height_blocks:
+            return float(sp.get("height_m") or 30) / height_blocks
+        return _auto_block(sp)
+
     def make(sp):
-        kw = {"block_size": block_size} if block_size else \
-             {"height_blocks": height_blocks} if height_blocks else {"block_size": _auto_block(sp)}
+        sp["recommended_block_size"] = round(bsize(sp), 3)    # so `photo2mc.py spec` rebuilds the same
+        kw = {"height_blocks": height_blocks} if height_blocks and not block_size else \
+             {"block_size": sp["recommended_block_size"]}
         return build_from_spec(sp, target=target, **kw)
 
     b = make(spec)
@@ -275,18 +297,26 @@ def photos_to_build(photos: list, rounds: int = 1, block_size: float | None = No
         png = os.path.join(workdir, f"render_v{r + 1}.png")
         render_iso(b, png, azimuth=cam.get("azimuth_deg", 30), elevation=cam.get("elevation_deg", 15))
         log(f"comparing build to photo (round {r + 1})...")
-        spec = w.refine(photos, spec, png, hint)
+        spec = w.refine(photos, spec, png, hint, bsize(spec))
         versions.append(spec)
         b = make(spec)
         log(f"  v{r + 2}: {len(spec['parts'])} parts, {b.size} blocks")
     return b, spec, versions
 
 
+DETAIL_BLOCKS = 80     # default build height in blocks: enough for bases, cornices and recesses to show
+
+
 def _auto_block(spec) -> float:
-    """1 block per meter, unless that's huge (>256 tall) or tiny (<24 tall)."""
+    """About DETAIL_BLOCKS tall, between 0.25 and 1 m per block; past 256 m, whatever fits in 256 blocks."""
     h = float(spec.get("height_m") or 30)
-    if h > 256:
-        return h / 256
-    if h < 24:
-        return max(h / 24, 0.25)
-    return 1.0
+    return round(max(h / 256, min(1.0, max(h / DETAIL_BLOCKS, 0.25))), 3)
+
+
+def _scale_note(block_size=None, height_blocks=None) -> str:
+    if block_size:
+        return f"Build scale: {block_size:g} m per block."
+    if height_blocks:
+        return f"Build scale: the whole structure will be {height_blocks} blocks tall."
+    return (f"Build scale: about {DETAIL_BLOCKS} blocks tall (height / {DETAIL_BLOCKS} m per block, "
+            "between 0.25 and 1 m), so a 26 m building gets about 0.33 m blocks.")

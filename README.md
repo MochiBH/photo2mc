@@ -20,6 +20,8 @@ python photo2mc.py model chapel.obj --up z --height 60 --out out/chapel
 
 Every command writes `<out>.schem`, `<out>_datapack.zip`, `<out>.html` (3D viewer), `<out>_guide.html` (survival guide) and `<out>.png`.
 
+Photo and spec builds default to about 80 blocks tall (0.25–1 m per block), fine enough for column bases, cornices, recessed panels and other block detailing; Claude is told the scale and details to it. Use `--block-size` or `--height` for a bigger or smaller build.
+
 Options for every command: `--mc latest|1.21` (default latest: uses 26.x blocks such as concrete stairs; `1.21` keeps to blocks that exist in 1.21.1 so builds load on older servers), `--solid`, `--height` / `--block-size`. Scans and models also take `--no-mix`, `--semantic`, `--photo`, `--materials`.
 
 ## Landmark library
