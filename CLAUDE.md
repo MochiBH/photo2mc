@@ -47,7 +47,6 @@ Outputs go in `out/` (git-ignored): `.schem`, `_datapack.zip`, `.html` viewer, `
 
 ## Status / next steps
 
-- The live Claude call in `vision.py` has only been exercised with a stand-in client (no API key in the original workspace). First real run: check the tool-use response parses and the spec validates; tune SYSTEM prompt from results. Model id defaults to `claude-opus-5-5` (env `PHOTO2MC_MODEL`).
-- `regions.ask_claude` (semantic scan materials) is also stub-tested only.
+- Live Claude calls verified on `claude-opus-5-5` (env `PHOTO2MC_MODEL`): `photo` (Brandenburg Gate photo → 33-part spec, 1 refine round, ~2 min) and `model --semantic`. All calls go through `vision.ask_tool`: streaming (`call_claude`, falls back to `messages.create` for stub clients), `tool_choice` auto plus a prompt instruction and one nudge (current models reject forced tool choice), effort `high`.
 - Colour-match builds: `_dither` mixes two same-class blocks when best single ΔE > 5 (hash pattern, max pair ΔE 14). `Build.color_error` reports CIEDE2000 stats.
 - Ideas: image-to-3D provider clients (TRELLIS / Hunyuan3D / Tripo) feeding `model`, landmark fetch from Google Photorealistic 3D Tiles, verify 26.x stair recipes, more landmarks (Statue of Liberty, Sydney Opera House need freeform shapes).

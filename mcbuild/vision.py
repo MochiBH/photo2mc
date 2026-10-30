@@ -116,6 +116,8 @@ METHOD
 WORKED EXAMPLES (real specs from the library — match this level of care):
 {_examples_text()}
 
+Always deliver the spec by calling the submit_structure tool, with no other reply.
+
 Report the camera: "camera": {{"azimuth_deg": angle of the camera from the +z axis toward +x (0 = straight-on front, 45 = front-right corner), "elevation_deg": above the horizon}}.
 """
 
@@ -162,6 +164,33 @@ def _image_block(img: str | Image.Image, max_side=1568):
                                          "data": base64.b64encode(buf.getvalue()).decode()}}
 
 
+def call_claude(client, **kw):
+    """messages.create via streaming (the SDK refuses long non-streaming requests); stub clients may only have create."""
+    if hasattr(client.messages, "stream"):
+        with client.messages.stream(**kw) as s:
+            return s.get_final_message()
+    return client.messages.create(**kw)
+
+
+def ask_tool(client, tool: dict, content: list, effort: str = "high", **kw) -> dict:
+    """Get one call of `tool` and return its input. Current models reject a forced tool_choice, so the
+    tool is offered with tool_choice auto and the model is nudged once if it answers in text instead."""
+    messages = [{"role": "user", "content": content}]
+    for _ in range(2):
+        r = call_claude(client, tools=[tool], tool_choice={"type": "auto"},
+                        output_config={"effort": effort}, messages=messages, **kw)
+        if getattr(r, "stop_reason", None) == "refusal":
+            raise RuntimeError(f"model declined: {getattr(r, 'stop_details', None)}")
+        for blk in r.content:
+            if blk.type == "tool_use":
+                return dict(blk.input)
+        if getattr(r, "stop_reason", None) == "max_tokens":
+            raise RuntimeError("model ran out of output tokens before calling " + tool["name"])
+        messages += [{"role": "assistant", "content": r.content},
+                     {"role": "user", "content": f"Now call the {tool['name']} tool with your complete answer."}]
+    raise RuntimeError(f"model did not call {tool['name']}")
+
+
 def validate(spec: dict) -> list[str]:
     """Problems that would stop a build, as messages Claude can act on."""
     errs = []
@@ -188,14 +217,7 @@ class SpecWriter:
         self.model = model
 
     def _ask(self, content):
-        r = self.client.messages.create(
-            model=self.model, max_tokens=32000, system=SYSTEM,
-            tools=[TOOL], tool_choice={"type": "tool", "name": "submit_structure"},
-            messages=[{"role": "user", "content": content}])
-        for blk in r.content:
-            if blk.type == "tool_use":
-                return dict(blk.input)
-        raise RuntimeError("model returned no spec")
+        return ask_tool(self.client, TOOL, content, model=self.model, max_tokens=64000, system=SYSTEM)
 
     def _with_fixes(self, content, spec):
         errs = validate(spec)
@@ -236,6 +258,7 @@ def photos_to_build(photos: list, rounds: int = 1, block_size: float | None = No
     from .render import render_iso
     w = SpecWriter(model=model, client=client)
     workdir = workdir or tempfile.mkdtemp(prefix="photo2mc_")
+    os.makedirs(workdir, exist_ok=True)
     log("reading photo(s)...")
     spec = w.from_photos(photos, hint)
     versions = [spec]

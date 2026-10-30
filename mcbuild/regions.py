@@ -132,7 +132,7 @@ Rules: windows -> a glass pane material (glass_pane or a *_stained_glass_pane; d
 
 
 def ask_claude(b: Build, rid, regions, photos=(), model=None, client=None, workdir=None):
-    from .vision import _image_block, DEFAULT_MODEL, _palette_text
+    from .vision import _image_block, DEFAULT_MODEL, _palette_text, ask_tool
     from .render import render_iso
     if client is None:
         import anthropic
@@ -148,13 +148,7 @@ def ask_claude(b: Build, rid, regions, photos=(), model=None, client=None, workd
     thin = ", ".join(sorted(c for c in CONNECTABLES if c.endswith(("_pane", "_fence", "iron_bars"))))
     content.append({"type": "text", "text": PROMPT.format(
         images=imgs, table=json.dumps(regions, indent=0), materials=_palette_text() + "\n- thin: " + thin)})
-    r = client.messages.create(model=model or DEFAULT_MODEL, max_tokens=8000, tools=[TOOL],
-                               tool_choice={"type": "tool", "name": "assign_materials"},
-                               messages=[{"role": "user", "content": content}])
-    for blk in r.content:
-        if blk.type == "tool_use":
-            return dict(blk.input)
-    raise RuntimeError("no material assignment returned")
+    return ask_tool(client, TOOL, content, model=model or DEFAULT_MODEL, max_tokens=16000)
 
 
 def apply_assignment(b: Build, rid, assignment, target="latest") -> Build:
