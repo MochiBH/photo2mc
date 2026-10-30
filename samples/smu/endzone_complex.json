@@ -1,0 +1,1232 @@
+{
+ "name": "Garry Weber End Zone Complex",
+ "height_m": 27,
+ "camera": {
+  "azimuth_deg": 180,
+  "elevation_deg": 10
+ },
+ "analysis": "Ford Stadium's south end zone building (2024). Footprint from OpenStreetMap, layout and heights from a 2024 photo: seats facing north, glass club/suite levels, brick end pavilions, video board on the roof.",
+ "parts": [
+  {
+   "shape": "extrude",
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "label": "seating structure",
+   "footprint": [
+    [
+     -27.9,
+     -26.2
+    ],
+    [
+     -45.7,
+     -15.5
+    ],
+    [
+     -46.8,
+     -16.8
+    ],
+    [
+     -62.2,
+     -11.2
+    ],
+    [
+     -62.3,
+     -13.0
+    ],
+    [
+     -65.7,
+     -12.9
+    ],
+    [
+     -65.9,
+     -5.6
+    ],
+    [
+     -67.0,
+     -5.7
+    ],
+    [
+     -67.1,
+     -3.0
+    ],
+    [
+     -68.0,
+     -3.0
+    ],
+    [
+     -68.1,
+     7.7
+    ],
+    [
+     -63.1,
+     7.7
+    ],
+    [
+     -63.2,
+     18.0
+    ],
+    [
+     -17.5,
+     19.4
+    ],
+    [
+     -17.1,
+     23.3
+    ],
+    [
+     -12.5,
+     24.9
+    ],
+    [
+     -5.3,
+     26.0
+    ],
+    [
+     0.5,
+     26.2
+    ],
+    [
+     5.8,
+     26.0
+    ],
+    [
+     11.2,
+     25.0
+    ],
+    [
+     15.8,
+     23.8
+    ],
+    [
+     15.8,
+     19.8
+    ],
+    [
+     62.6,
+     21.1
+    ],
+    [
+     62.9,
+     11.7
+    ],
+    [
+     67.7,
+     11.5
+    ],
+    [
+     68.1,
+     0.7
+    ],
+    [
+     63.0,
+     0.6
+    ],
+    [
+     63.4,
+     -7.9
+    ],
+    [
+     48.0,
+     -14.3
+    ],
+    [
+     46.6,
+     -13.1
+    ],
+    [
+     30.2,
+     -24.4
+    ],
+    [
+     25.9,
+     -20.3
+    ],
+    [
+     -24.7,
+     -21.9
+    ]
+   ],
+   "height": 7.5,
+   "material": "polished_andesite"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    0.0,
+    -25.5
+   ],
+   "label": "seat row 1 cut",
+   "mode": "carve",
+   "size": [
+    140,
+    20,
+    1.0
+   ]
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    -0.3,
+    -25.5
+   ],
+   "label": "seat row 1",
+   "mode": "paint",
+   "size": [
+    140,
+    0.7,
+    1.0
+   ],
+   "material": "blue_concrete"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    0.62,
+    -24.5
+   ],
+   "label": "seat row 2 cut",
+   "mode": "carve",
+   "size": [
+    140,
+    20,
+    1.0
+   ]
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    0.32,
+    -24.5
+   ],
+   "label": "seat row 2",
+   "mode": "paint",
+   "size": [
+    140,
+    0.7,
+    1.0
+   ],
+   "material": "blue_concrete"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    1.24,
+    -23.5
+   ],
+   "label": "seat row 3 cut",
+   "mode": "carve",
+   "size": [
+    140,
+    20,
+    1.0
+   ]
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    0.94,
+    -23.5
+   ],
+   "label": "seat row 3",
+   "mode": "paint",
+   "size": [
+    140,
+    0.7,
+    1.0
+   ],
+   "material": "blue_concrete"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    1.86,
+    -22.5
+   ],
+   "label": "seat row 4 cut",
+   "mode": "carve",
+   "size": [
+    140,
+    20,
+    1.0
+   ]
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    1.56,
+    -22.5
+   ],
+   "label": "seat row 4",
+   "mode": "paint",
+   "size": [
+    140,
+    0.7,
+    1.0
+   ],
+   "material": "blue_concrete"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    2.48,
+    -21.5
+   ],
+   "label": "seat row 5 cut",
+   "mode": "carve",
+   "size": [
+    140,
+    20,
+    1.0
+   ]
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    2.18,
+    -21.5
+   ],
+   "label": "seat row 5",
+   "mode": "paint",
+   "size": [
+    140,
+    0.7,
+    1.0
+   ],
+   "material": "blue_concrete"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    3.1,
+    -20.5
+   ],
+   "label": "seat row 6 cut",
+   "mode": "carve",
+   "size": [
+    140,
+    20,
+    1.0
+   ]
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    2.8,
+    -20.5
+   ],
+   "label": "seat row 6",
+   "mode": "paint",
+   "size": [
+    140,
+    0.7,
+    1.0
+   ],
+   "material": "blue_concrete"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    3.72,
+    -19.5
+   ],
+   "label": "seat row 7 cut",
+   "mode": "carve",
+   "size": [
+    140,
+    20,
+    1.0
+   ]
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    3.42,
+    -19.5
+   ],
+   "label": "seat row 7",
+   "mode": "paint",
+   "size": [
+    140,
+    0.7,
+    1.0
+   ],
+   "material": "blue_concrete"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    4.34,
+    -18.5
+   ],
+   "label": "seat row 8 cut",
+   "mode": "carve",
+   "size": [
+    140,
+    20,
+    1.0
+   ]
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    4.04,
+    -18.5
+   ],
+   "label": "seat row 8",
+   "mode": "paint",
+   "size": [
+    140,
+    0.7,
+    1.0
+   ],
+   "material": "blue_concrete"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    4.96,
+    -17.5
+   ],
+   "label": "seat row 9 cut",
+   "mode": "carve",
+   "size": [
+    140,
+    20,
+    1.0
+   ]
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    4.66,
+    -17.5
+   ],
+   "label": "seat row 9",
+   "mode": "paint",
+   "size": [
+    140,
+    0.7,
+    1.0
+   ],
+   "material": "blue_concrete"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    5.58,
+    -16.5
+   ],
+   "label": "seat row 10 cut",
+   "mode": "carve",
+   "size": [
+    140,
+    20,
+    1.0
+   ]
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    5.28,
+    -16.5
+   ],
+   "label": "seat row 10",
+   "mode": "paint",
+   "size": [
+    140,
+    0.7,
+    1.0
+   ],
+   "material": "blue_concrete"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    6.2,
+    -15.5
+   ],
+   "label": "seat row 11 cut",
+   "mode": "carve",
+   "size": [
+    140,
+    20,
+    1.0
+   ]
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    5.9,
+    -15.5
+   ],
+   "label": "seat row 11",
+   "mode": "paint",
+   "size": [
+    140,
+    0.7,
+    1.0
+   ],
+   "material": "blue_concrete"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    6.82,
+    -14.5
+   ],
+   "label": "seat row 12 cut",
+   "mode": "carve",
+   "size": [
+    140,
+    20,
+    1.0
+   ]
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    6.52,
+    -14.5
+   ],
+   "label": "seat row 12",
+   "mode": "paint",
+   "size": [
+    140,
+    0.7,
+    1.0
+   ],
+   "material": "blue_concrete"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    0,
+    -14.0
+   ],
+   "label": "aisle",
+   "size": [
+    1.4,
+    0.2,
+    24
+   ],
+   "mode": "paint",
+   "material": "polished_andesite"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    0,
+    -3.0
+   ],
+   "label": "club building",
+   "size": [
+    80,
+    15.5,
+    22
+   ],
+   "material": "bricks"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -49,
+    0,
+    -5.0
+   ],
+   "label": "end pavilion",
+   "size": [
+    18,
+    17,
+    18
+   ],
+   "material": "bricks"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -49,
+    17,
+    -5.0
+   ],
+   "label": "pavilion cornice",
+   "size": [
+    18.6,
+    0.6,
+    18.6
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -54,
+    9.0,
+    -14.0
+   ],
+   "label": "pavilion window",
+   "mode": "paint",
+   "size": [
+    1.6,
+    2.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -49,
+    9.0,
+    -14.0
+   ],
+   "label": "pavilion window",
+   "mode": "paint",
+   "size": [
+    1.6,
+    2.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -44,
+    9.0,
+    -14.0
+   ],
+   "label": "pavilion window",
+   "mode": "paint",
+   "size": [
+    1.6,
+    2.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -54,
+    12.6,
+    -14.0
+   ],
+   "label": "pavilion window",
+   "mode": "paint",
+   "size": [
+    1.6,
+    2.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -49,
+    12.6,
+    -14.0
+   ],
+   "label": "pavilion window",
+   "mode": "paint",
+   "size": [
+    1.6,
+    2.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -44,
+    12.6,
+    -14.0
+   ],
+   "label": "pavilion window",
+   "mode": "paint",
+   "size": [
+    1.6,
+    2.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    49,
+    0,
+    -5.0
+   ],
+   "label": "end pavilion",
+   "size": [
+    18,
+    17,
+    18
+   ],
+   "material": "bricks"
+  },
+  {
+   "shape": "box",
+   "at": [
+    49,
+    17,
+    -5.0
+   ],
+   "label": "pavilion cornice",
+   "size": [
+    18.6,
+    0.6,
+    18.6
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    44,
+    9.0,
+    -14.0
+   ],
+   "label": "pavilion window",
+   "mode": "paint",
+   "size": [
+    1.6,
+    2.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    49,
+    9.0,
+    -14.0
+   ],
+   "label": "pavilion window",
+   "mode": "paint",
+   "size": [
+    1.6,
+    2.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    54,
+    9.0,
+    -14.0
+   ],
+   "label": "pavilion window",
+   "mode": "paint",
+   "size": [
+    1.6,
+    2.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    44,
+    12.6,
+    -14.0
+   ],
+   "label": "pavilion window",
+   "mode": "paint",
+   "size": [
+    1.6,
+    2.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    49,
+    12.6,
+    -14.0
+   ],
+   "label": "pavilion window",
+   "mode": "paint",
+   "size": [
+    1.6,
+    2.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    54,
+    12.6,
+    -14.0
+   ],
+   "label": "pavilion window",
+   "mode": "paint",
+   "size": [
+    1.6,
+    2.4,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    7.5,
+    -14.0
+   ],
+   "label": "club glazing",
+   "mode": "paint",
+   "size": [
+    78,
+    3.6,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    11.1,
+    -14.0
+   ],
+   "label": "name band",
+   "mode": "paint",
+   "size": [
+    80,
+    1.0,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    12.1,
+    -14.0
+   ],
+   "label": "suite glazing",
+   "mode": "paint",
+   "size": [
+    78,
+    3.0,
+    1.3
+   ],
+   "material": "gray_stained_glass_pane"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    15.1,
+    -3.0
+   ],
+   "label": "roof cornice",
+   "size": [
+    81,
+    0.6,
+    23
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -36,
+    7.5,
+    -14.0
+   ],
+   "label": "mullion",
+   "mode": "paint",
+   "size": [
+    0.4,
+    7.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -30,
+    7.5,
+    -14.0
+   ],
+   "label": "mullion",
+   "mode": "paint",
+   "size": [
+    0.4,
+    7.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -24,
+    7.5,
+    -14.0
+   ],
+   "label": "mullion",
+   "mode": "paint",
+   "size": [
+    0.4,
+    7.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -18,
+    7.5,
+    -14.0
+   ],
+   "label": "mullion",
+   "mode": "paint",
+   "size": [
+    0.4,
+    7.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -12,
+    7.5,
+    -14.0
+   ],
+   "label": "mullion",
+   "mode": "paint",
+   "size": [
+    0.4,
+    7.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -6,
+    7.5,
+    -14.0
+   ],
+   "label": "mullion",
+   "mode": "paint",
+   "size": [
+    0.4,
+    7.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    7.5,
+    -14.0
+   ],
+   "label": "mullion",
+   "mode": "paint",
+   "size": [
+    0.4,
+    7.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    6,
+    7.5,
+    -14.0
+   ],
+   "label": "mullion",
+   "mode": "paint",
+   "size": [
+    0.4,
+    7.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    12,
+    7.5,
+    -14.0
+   ],
+   "label": "mullion",
+   "mode": "paint",
+   "size": [
+    0.4,
+    7.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    18,
+    7.5,
+    -14.0
+   ],
+   "label": "mullion",
+   "mode": "paint",
+   "size": [
+    0.4,
+    7.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    24,
+    7.5,
+    -14.0
+   ],
+   "label": "mullion",
+   "mode": "paint",
+   "size": [
+    0.4,
+    7.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    30,
+    7.5,
+    -14.0
+   ],
+   "label": "mullion",
+   "mode": "paint",
+   "size": [
+    0.4,
+    7.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    36,
+    7.5,
+    -14.0
+   ],
+   "label": "mullion",
+   "mode": "paint",
+   "size": [
+    0.4,
+    7.6,
+    1.3
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    15.7,
+    -12.0
+   ],
+   "label": "video board frame",
+   "size": [
+    26,
+    10.5,
+    2.0
+   ],
+   "material": "black_concrete"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    16.4,
+    -13.0
+   ],
+   "label": "video board screen",
+   "mode": "paint",
+   "size": [
+    24,
+    8.0,
+    1.3
+   ],
+   "material": "blue_concrete"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    21.0,
+    -13.0
+   ],
+   "label": "screen graphic",
+   "mode": "paint",
+   "size": [
+    10,
+    2.2,
+    1.3
+   ],
+   "material": "red_concrete"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    26.2,
+    -12.0
+   ],
+   "label": "stadium name band",
+   "size": [
+    26,
+    1.0,
+    2.0
+   ],
+   "material": "smooth_quartz"
+  },
+  {
+   "shape": "box",
+   "at": [
+    0,
+    4.0,
+    8.0
+   ],
+   "label": "support legs",
+   "size": [
+    6,
+    11.7,
+    1.0
+   ],
+   "mode": "paint",
+   "material": "black_concrete"
+  },
+  {
+   "shape": "beam",
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "label": "flag pole",
+   "from": [
+    -30,
+    15.6,
+    -13.0
+   ],
+   "to": [
+    -30,
+    24.5,
+    -13.0
+   ],
+   "width": 0.2,
+   "material": "iron_bars"
+  },
+  {
+   "shape": "box",
+   "at": [
+    -28.6,
+    22.6,
+    -13.0
+   ],
+   "label": "flag",
+   "size": [
+    2.6,
+    1.6,
+    0.34
+   ],
+   "material": "blue_wool"
+  },
+  {
+   "shape": "beam",
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "label": "flag pole",
+   "from": [
+    30,
+    15.6,
+    -13.0
+   ],
+   "to": [
+    30,
+    24.5,
+    -13.0
+   ],
+   "width": 0.2,
+   "material": "iron_bars"
+  },
+  {
+   "shape": "box",
+   "at": [
+    31.4,
+    22.6,
+    -13.0
+   ],
+   "label": "flag",
+   "size": [
+    2.6,
+    1.6,
+    0.34
+   ],
+   "material": "red_wool"
+  }
+ ]
+}

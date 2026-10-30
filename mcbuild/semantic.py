@@ -91,10 +91,21 @@ def build_from_spec(spec: dict, block_size: float | None = None, height_blocks: 
     paint = np.full(dims, -1, np.int16)
     thin = np.full(tuple(nblocks), -1, np.int16)      # block-level thin parts
 
-    def touched_blocks(mesh, g):
+    def window(mesh):
+        """Sub-cell window (block-aligned) around a part, so each part is voxelized only where it is."""
+        i0 = np.floor((mesh.bounds[0] - origin) / sub).astype(int) - 2
+        i1 = np.ceil((mesh.bounds[1] - origin) / sub).astype(int) + 2
+        i0 = np.clip(i0 // 2 * 2, 0, dims)
+        i1 = np.clip(-(-i1 // 2) * 2, 0, dims)
+        return i0, i1
+
+    def touched_blocks(mesh, g, i0, i1):
         """Blocks a thin part passes through at all (it may be far thinner
         than half a block, so 'centre inside' would miss it)."""
-        t = g.reshape(nblocks[0], 2, nblocks[1], 2, nblocks[2], 2).sum(axis=(1, 3, 5)) >= 4
+        t = np.zeros(tuple(nblocks), bool)
+        gb = tuple(i1 // 2 - i0 // 2)
+        t[tuple(slice(a // 2, b // 2) for a, b in zip(i0, i1))] = \
+            g.reshape(gb[0], 2, gb[1], 2, gb[2], 2).sum(axis=(1, 3, 5)) >= 4
         n = max(500, int(mesh.area / (block_size / 4) ** 2))
         pts, fi = trimesh.sample.sample_surface(mesh, min(n, 2_000_000), seed=0)
         # nudge inward so faces lying exactly on a block boundary (the top of
@@ -113,19 +124,25 @@ def build_from_spec(spec: dict, block_size: float | None = None, height_blocks: 
         return t
 
     for mesh, mname, mode in parts:
-        g = _occ(mesh, origin, dims, sub)
+        i0, i1 = window(mesh)
+        if np.any(i1 <= i0):
+            continue
+        g = _occ(mesh, origin + i0 * sub, tuple(i1 - i0), sub)
+        sl = tuple(slice(a, b) for a, b in zip(i0, i1))
         if mode == "carve":
-            occ &= ~g
-            thin[g.reshape(nblocks[0], 2, nblocks[1], 2, nblocks[2], 2).any(axis=(1, 3, 5))] = -1
+            occ[sl] &= ~g
+            gb = tuple(i1 // 2 - i0 // 2)
+            tb = thin[tuple(slice(a // 2, b // 2) for a, b in zip(i0, i1))]
+            tb[g.reshape(gb[0], 2, gb[1], 2, gb[2], 2).any(axis=(1, 3, 5))] = -1
         elif mode == "paint":
-            paint[g] = idx(mname)
+            paint[sl][g] = idx(mname)
         else:
             i = idx(mname)
             if isinstance(mats[i], Connectable):
-                thin[touched_blocks(mesh, g)] = i
+                thin[touched_blocks(mesh, g, i0, i1)] = i
             else:
-                occ |= g
-                matg[g] = i
+                occ[sl] |= g
+                matg[sl][g] = i
 
     (X, Y, Z), coords, kinds, codes = classify_blocks(occ, shapes=shapes, hollow=hollow) if occ.any() else \
         ((int(nblocks[0]), int(nblocks[1]), int(nblocks[2])), np.zeros((0, 3), int), np.zeros(0, np.int8), np.zeros(0, int))

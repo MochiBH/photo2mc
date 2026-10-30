@@ -147,7 +147,7 @@ check("semantic remap keeps stair shapes", any("waxed_oxidized_cut_copper_stairs
 
 # 15. whole-site pipeline on synthetic map + lidar, written as a world and read back
 from mcbuild.geo import Frame
-from mcbuild.site import Site, build_world, rotate_state
+from mcbuild.site import Site, add_hero, build_world, rotate_state
 from mcbuild.world import read_chunk
 fr = Frame(32.0, -96.0, 32.0006, -95.9993)            # ~66 x 66 m
 rng = np.random.default_rng(0)
@@ -190,6 +190,33 @@ with tempfile.TemporaryDirectory() as d:
     lv = nbtlib.load(os.path.join(d, "level.dat"))
     check("world: chunk + level.dat readable", c is not None and int(c["DataVersion"]) == 3955 and len(c["sections"]) >= 1
           and str(lv["Data"]["LevelName"]) == "test" and stats["chunks"] > 0)
+
+# 16. pixel font, stadium field (end zone lettering, goal posts) and a hero with extras
+from mcbuild.pixfont import text as pixtext
+t = pixtext("SMU", gap=1)
+check("pixfont", t.shape == (7, 17) and t[:, 5].sum() == 0 and t[:, :5].sum() > 10)
+fr = Frame(32.0, -96.0, 32.0012, -95.9984)            # ~151 x 133 m
+gx, gy = rng.uniform(0, fr.width, 40000), rng.uniform(0, fr.height, 40000)
+lid = {"x": gx.astype(np.float32), "y": gy.astype(np.float32), "z": np.full(len(gx), 100.0, np.float32),
+       "cls": np.full(len(gx), 2, np.uint8), "ret": np.ones(len(gx), np.uint8), "nret": np.ones(len(gx), np.uint8)}
+cx, cy = fr.width / 2, fr.height / 2
+feats = [{"kind": "area", "tags": {"leisure": "stadium", "name": "Bowl"}, "pts": sq(cx - 70, cy - 64, cx + 70, cy + 64), "holes": [], "id": "w1"},
+         {"kind": "area", "tags": {"leisure": "pitch", "sport": "american_football"},
+          "pts": sq(cx - 24.5, cy - 55, cx + 24.5, cy + 55), "holes": [], "id": "w2"},
+         {"kind": "area", "tags": {"building": "yes", "name": "Shed"}, "pts": sq(4, 4, 12, 12), "holes": [], "id": "w3"}]
+site = Site(fr, feats, lid, log=lambda *a: None)
+hero = {"name": "kiosk", "parts": [{"shape": "box", "size": [3, 3, 3], "at": [0, 0, 0], "material": "bricks"}]}
+add_hero(site, "Shed", hero, at=(8.0, 8.0), log=lambda *a: None,
+         extras={"ground": [{"shape": "rect", "x": 0, "z": 0, "w": 8, "d": 8, "surface": "stone"}],
+                 "lamps": [[3, 3]], "signs": [{"text": "HI", "x": 0, "z": 1.6, "y": 1.0, "facing": "south"}]})
+A, _ = site.region(0, 0)
+names = {site.pal.states[i].split("[")[0].split(":")[1] for i in np.unique(A)}
+check("stadium: end zones, lettering, lines", {"blue_concrete", "red_concrete", "white_concrete"} <= names
+      and len(site.stadiums) == 1, str(sorted(names)))
+r, c = site.stadiums[0]._rc(site.stadiums[0].c + site.stadiums[0].u * (site.stadiums[0].el + 0.3))
+post = [site.pal.states[i] for i in A[r, c] if i]
+check("stadium: goal post", sum("white_concrete" in s_ for s_ in post) >= 9)
+check("hero: spec, lamp, sign", {"bricks", "lantern", "black_concrete"} <= names)
 
 print(f"\n{sum(results)}/{len(results)} passed")
 sys.exit(0 if all(results) else 1)

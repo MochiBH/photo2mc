@@ -62,9 +62,28 @@ with `level.dat`; drop it into `.minecraft/saves/`), `out/smu.zip` and a top-dow
   (terracotta and granite in brick, cracked slate tiles, patched asphalt, andesite in concrete); parking lots get
   stall lines, crossings get zebra stripes, roads get a half-block curb; lawns have tufts of grass and a few flowers,
   flower beds bloom, and the ground under trees is bare earth.
-- **Hero buildings** replace the lidar massing with a detailed spec: `samples/smu/` has Dallas Hall (from lidar
-  dimensions and Commons photos) and Perkins Chapel (lidar + Georgian steeple conventions). Add more to
-  `heroes.json`; `python samples/smu/make_heroes.py` regenerates the specs.
+- **Streets** (`mcbuild/street.py`): double yellow centre lines, dashed lane lines,
+  concrete joints, sidewalk seams, stop bars,
+  street lamps (blackstone post + lantern) along roads and paths, benches with bins, bike racks, picnic tables, stop
+  signs, the campus flagpole, shrubs along foundations, and doors where OSM entrances or paths meet a wall.
+- **Stadium** (`mcbuild/stadium.py`): every American football pitch inside a stadium outline gets a real field —
+  white sideline border, 5-yard lines, hash marks, yard numbers, blue end zones with MUSTANGS in red with a white
+  outline (in both end zones), a midfield horse, goal posts — and light towers at the OSM masts, as tall as the
+  lidar says. The lidar rake becomes seat rows (red lower bowl, blue upper rows) with stepped aisles.
+- **Hero buildings** replace the lidar massing with a detailed spec: `samples/smu/` has
+  - Dallas Hall (from lidar dimensions and Commons photos) and Perkins Chapel (lidar + Georgian steeple conventions);
+  - the Cox School of Business (Fincher, Maguire and Crow buildings) laid out from SMU's floor map and aerial
+    photos: Georgian brick wings with stone quoins and pedimented porticos, the rotunda and the courtyard, its lawn,
+    walks, lamps and an "SMU COX" sign on the boulevard front;
+  - Ford Stadium's west press box: white frame, two floors of glass suites with mullions, the "SMU MUSTANGS" sign
+    band, stair towers, and the north suite wing; and the Garry Weber End Zone Complex (seats, glass club, video
+    board, flags).
+
+  Each hero in `heroes.json` names the OSM building(s) it replaces and can set `at` (local metres for the spec
+  origin), `keep` (leave the underlying building, for additions to the stadium), and `extras` in spec metres:
+  `ground` (painted rectangles/ellipses), `lamps`, `benches`, `trees`, `signs` (raised pixel-font letters),
+  `clear` (drop lidar trees and clutter) and `carve` (empty a polygon above a height, to cut lidar massing away).
+  `python samples/smu/make_heroes.py` regenerates the specs.
 
 `python tools/site_view.py out/smu 540 690 870 1080 out/view.png` draws any part of the saved world with Minecraft's
 own block textures (downloaded once into `data/textures/`).
@@ -135,6 +154,9 @@ Extras: `rotate`, `tilt` (e.g. a clock face on a wall), `repeat` (rows/grids of 
 - `mcbuild/export.py` — `.schem`, datapack, viewer JSON.
 - `mcbuild/geo.py` — OpenStreetMap and USGS lidar download/parse into local meters. `mcbuild/site.py` — whole-site
   generator (terrain, surfaces, buildings, trees, heroes). `mcbuild/world.py` — Anvil region files + `level.dat`.
+  `mcbuild/street.py` — street paint and objects. `mcbuild/stadium.py` — football field, goal posts, light towers,
+  seat and press-box colours. `mcbuild/pixfont.py` — 5×7 pixel font for signs and yard numbers.
+  `mcbuild/trees.py` — grown trees. `mcbuild/texrender.py` — textured previews.
   `mcbuild/sitepreview.py` — fast top-down/oblique previews of big block arrays.
 - `mcbuild/render.py` — quick isometric PNG.
 - `samples/make_samples.py` — procedural cottage, Great Pyramid, domed temple.
@@ -149,5 +171,7 @@ Extras: `rotate`, `tilt` (e.g. a clock face on a wall), `repeat` (rows/grids of 
 - `site` buildings without a hero spec are lidar massing plus a facade style: roof shapes, dormers and chimneys are
   real, but porticos, columns and ornament are not. Buildings newer than the lidar (2018) get a height from OSM tags or
   a default. Interiors are hollow.
+- SMU's real field has the SMU logo in one end zone and MUSTANGS in the other; this build puts MUSTANGS in both, as
+  asked. The Cox sign is "SMU COX" because the full name doesn't fit legibly at 0.33 m per block.
 - The `site` world format was checked by reading it back with an independent NBT parser, not by loading it in the game.
 - Very lattice-like structures (Eiffel Tower ironwork) come out as solid massing; openings have to be carved explicitly.

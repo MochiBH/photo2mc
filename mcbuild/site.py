@@ -35,12 +35,15 @@ Y0 = -50                      # block y of the lowest ground in the site
 
 def _hash(r, c, y, salt):
     """Deterministic per-block noise from global coordinates."""
-    r = np.asarray(r, np.int64)
-    c = np.asarray(c, np.int64)
-    y = np.asarray(y, np.int64)
-    h = (r * 73856093) ^ (c * 19349663) ^ (y * 83492791) ^ (salt * 2654435761)
-    h = (h ^ (h >> 13)) * 1274126177
-    return np.abs(h ^ (h >> 16))
+    r = np.asarray(r, np.int64).astype(np.uint64)
+    c = np.asarray(c, np.int64).astype(np.uint64)
+    y = np.asarray(y, np.int64).astype(np.uint64)
+    with np.errstate(over="ignore"):
+        h = (r * np.uint64(73856093)) ^ (c * np.uint64(19349663)) ^ (y * np.uint64(83492791)) \
+            ^ (np.uint64(int(salt) % 2 ** 32) * np.uint64(2654435761))
+        h = (h ^ (h >> np.uint64(13))) * np.uint64(1274126177)
+        h = h ^ (h >> np.uint64(16))
+    return (h & np.uint64(2 ** 62 - 1)).astype(np.int64)
 
 
 def _h(s: str) -> int:
@@ -124,7 +127,7 @@ STYLES = {
 SURF = ["grass_block[snowy=false]", "light_gray_concrete", "gray_concrete", "smooth_stone", "bricks",
         "stone_bricks", "water[level=0]", "sand", "red_terracotta", "moss_block", "green_terracotta",
         "yellow_concrete", "white_concrete", "dirt_path", "gravel", "polished_andesite", "coarse_dirt",
-        "red_concrete"]
+        "red_concrete", "stone", "andesite", "blue_concrete"]
 S = {n.split("[")[0]: i for i, n in enumerate(SURF)}
 S_GRASS, S_CONC, S_ASPH, S_WALK, S_BRICK, S_STONE, S_WATER = 0, 1, 2, 3, 4, 5, 6
 
@@ -172,6 +175,31 @@ class Site:
         self._finish_buildings()
         self._vegetation()
         self._extras()
+        from .street import Streetscape
+        self.S = S
+        self.street = Streetscape(self)
+        self._stadiums()
+
+    def _stadiums(self):
+        """Ford-Stadium-style detail for every football pitch inside a stadium outline."""
+        from .stadium import Stadium, text_bitmap
+        self.stadiums = []
+        bowls = [f for f in self.feats if f["kind"] == "area" and f["tags"].get("leisure") == "stadium"]
+        for f in self.feats:
+            t = f["tags"]
+            if f["kind"] == "area" and t.get("leisure") == "pitch" and t.get("sport") == "american_football":
+                c = f["pts"].mean(0)
+                if any(_inside(bw["pts"], *c) for bw in bowls):
+                    self.stadiums.append(Stadium(self, f))
+        # press box: the tall step face in stadium buildings
+        stad_k = np.array([B["style"] == "stadium" for B in self.blds] + [False])
+        deck = getattr(self, "_deck", None)
+        if deck is not None:
+            face = stad_k[self.bid] & (deck - self.step_lo.astype(np.int32) > 15) & (deck - self.base_y > 40)
+            if face.sum() > 20:
+                rows = np.nonzero(face)[0]
+                from .pixfont import text as pixtext
+                self.pressbox = {"rc": int(np.median(rows)), "sign": pixtext("SMU MUSTANGS").astype(np.uint8)}
 
     # ------------------------------------------------------------ coordinates
     def _px(self, pts, res):
@@ -180,7 +208,7 @@ class Site:
 
     def yb(self, z):
         """height (m) -> block y."""
-        return (Y0 + np.floor((np.asarray(z) - self.z0) * 3)).astype(np.int32)
+        return (Y0 + np.floor((np.asarray(z) - self.z0) / self.bs + 1e-6)).astype(np.int32)
 
     # ------------------------------------------------------------ lidar rasters
     def _grid(self, lid, mask, res, how):
@@ -434,6 +462,8 @@ class Site:
         wm = self.surf == S_WATER
         lab, n = ndi.label(wm)
         self.water_y = np.full(self.surf.shape, -999, np.int16)
+        self.fountain_rim = np.zeros(self.surf.shape, bool)
+        self.fountains = []
         if not n:
             return
         ring = ndi.binary_dilation(wm, iterations=1) & ~wm
@@ -643,6 +673,7 @@ class Site:
             same = np.roll(bid, (dr, dc), (0, 1)) == bid
             nmin = np.where(same & inb, np.minimum(nmin, np.roll(deck, (dr, dc), (0, 1))), nmin)
         self.step_lo = nmin.astype(np.int16)
+        self._deck = deck
         # locally flat roof (deck varies by at most one block within 3 blocks): concourses, press-box roofs
         dsm_ = ndi.gaussian_filter(np.where(inb, deck, 0).astype(np.float32), 2.5)
         wsum = ndi.gaussian_filter(inb.astype(np.float32), 2.5)
@@ -821,16 +852,48 @@ class Site:
                 fluid.append((fc, fy + 5, fr))
         # extras
         ex = self.extra[sl]
-        for val, blk, hgt in ((1, "oak_leaves[distance=1,persistent=true,waterlogged=false]", 4), (2, "bricks", 5)):
+        for val, blk, hgt in ((1, "oak_leaves[distance=1,persistent=true,waterlogged=false]", 4), (2, "bricks", 5),
+                              (3, "azalea_leaves[distance=1,persistent=true,waterlogged=false]", 3)):
             m = ex == val
+            if val == 3:                                  # foundation shrubs: some flowering, a soft top edge
+                hh = _hash(rr + r0, cc + c0, 0, 23) % 100
+                for k in range(1, hgt + 1):
+                    mk = m & ~((k == hgt) & (hh < 30))
+                    a[rr[mk], cc[mk], (g[mk] + k - Y_MIN).clip(0, H - 1)] = np.where(
+                        hh[mk] < 18, P("flowering_azalea_leaves[distance=1,persistent=true,waterlogged=false]"), P(blk))
+                continue
             for k in range(1, hgt + 1):
                 a[rr[m], cc[m], (g[m] + k - Y_MIN).clip(0, H - 1)] = P(blk)
         self._fill_buildings(a, sl, yy, H)
         self._fill_trees(a, r0, c0, nz, nx, H)
+        for m, ycut in getattr(self, "carves", []):
+            mm = m[r0:r0 + nz, c0:c0 + nx]
+            if mm.any():
+                a[mm, max(ycut - Y_MIN, 0):] = 0
         _paste_heroes(self, a, r0, c0, nz, nx, H)
         self._decorate(a, r0, c0, nz, nx, g)
+        self._objects(a, r0, c0, nz, nx, g, H)
         self._texture(a, r0, c0)
         return A, fluid
+
+    def _objects(self, a, r0, c0, nz, nx, g, H):
+        """Street furniture from the streetscape list (lamps, benches, signs...)."""
+        from .street import object_blocks
+        P = self.pal
+        for (r, c, kind, info) in self.street.objects:
+            if not (r0 - 10 <= r < r0 + nz + 10 and c0 - 10 <= c < c0 + nx + 10):
+                continue
+            h = int(_hash(r, c, 0, 31))
+            gy = int(self.ground_y[min(max(r, 0), self.NZ - 1), min(max(c, 0), self.NX - 1)])
+            for dr, dc, dy, st in object_blocks(kind, info, h):
+                lr, lc = r + dr - r0, c + dc - c0
+                y = gy + dy - Y_MIN
+                if 0 <= lr < nz and 0 <= lc < nx and 0 < y < H:
+                    cur = a[lr, lc, y]
+                    if cur == 0 or self.pal.states[cur].split("[")[0].split(":")[1] in ("short_grass",) or \
+                            self.pal.states[cur].split("[")[0].endswith(("leaves", "tulip", "poppy", "dandelion",
+                                                                          "allium", "bluet", "daisy", "cornflower")):
+                        a[lr, lc, y] = P(st)
 
     def _decorate(self, a, r0, c0, nz, nx, g):
         """Curbs, lawn grass and flowers, flower beds, bare earth under trees (on top of the terrain)."""
@@ -940,10 +1003,14 @@ class Site:
             # only the top layer is roof; partial blocks lower down are the side of a step -> wall
             lower = y[m] < hi[m] - 2
             # material: 0 roof, 1 wall (side of a step), 2 stadium aisle, 3 flat part of a stadium
-            mc = np.where(lower, 1, np.where(stad[m] & flat_l[m], 3, np.where(aisle[m], 2, 0)))
-            key = (b[m].astype(np.int64) * 4 + mc) * 256 + code
+            # 4 = upper-deck seats (blue)
+            upper = stad[m] & ((hi[m] - base[m]) > 29)
+            high = stad[m] & ((hi[m] - base[m]) > 54)
+            mc = np.where(lower, 1, np.where(stad[m] & (flat_l[m] | high), 3, np.where(aisle[m], 2, np.where(upper, 4, 0))))
+            key = (b[m].astype(np.int64) * 8 + mc) * 256 + code
             uk, inv = np.unique(key, return_inverse=True)
-            fams = lambda k: (roof_fam[k // 1024], wall_fam[k // 1024], "polished_andesite", "smooth_stone")[(k // 256) % 4]
+            fams = lambda k: (roof_fam[k // 2048], wall_fam[k // 2048], "polished_andesite", "smooth_stone",
+                              "blue_concrete")[(k // 256) % 8]
             idx = np.array([P.shaped(fams(k), int(k % 256)) for k in uk], np.uint16)[inv]
             ok = (y[m] - Y_MIN >= 0) & (y[m] - Y_MIN < H)
             a[rr[m][ok], cc[m][ok], (y[m] - Y_MIN)[ok]] = idx[ok]
@@ -962,8 +1029,18 @@ class Site:
                 (np.arange(n.sum()) - np.repeat(np.cumsum(n) - n, n))
             wall_ids = np.array([P(FAM[B.get("wall", "bricks")].full) for B in self.blds], np.uint16)
             ok = ys > base[rep]
-            a[rr[rep][ok], cc[rep][ok], ys[ok] - Y_MIN] = np.where(
-                (deck[rep] - slo[rep] > 3)[ok], wall_ids[b[rep]][ok], fam_full[rep][ok])
+            vals = np.where(deck[rep] - slo[rep] > 3, wall_ids[b[rep]], fam_full[rep])
+            # stadium press box: the tall face above the seats is glass suites with a sign band
+            pb = getattr(self, "pressbox", None)
+            if pb is not None:
+                big = stad[rep] & (deck[rep] - slo[rep] > 15) & (ys - base[rep] > 30)
+                if big.any():
+                    from .stadium import press_box_block
+                    rel = ys - slo[rep] - 1
+                    col = pb["rc"] - (rr[rep] + r0) + pb["sign"].shape[1] // 2
+                    for i in np.flatnonzero(big):
+                        vals[i] = P(press_box_block(int(rel[i]), int(col[i]), pb["sign"]))
+            a[rr[rep][ok], cc[rep][ok], ys[ok] - Y_MIN] = vals[ok]
         # walls on the boundary: from base+1 up to the deck
         wr, wc = rr[bnd], cc[bnd]
         wb, wbase, wtop = b[bnd], base[bnd], deck[bnd]
@@ -973,7 +1050,7 @@ class Site:
             ys = wbase[rep] + 1 + (np.arange(n.sum()) - np.repeat(np.cumsum(n) - n, n))
             vals = self._facade(wb[rep], ys, wbase[rep], wr[rep] + r0, wc[rep] + c0, code_b[bnd][rep],
                                 corner[bnd][rep], straight[bnd][rep], np.minimum(eave[bnd][rep] + 12, wtop[rep]),
-                                styles)
+                                styles, self.street.door[sl][wr, wc][rep])
             a[wr[rep], wc[rep], ys - Y_MIN] = vals
         # flat roofs: parapet on the boundary
         pm = bnd & flat
@@ -996,7 +1073,7 @@ class Site:
         free = a[rr, cc, y] == 0
         a[rr[free], cc[free], y[free]] = P("smooth_quartz_slab[type=top,waterlogged=false]")
 
-    def _facade(self, b, y, base, r, c, code, corner, straight, eave, styles):
+    def _facade(self, b, y, base, r, c, code, corner, straight, eave, styles, door=None):
         """Block for each wall position (vectorised)."""
         P = self.pal
         out = np.zeros(len(b), np.uint16)
@@ -1041,6 +1118,24 @@ class Site:
                 vals.append(P(f"{g}[east={ew},north={nsx},south={nsx},waterlogged=false,west={ew}]"))
             out[gi] = np.array(vals, np.uint16)[inv]
         out[inwin & garage] = 0
+        # sash windows: a white meeting rail across the middle of each window
+        rail = inwin & ~garage & (row == wy + wh // 2)
+        out[rail] = trim[rail]
+        # doorways: dark double door, white surround, glass fanlight, slab hood
+        if door is not None:
+            dm = door > 0
+            off = np.abs(door.astype(int) - 3)
+            mid = dm & (off <= 1)
+            edge = dm & (off == 2)
+            r1 = (rel >= 1) & (rel <= 7)
+            out[mid & r1] = P("dark_oak_planks")
+            out[edge & (rel >= 1) & (rel <= 9)] = trim[edge & (rel >= 1) & (rel <= 9)]
+            fan = mid & (rel == 8)
+            if fan.any():
+                ew = ((code & 3) > 0)[fan]
+                out[fan] = np.where(ew, P("gray_stained_glass_pane[east=true,north=false,south=false,waterlogged=false,west=true]"),
+                                    P("gray_stained_glass_pane[east=false,north=true,south=true,waterlogged=false,west=false]"))
+            out[mid & (rel == 9)] = trim[mid & (rel == 9)]
         # corner quoins
         q = corner & (rel > 2) & (((rel // 2) % 2) == 0)
         out[q] = trim[q]
@@ -1214,12 +1309,21 @@ def rotate_state(s: str, quarter: int) -> str:
     return name + "[" + ",".join(f"{k}={v}" for k, v in kv.items()) + "]"
 
 
-def add_hero(site: Site, building_name: str, spec: dict, quarter: int = 0, log=print):
-    """Replace the lidar massing of the named building with a detailed spec build (same footprint centre,
-    standing on the building's floor). quarter: clockwise quarter turns (0 = spec front faces south)."""
-    from .semantic import build_from_spec
-    k = next((i for i, B in enumerate(site.blds) if B["name"] == building_name), None)
-    if k is None:
+def add_hero(site: Site, building_name, spec: dict, quarter: int = 0, at=None, extras=None, keep=False, log=print):
+    """Replace lidar massing with a detailed spec build.
+
+    building_name: one OSM building name, or a list of names, whose massing the spec replaces.
+    at: None -> centre the spec on the (first) building's footprint; or (x, y) local metres where the
+        spec's origin (0, 0) goes (spec x = east, spec z = south).
+    extras: optional dict for the ground around it, in spec coordinates (metres):
+        "ground": [{"shape": "rect"|"ellipse", "x", "z", "w", "d", "surface": SURF name}, ...] painted in order,
+        "lamps"/"benches": [[x, z(, facing)], ...], "trees": [[x, z, height, radius, species], ...],
+        "clear": [x0, z0, x1, z1] area where 2018 lidar trees and shrubs are removed.
+    quarter: clockwise quarter turns (0 = spec front faces south)."""
+    from .semantic import build_from_spec, spec_meshes
+    names = [building_name] if isinstance(building_name, str) else list(building_name)
+    ks = [i for i, B in enumerate(site.blds) if B["name"] in names]
+    if not ks and not keep:
         raise KeyError(building_name)
     b = build_from_spec(spec, block_size=site.bs, target="1.21")
     x, y, z = b.coords[:, 0], b.coords[:, 1], b.coords[:, 2]
@@ -1228,19 +1332,86 @@ def add_hero(site: Site, building_name: str, spec: dict, quarter: int = 0, log=p
         x, z = (Z - 1 - z), x
         X, Z = Z, X
     states = [rotate_state(s, quarter) for s in b.states]
-    B = site.blds[k]
-    rows, cols = np.nonzero(site.bid == k)              # align bounding-box centres
-    r0 = (rows.min() + rows.max() + 1) // 2 - Z // 2
-    c0 = (cols.min() + cols.max() + 1) // 2 - X // 2
-    y0 = B["base_y"] + 1
+    if at is None:
+        rows, cols = np.nonzero(site.bid == ks[0])          # align bounding-box centres
+        r0 = (rows.min() + rows.max() + 1) // 2 - Z // 2
+        c0 = (cols.min() + cols.max() + 1) // 2 - X // 2
+        y0 = site.blds[ks[0]]["base_y"] + 1
+    else:
+        meshes = [m for m, _, mode in spec_meshes(spec) if mode == "solid"]
+        lo = np.min([m.bounds[0] for m in meshes], axis=0)
+        c0 = int(round((at[0] + lo[0]) / site.bs))
+        r0 = int(round((site.Hm - (at[1] - lo[2])) / site.bs))
+        rr_, cc_ = int(round((site.Hm - at[1]) / site.bs)), int(round(at[0] / site.bs))
+        y0 = int(site.ground_y[min(max(rr_, 0), site.NZ - 1), min(max(cc_, 0), site.NX - 1)]) + 1
     idx = np.array([site.pal(s) for s in states], np.uint16)
     site.heroes = getattr(site, "heroes", [])
-    site.heroes.append({"k": k, "r": r0 + z, "c": c0 + x, "y": y0 + y, "ids": idx})
-    site.skip[k] = True
-    # clear the cornice ring of the replaced massing
-    ring = ndi.binary_dilation(site.bid == k, iterations=1) & (site.bid != k)
-    site.cornice_y[ring] = -32768
-    log(f"  hero {building_name}: {len(idx)} blocks, {X}x{b.size[1]}x{Z}")
+    site.heroes.append({"k": ks[0] if ks else -1, "r": r0 + z, "c": c0 + x, "y": y0 + y, "ids": idx})
+    for k in ([] if keep else ks):
+        site.skip[k] = True
+        ring = ndi.binary_dilation(site.bid == k, iterations=1) & (site.bid != k)
+        site.cornice_y[ring] = -32768
+    if extras and at is not None:
+        _hero_extras(site, extras, at, y0)
+    log(f"  hero {names[0]}: {len(idx)} blocks, {X}x{b.size[1]}x{Z}")
+
+
+def _hero_extras(site, ex, at, y0):
+    """Ground, lamps, benches and trees around a hero, given in its spec coordinates."""
+    to_rc = lambda x, z: (int(round((site.Hm - (at[1] - z)) / site.bs)), int(round((at[0] + x) / site.bs)))
+    if "clear" in ex:
+        x0, z0, x1, z1 = ex["clear"]
+        (ra, ca), (rb, cb) = to_rc(x0, z0), to_rc(x1, z1)
+        r_lo, r_hi, c_lo, c_hi = min(ra, rb), max(ra, rb), min(ca, cb), max(ca, cb)
+        site.trees = [t for t in site.trees if not (r_lo <= t["r"] <= r_hi and c_lo <= t["c"] <= c_hi)]
+        f = site.bs / 0.5
+        site.leaf_top[int(r_lo * f):int(r_hi * f) + 1, int(c_lo * f):int(c_hi * f) + 1] = np.nan
+        site.extra[r_lo:r_hi + 1, c_lo:c_hi + 1] = 0
+        site.cornice_y[r_lo:r_hi + 1, c_lo:c_hi + 1] = -32768
+        site.street.objects = [o for o in site.street.objects
+                               if not (r_lo <= o[0] <= r_hi and c_lo <= o[1] <= c_hi)]
+        for k, B in enumerate(site.blds):                    # anything else that stood there in 2018
+            if r_lo <= B.get("cz", -1) <= r_hi and c_lo <= B.get("cx", -1) <= c_hi:
+                site.skip[k] = True
+    for gnd in ex.get("ground", []):
+        im = Image.new("L", (site.NX, site.NZ), 0)
+        d = ImageDraw.Draw(im)
+        (ra, ca) = to_rc(gnd["x"] - gnd["w"] / 2, gnd["z"] - gnd["d"] / 2)
+        (rb, cb) = to_rc(gnd["x"] + gnd["w"] / 2, gnd["z"] + gnd["d"] / 2)
+        box = [min(ca, cb), min(ra, rb), max(ca, cb), max(ra, rb)]
+        (d.ellipse if gnd["shape"] == "ellipse" else d.rectangle)(box, fill=1)
+        m = np.asarray(im) > 0
+        site.surf[m] = site.S[gnd["surface"]]
+        site.lawn[m] = gnd["surface"] == "grass_block" and gnd.get("lawn", True)
+        site.ground_y[m & (site.bid < 0)] = y0 - 1
+    for cv in ex.get("carve", []):                       # clear everything above y inside a polygon
+        im = Image.new("L", (site.NX, site.NZ), 0)
+        pts = [to_rc(x, z)[::-1] for x, z in cv["poly"]]
+        ImageDraw.Draw(im).polygon(pts, fill=1)
+        site.carves = getattr(site, "carves", []) + [(np.asarray(im) > 0, y0 + int(round(cv["y"] / site.bs)))]
+    for p in ex.get("lamps", []):
+        site.street.objects.append((*to_rc(p[0], p[1]), "lamp", None))
+    for p in ex.get("benches", []):
+        site.street.objects.append((*to_rc(p[0], p[1]), "bench", p[2] if len(p) > 2 else "north"))
+    from .pixfont import text as pixtext
+    for sg in ex.get("signs", []):                       # raised letters mounted on a wall face
+        bm = pixtext(sg["text"])
+        r, c = to_rc(sg["x"], sg["z"])
+        out = {"west": (0, -1, 1), "east": (0, 1, -1), "north": (-1, 0, -1), "south": (1, 0, 1)}[sg.get("facing", "west")]
+        base = int(round(sg.get("y", 1) / site.bs))
+        blocks = []
+        for row, col in zip(*np.nonzero(bm)):
+            o = (col - bm.shape[1] // 2) * out[2]
+            dr, dc = (o, out[1]) if out[0] == 0 else (out[0], o)
+            blocks.append((dr, dc, base + (bm.shape[0] - row), "black_concrete"))
+        site.street.objects.append((r, c, "custom", blocks))
+    from .trees import species_for
+    for i, (x, z, h, rad, sp) in enumerate(ex.get("trees", [])):
+        r, c = to_rc(x, z)
+        g = site.z0 + (y0 - 1 - Y0) * site.bs
+        site.trees.append({"r": r, "c": c, "y0": y0, "H": h, "rad": rad, "base": g + 0.3 * h, "top": g + h,
+                           "seed": _h(f"hero_tree{i}{x}{z}"), "species": sp or species_for(h, rad, i),
+                           "y_top": int(site.yb(g + h)), "kind": 0})
 
 
 def _paste_heroes(site, a, r0, c0, nz, nx, H):

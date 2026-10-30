@@ -78,7 +78,8 @@ def run_site(a):
         base = os.path.dirname(os.path.abspath(a.heroes))
         for h in json.load(open(a.heroes)):
             spec = json.load(open(os.path.join(base, h["spec"])))
-            add_hero(site, h["building"], spec, h.get("quarter", 0))
+            add_hero(site, h["building"], spec, h.get("quarter", 0), at=h.get("at"), extras=h.get("extras"),
+                     keep=h.get("keep", False))
     world = a.out
     if os.path.exists(world):
         shutil.rmtree(world)
