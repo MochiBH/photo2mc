@@ -43,7 +43,7 @@ python photo2mc.py site --bbox 32.83631,-96.78741,32.84772,-96.77522 --name smu 
 ```
 
 That is Southern Methodist University (Dallas) at 0.33 m per block: about 3,420 × 3,810 blocks. It downloads OpenStreetMap
-data and the 2018 USGS lidar once (cached in `data/smu/`), takes about 4 minutes, and writes `out/smu/` (a world folder
+data and the 2018 USGS lidar once (cached in `data/smu/`), takes about 5 minutes, and writes `out/smu/` (a world folder
 with `level.dat`; drop it into `.minecraft/saves/`), `out/smu.zip` and a top-down `out/smu_map.png`.
 
 - **Terrain** from lidar ground points. **Surfaces** from OpenStreetMap: roads (asphalt or concrete, centre lines),
@@ -53,11 +53,21 @@ with `level.dat`; drop it into `.minecraft/saves/`), `out/smu.zip` and a top-dow
   no footprint (the stadium stands) are added too. Facades follow a style per building: on campus, Georgian red brick
   with a limestone base, white-framed windows per storey, corner quoins, a white cornice and slate roofs; houses,
   commercial buildings and garages have their own.
-- **Trees** from the lidar canopy height model: tree tops, crowns sized from the canopy and their height, trunks and
-  branches, oak, dark oak and birch leaves (persistent, so they never decay); low canopy becomes shrubs.
+- **Trees** from the lidar canopy height model: each tree's position, height and crown spread come from the lidar,
+  and it is grown, not stamped: a tapered trunk with a root flare and surface roots, limbs forking at species
+  angles, side branches, and leaf clumps at the branch tips with ragged edges (`mcbuild/trees.py`). Species follow
+  the shape and Dallas streets: broad live oaks, vase elms, round oaks, a few birches, pink crape myrtles for many
+  small trees. Leaves are persistent, so they never decay; low canopy becomes shrubs.
+- **Texture**, the way builders do it: walls, roofs, roads and paths scatter close variants through the main block
+  (terracotta and granite in brick, cracked slate tiles, patched asphalt, andesite in concrete); parking lots get
+  stall lines, crossings get zebra stripes, roads get a half-block curb; lawns have tufts of grass and a few flowers,
+  flower beds bloom, and the ground under trees is bare earth.
 - **Hero buildings** replace the lidar massing with a detailed spec: `samples/smu/` has Dallas Hall (from lidar
   dimensions and Commons photos) and Perkins Chapel (lidar + Georgian steeple conventions). Add more to
   `heroes.json`; `python samples/smu/make_heroes.py` regenerates the specs.
+
+`python tools/site_view.py out/smu 540 690 870 1080 out/view.png` draws any part of the saved world with Minecraft's
+own block textures (downloaded once into `data/textures/`).
 
 The world is saved in the 1.21.1 format with only 1.21 blocks; newer versions upgrade it on open. Outside the map is
 void. If a game version rejects the `level.dat`, create a new world with the "The Void" superflat preset and copy

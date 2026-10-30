@@ -12,6 +12,11 @@ SPECIAL = {
     "oak_log": (110, 88, 54), "dark_oak_log": (66, 50, 32), "birch_log": (210, 205, 195), "dirt": (134, 96, 67),
     "stone": (125, 125, 125), "bedrock": (60, 60, 60), "sand": (219, 207, 163), "gravel": (131, 127, 126),
     "dirt_path": (148, 122, 65), "coarse_dirt": (119, 85, 59), "quartz_pillar": (235, 230, 222),
+    "short_grass": (98, 150, 58), "podzol": (106, 76, 42), "dandelion": (200, 190, 60), "poppy": (170, 60, 50),
+    "oxeye_daisy": (200, 200, 190), "cornflower": (90, 110, 190), "azure_bluet": (190, 200, 200),
+    "red_tulip": (175, 70, 55), "white_tulip": (205, 210, 200), "allium": (170, 120, 200),
+    "gray_concrete_powder": (77, 81, 85), "light_gray_concrete_powder": (154, 154, 148), "tuff": (108, 109, 102),
+    "cracked_deepslate_tiles": (52, 52, 53), "granite": (149, 103, 85), "smooth_stone_slab": (158, 158, 158),
 }
 
 

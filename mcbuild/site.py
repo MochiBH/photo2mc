@@ -25,11 +25,22 @@ from PIL import Image, ImageDraw
 from scipy import ndimage as ndi
 
 from .palette import MATERIALS, for_version
+from .trees import grow, species_for
 from .voxelize import AIR, FULL, LUT, LUT_KIND, SLAB, STAIRS
 from .world import Y_MIN
 
 FAM = {m.name: for_version(m, "1.21") for m in MATERIALS}
 Y0 = -50                      # block y of the lowest ground in the site
+
+
+def _hash(r, c, y, salt):
+    """Deterministic per-block noise from global coordinates."""
+    r = np.asarray(r, np.int64)
+    c = np.asarray(c, np.int64)
+    y = np.asarray(y, np.int64)
+    h = (r * 73856093) ^ (c * 19349663) ^ (y * 83492791) ^ (salt * 2654435761)
+    h = (h ^ (h >> 13)) * 1274126177
+    return np.abs(h ^ (h >> 16))
 
 
 def _h(s: str) -> int:
@@ -69,6 +80,22 @@ class Palette:
         return self._shape[key]
 
 
+FLOWERS = ["dandelion", "poppy", "oxeye_daisy", "cornflower", "azure_bluet", "red_tulip", "white_tulip", "allium"]
+# close variants scattered through large single-block surfaces (fraction of blocks)
+TEXTURE = {
+    "bricks": [("terracotta", 0.05), ("granite", 0.025)],
+    "stone_bricks": [("cracked_stone_bricks", 0.08), ("mossy_stone_bricks", 0.04)],
+    "deepslate_tiles": [("cracked_deepslate_tiles", 0.10), ("deepslate_bricks", 0.04)],
+    "smooth_stone": [("stone", 0.06), ("andesite", 0.03)],
+    "light_gray_concrete": [("light_gray_concrete_powder", 0.08), ("andesite", 0.05), ("stone", 0.03)],
+    "gray_concrete": [("gray_concrete_powder", 0.10), ("tuff", 0.04), ("cobbled_deepslate", 0.02)],
+    "polished_andesite": [("andesite", 0.06)],
+    "red_terracotta": [("terracotta", 0.06)],
+    "oak_leaves[distance=1,persistent=true,waterlogged=false]":
+        [("dark_oak_leaves[distance=1,persistent=true,waterlogged=false]", 0.08)],
+    "dark_oak_leaves[distance=1,persistent=true,waterlogged=false]":
+        [("oak_leaves[distance=1,persistent=true,waterlogged=false]", 0.08)],
+}
 LEAVES = ["oak_leaves", "dark_oak_leaves", "azalea_leaves", "birch_leaves"]
 LOGS = ["oak_log", "dark_oak_log", "oak_log", "birch_log"]
 
@@ -82,6 +109,9 @@ STYLES = {
     "commercial": dict(wall=["stone_bricks", "smooth_sandstone", "light_gray_terracotta", "bricks", "polished_andesite"],
                        base="polished_andesite", trim="smooth_quartz", roof=["deepslate_tiles"],
                        flat="smooth_stone", glass="light_gray_stained_glass_pane", fh=12, ww=5, wh=7, sp=8, wy=3),
+    # seating bowls: the lidar rake becomes rows of red seats (stairs), radial aisles in grey
+    "stadium": dict(wall=["bricks"], base="stone_bricks", trim="smooth_quartz", roof=["mangrove_planks"],
+                    flat="smooth_stone", glass="gray_stained_glass_pane", fh=12, ww=4, wh=7, sp=10, wy=3),
     "garage": dict(wall=["polished_andesite"], base="polished_andesite", trim="smooth_stone", roof=["polished_andesite"],
                    flat="polished_andesite", glass=None, fh=9, ww=6, wh=4, sp=8, wy=3),
     "structure": dict(wall=["polished_andesite"], base="polished_andesite", trim="polished_andesite",
@@ -93,7 +123,8 @@ STYLES = {
 # surface classes -> top block
 SURF = ["grass_block[snowy=false]", "light_gray_concrete", "gray_concrete", "smooth_stone", "bricks",
         "stone_bricks", "water[level=0]", "sand", "red_terracotta", "moss_block", "green_terracotta",
-        "yellow_concrete", "white_concrete", "dirt_path", "gravel", "polished_andesite", "coarse_dirt"]
+        "yellow_concrete", "white_concrete", "dirt_path", "gravel", "polished_andesite", "coarse_dirt",
+        "red_concrete"]
 S = {n.split("[")[0]: i for i, n in enumerate(SURF)}
 S_GRASS, S_CONC, S_ASPH, S_WALK, S_BRICK, S_STONE, S_WATER = 0, 1, 2, 3, 4, 5, 6
 
@@ -258,15 +289,32 @@ class Site:
                 order.append((3, f, _surface_block(t, S_WALK)))
             elif t.get("amenity") in ("parking_space",):
                 continue
+        # masks for markings and decoration: pitches (no flowers), parking (stall lines), roads (curbs), beds
+        masks = {k: self._draw(self.bs) for k in ("pitch", "parking", "road", "bed", "marks")}
         for _, f, blk in sorted(order, key=lambda o: o[0]):
             self._poly(d, f, self.bs, blk)
+            t = f["tags"]
+            if t.get("leisure") in ("pitch", "track"):
+                self._poly(masks["pitch"][1], f, self.bs, 1)
+            if t.get("leisure") == "pitch" and blk in (S_GRASS, S["moss_block"]):
+                self._pitch_lines(d, f, t.get("sport", ""))
+            if t.get("amenity") == "parking":
+                self._poly(masks["parking"][1], f, self.bs, 1)
+        for f in F:
+            if f["kind"] == "area" and f["tags"].get("landuse") == "flowerbed":
+                self._poly(d, f, self.bs, S_GRASS)
+                self._poly(masks["bed"][1], f, self.bs, 1)
         # roads, then paths on top
         for f in F:
             t = f["tags"]
             hw = t.get("highway")
             if f["kind"] == "way" and hw in ROAD_W and t.get("tunnel") != "yes":
-                w = _num(t.get("width")) or ROAD_W[hw] * (0.75 if t.get("service") == "parking_aisle" else 1)
+                aisle = t.get("service") == "parking_aisle"
+                w = _num(t.get("width")) or ROAD_W[hw] * (0.75 if aisle else 1)
                 self._line(d, f, self.bs, _surface_block(t, S_ASPH), w)
+                self._line(masks["road"][1], f, self.bs, 1, w)
+                if aisle:
+                    self._stalls(masks["marks"][1], f["pts"], w)
         for f in F:
             t = f["tags"]
             hw = t.get("highway")
@@ -277,6 +325,9 @@ class Site:
             hw = t.get("highway")
             if f["kind"] == "way" and PATH_W.get(hw) and t.get("tunnel") != "yes" and t.get("indoor") != "yes":
                 w = _num(t.get("width")) or PATH_W[hw]
+                if t.get("footway") == "crossing" or t.get("crossing"):
+                    self._zebra(masks["marks"][1], f["pts"])
+                    continue
                 self._line(d, f, self.bs, S_STONE if hw == "steps" else _surface_block(t, S_WALK), w)
         # water last (pools, ponds)
         water = []
@@ -292,7 +343,91 @@ class Site:
                 rad = 2.5 / self.bs
                 d.ellipse([c[0] - rad, r[0] - rad, c[0] + rad, r[0] + rad], fill=S_WATER)
         self.surf = np.array(im, np.uint8)
+        m = {k: np.array(v[0], np.uint8) > 0 for k, v in masks.items()}
+        self.road = m["road"]
+        paved = np.isin(self.surf, (S_ASPH, S_CONC))
+        stall = m["marks"] & paved & (m["parking"] | self.road)
+        self.surf[stall] = S["white_concrete"]
+        self.lawn = (self.surf == S_GRASS) & ~m["pitch"]
+        self.bed = m["bed"] & (self.surf == S_GRASS)
+        # curbs: road cells next to a sidewalk or lawn that isn't itself part of the road
+        side = np.isin(self.surf, (S_WALK, S_GRASS, S_BRICK)) & ~self.road
+        nb = np.zeros_like(side)
+        for sh in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nb |= np.roll(side, sh, (0, 1))
+        self.curb = self.road & np.isin(self.surf, (S_ASPH, S_CONC)) & nb & ~m["parking"]
         self._water_levels()
+
+    def _pitch_lines(self, draw, f, sport):
+        """Field markings in white (and coloured end zones) on the pitch's own axes."""
+        pts = f["pts"]
+        c = pts.mean(0)
+        w, v = np.linalg.eigh(np.cov((pts - c).T))
+        u, n = v[:, 1], v[:, 0]                        # long axis, short axis
+        L = float(np.ptp((pts - c) @ u))
+        Wd = float(np.ptp((pts - c) @ n))
+        c = c + u * float(((pts - c) @ u).max() + ((pts - c) @ u).min()) / 2 \
+            + n * float(((pts - c) @ n).max() + ((pts - c) @ n).min()) / 2
+
+        def quad(a0, a1, b0, b1, fill):
+            q = np.array([c + u * a + n * b for a, b in ((a0, b0), (a1, b0), (a1, b1), (a0, b1))])
+            col, row = self._px(q, self.bs)
+            draw.polygon(list(zip(col.tolist(), row.tolist())), fill=fill)
+
+        lw = self.bs * 1.01                            # one block wide
+        white, end = S["white_concrete"], S["red_concrete"]
+        if sport == "american_football":
+            k = min(1.0, L / 112.0, Wd / 50.0)
+            gl, el, sd = 45.72 * k, 54.86 * k, 24.38 * k
+            for sgn in (-1, 1):
+                quad(sgn * gl, sgn * el, -sd, sd, end)                 # end zones
+            for i in range(-10, 11):                                   # yard lines every 5 yards
+                a = i * 4.572 * k
+                quad(a - lw / 2, a + lw / 2, -sd, sd, white)
+            for a0, a1, b0, b1 in ((-el, el, -sd - lw, -sd), (-el, el, sd, sd + lw),
+                                   (-el - lw, -el, -sd, sd), (el, el + lw, -sd, sd)):
+                quad(a0, a1, b0, b1, white)
+        elif sport == "soccer" and L > 30:
+            hl, hw = L / 2 - 1.0, Wd / 2 - 1.0
+            for a0, a1, b0, b1 in ((-hl, hl, -hw - lw, -hw), (-hl, hl, hw, hw + lw), (-hl - lw, -hl, -hw, hw),
+                                   (hl, hl + lw, -hw, hw), (-lw / 2, lw / 2, -hw, hw)):
+                quad(a0, a1, b0, b1, white)
+            r = min(9.15, hw * 0.4)
+            ring = np.array([c + u * r * np.cos(t_) + n * r * np.sin(t_) for t_ in np.linspace(0, 2 * np.pi, 80)])
+            col, row = self._px(ring, self.bs)
+            draw.line(list(zip(col.tolist(), row.tolist())), fill=white, width=1)
+
+    def _stalls(self, draw, pts, aisle_w, pitch=2.7, depth=5.4):
+        """Parking stall lines on both sides of a parking aisle."""
+        for a, b in zip(pts[:-1], pts[1:]):
+            d = b - a
+            L = float(np.hypot(*d))
+            if L < 3:
+                continue
+            d /= L
+            n = np.array([-d[1], d[0]])
+            for t in np.arange(1.0, L - 0.5, pitch):
+                p = a + d * t
+                for sgn in (-1, 1):
+                    q0 = p + n * sgn * (aisle_w / 2 + 0.3)
+                    q1 = p + n * sgn * (aisle_w / 2 + depth)
+                    c, r = self._px(np.array([q0, q1]), self.bs)
+                    draw.line(list(zip(c.tolist(), r.tolist())), fill=1, width=1)
+
+    def _zebra(self, draw, pts, width=3.0, bar=0.6):
+        """Zebra crossing: bars along the road, one every 2 x bar along the walking line."""
+        for a, b in zip(pts[:-1], pts[1:]):
+            d = b - a
+            L = float(np.hypot(*d))
+            if L < 0.5:
+                continue
+            d /= L
+            n = np.array([-d[1], d[0]])
+            for t in np.arange(bar / 2, L, 2 * bar):
+                p = a + d * t
+                q = np.array([p - n * width / 2, p + n * width / 2])
+                c, r = self._px(q, self.bs)
+                draw.line(list(zip(c.tolist(), r.tolist())), fill=1, width=max(1, int(round(bar / self.bs))))
 
     def _water_levels(self):
         """Each water body gets one level (below the lowest bank) so it can't spill."""
@@ -329,6 +464,8 @@ class Site:
             return "garage"
         if b in ("roof", "carport"):
             return "roof"
+        if b in ("stadium", "grandstand") or t.get("leisure") == "stadium":
+            return "stadium"
         if on_campus:
             return "campus"
         if b in ("house", "detached", "semidetached_house", "residential", "terrace", "garage", "garages",
@@ -506,6 +643,22 @@ class Site:
             same = np.roll(bid, (dr, dc), (0, 1)) == bid
             nmin = np.where(same & inb, np.minimum(nmin, np.roll(deck, (dr, dc), (0, 1))), nmin)
         self.step_lo = nmin.astype(np.int16)
+        # locally flat roof (deck varies by at most one block within 3 blocks): concourses, press-box roofs
+        dsm_ = ndi.gaussian_filter(np.where(inb, deck, 0).astype(np.float32), 2.5)
+        wsum = ndi.gaussian_filter(inb.astype(np.float32), 2.5)
+        dsm_ = dsm_ / np.maximum(wsum, 1e-3)
+        gz, gx = np.gradient(dsm_)
+        fl = inb & (np.hypot(gz, gx) < 0.18) & (wsum > 0.6)
+        fl = ndi.binary_closing(ndi.binary_opening(fl, iterations=2), iterations=3) & inb
+        for target in (True, False):                    # drop islands and fill holes under ~20 m2
+            m = fl if target else (inb & ~fl)
+            lab, n = ndi.label(m)
+            if n:
+                size = ndi.sum(m, lab, np.arange(1, n + 1))
+                small = np.zeros(n + 1, bool)
+                small[1:] = size < 180
+                fl = np.where(small[lab] & m, not target, fl)
+        self.flat_local = fl & inb
         # cornice: outside cells next to a wall, at the eave (or lower, where the wall is lower)
         cor = np.full(bid.shape, -32768, np.int32)
         for dr, dc in ((-1, 0), (1, 0), (0, -1), (0, 1)):
@@ -595,8 +748,11 @@ class Site:
                 "w": 1 if H < 9 else 2 if H < 17 else 3, "kind": int(kind[i + 1]),
                 "rad": float(np.clip(max(1.15 * math.sqrt(area[i] / math.pi), 0.25 * H), 1.2, 0.6 * H)), "H": H,
                 "base": float(g + max(0.3 * H, 1.5)), "top": float(g + H), "seed": _h(f"tree{i}")})
-        for t in self.trees:                         # trunk reaches the middle of the crown
-            t["y1"] = max(t["y0"] + 2, int(self.yb(t["top"]) - _crown_hb(t, self.bs)))
+        for t in self.trees:
+            t["species"] = species_for(t["H"], t["rad"], t["seed"])
+            if t["species"] == "live_oak":
+                t["rad"] *= 1.1
+            t["y_top"] = int(self.yb(t["top"]))
         self.log(f"  {len(self.trees)} trees, canopy {veg.sum() * 0.25 / 1e4:.1f} ha")
 
     def _extras(self):
@@ -672,7 +828,58 @@ class Site:
         self._fill_buildings(a, sl, yy, H)
         self._fill_trees(a, r0, c0, nz, nx, H)
         _paste_heroes(self, a, r0, c0, nz, nx, H)
+        self._decorate(a, r0, c0, nz, nx, g)
+        self._texture(a, r0, c0)
         return A, fluid
+
+    def _decorate(self, a, r0, c0, nz, nx, g):
+        """Curbs, lawn grass and flowers, flower beds, bare earth under trees (on top of the terrain)."""
+        P = self.pal
+        sl = (slice(r0, r0 + nz), slice(c0, c0 + nx))
+        rr, cc = np.indices((nz, nx))
+        gy = g - Y_MIN
+        top = a[rr, cc, gy]
+        above = a[rr, cc, gy + 1]
+        h = _hash(rr + r0, cc + c0, g, 7) % 1000
+        free = (above == 0)
+        # curb: a half-block lip at the road edge
+        m = self.curb[sl] & free
+        a[rr[m], cc[m], gy[m] + 1] = P("smooth_stone_slab[type=bottom,waterlogged=false]")
+        grass = top == P(SURF[S_GRASS])
+        leaves = {P(f"{lv}[distance=1,persistent=true,waterlogged=false]") for lv in LEAVES}
+        shade = np.isin(a, list(leaves)).any(axis=2)
+        # bare patches under trees, grass and flowers in open lawns, beds full of flowers
+        m = grass & shade & (h < 150)
+        a[rr[m], cc[m], gy[m]] = np.where(h[m] < 100, P("coarse_dirt"), P("podzol[snowy=false]"))
+        flowers = np.array([P(f) for f in FLOWERS], np.uint16)
+        lawn = grass & ~shade & free & self.lawn[sl]
+        m = lawn & (h < 35)
+        a[rr[m], cc[m], gy[m] + 1] = P("short_grass")
+        m = lawn & (h >= 35) & (h < 40)
+        kind = _hash(rr + r0, cc + c0, g, 17) % len(flowers)
+        a[rr[m], cc[m], gy[m] + 1] = flowers[kind[m]]
+        m = grass & free & self.bed[sl] & (h < 450)
+        a[rr[m], cc[m], gy[m] + 1] = flowers[kind[m]]
+
+    def _texture(self, a, r0, c0):
+        """Scatter close variants through big single-block surfaces, as builders do."""
+        P = self.pal
+        for base, variants in TEXTURE.items():
+            bid = self.pal.idx.get("minecraft:" + base)
+            if bid is None:
+                continue
+            r, c, y = np.nonzero(a == bid)
+            if not len(r):
+                continue
+            # clustered noise: half from 2x2x2 cells, half per block, so variants form small patches
+            fine = _hash(r + r0, c + c0, y, 13)
+            h = np.where(fine % 2 == 0, _hash((r + r0) // 2, (c + c0) // 2, y // 2, 11), fine // 2) % 1000
+            lo = 0
+            for name, frac in variants:
+                hi = lo + int(frac * 1000)
+                m = (h >= lo) & (h < hi)
+                a[r[m], c[m], y[m]] = P(name)
+                lo = hi
 
     def _fill_buildings(self, a, sl, yy, H):
         P = self.pal
@@ -707,6 +914,18 @@ class Site:
         roof_fam = np.array([B.get("roof", "deepslate_tiles") if not B.get("flat") else STYLES[B["style"]]["flat"]
                              for B in self.blds], dtype=object)
         wall_fam = np.array([B.get("wall", "bricks") for B in self.blds], dtype=object)
+        # stadium aisles: radial lines 2 blocks wide, about every 9 m around the bowl
+        stad = np.array([B["style"] == "stadium" for B in self.blds])[b]
+        flat_l = self.flat_local[sl][rr, cc]
+        aisle = np.zeros(len(b), bool)
+        if stad.any():
+            cz_ = np.array([B.get("cz", 0) for B in self.blds])[b]
+            cx_ = np.array([B.get("cx", 0) for B in self.blds])[b]
+            dz, dx = (rr + r0) - cz_, (cc + c0) - cx_
+            rho = np.hypot(dz, dx) + 1e-6
+            n = 48
+            frac = (np.arctan2(dz, dx) / (2 * np.pi) * n) % 1.0
+            aisle = stad & (np.minimum(frac, 1 - frac) * 2 * np.pi * rho / n < 1.0)
         for k in range(int((hi - lo).max()) + 1):
             y = lo + k
             m = y < hi
@@ -719,11 +938,13 @@ class Site:
                     filled = (2 * y[m] + dy) < Lm[:, q]
                     code |= filled.astype(np.int64) << (dy * 4 + dz * 2 + dx)
             # only the top layer is roof; partial blocks lower down are the side of a step -> wall
-            lower = y[m] < hi[m] - 1
-            key = (b[m].astype(np.int64) * 2 + lower) * 256 + code
+            lower = y[m] < hi[m] - 2
+            # material: 0 roof, 1 wall (side of a step), 2 stadium aisle, 3 flat part of a stadium
+            mc = np.where(lower, 1, np.where(stad[m] & flat_l[m], 3, np.where(aisle[m], 2, 0)))
+            key = (b[m].astype(np.int64) * 4 + mc) * 256 + code
             uk, inv = np.unique(key, return_inverse=True)
-            idx = np.array([P.shaped(wall_fam[k // 512] if (k // 256) % 2 else roof_fam[k // 512], int(k % 256))
-                            for k in uk], np.uint16)[inv]
+            fams = lambda k: (roof_fam[k // 1024], wall_fam[k // 1024], "polished_andesite", "smooth_stone")[(k // 256) % 4]
+            idx = np.array([P.shaped(fams(k), int(k % 256)) for k in uk], np.uint16)[inv]
             ok = (y[m] - Y_MIN >= 0) & (y[m] - Y_MIN < H)
             a[rr[m][ok], cc[m][ok], (y[m] - Y_MIN)[ok]] = idx[ok]
         # deck under the roof surface, floor
@@ -742,7 +963,7 @@ class Site:
             wall_ids = np.array([P(FAM[B.get("wall", "bricks")].full) for B in self.blds], np.uint16)
             ok = ys > base[rep]
             a[rr[rep][ok], cc[rep][ok], ys[ok] - Y_MIN] = np.where(
-                (deck[rep] - slo[rep] > 0)[ok], wall_ids[b[rep]][ok], fam_full[rep][ok])
+                (deck[rep] - slo[rep] > 3)[ok], wall_ids[b[rep]][ok], fam_full[rep][ok])
         # walls on the boundary: from base+1 up to the deck
         wr, wc = rr[bnd], cc[bnd]
         wb, wbase, wtop = b[bnd], base[bnd], deck[bnd]
@@ -827,37 +1048,6 @@ class Site:
         out[roofonly & ~corner] = 0
         return out
 
-    def _crown(self, a, t, r0, c0, nz, nx, H, leaf):
-        R = t["rad"] / self.bs
-        y_hi = int(self.yb(t["top"]))
-        hb = _crown_hb(t, self.bs)
-        yc = y_hi - hb
-        y_lo = int(yc - hb)
-        rad = int(R) + 2
-        rr = np.arange(t["r"] - rad, t["r"] + rad + 1)
-        cc = np.arange(t["c"] - rad, t["c"] + rad + 1)
-        ys = np.arange(y_lo - 1, y_hi + 2)
-        keep_r = (rr >= r0) & (rr < r0 + nz)
-        keep_c = (cc >= c0) & (cc < c0 + nx)
-        if not keep_r.any() or not keep_c.any():
-            return
-        rr, cc = rr[keep_r], cc[keep_c]
-        DZ, DX, DY = np.meshgrid(rr - t["r"], cc - t["c"], ys - yc, indexing="ij")
-        val = np.full(DZ.shape, 9.0)
-        for (ox, oy, oz), (sa, sb) in _blobs(t, self.bs):
-            v = ((DX - ox) / sa) ** 2 + ((DZ - oz) / sa) ** 2 + ((DY - oy) / max(sb, 1)) ** 2
-            val = np.minimum(val, v)
-        hsh = ((DZ * 73856093) ^ (DX * 19349663) ^ (DY.astype(np.int64) * 83492791) ^ t["seed"]) % 11
-        inside = (val <= 1.0) & ~((val > 0.75) & (hsh < 3))
-        if not inside.any():
-            return
-        iz, ix, iy = np.nonzero(inside)
-        lr, lc, y = rr[iz] - r0, cc[ix] - c0, ys[iy] - Y_MIN
-        ok = (y > 0) & (y < H)
-        lr, lc, y = lr[ok], lc[ok], y[ok]
-        free = a[lr, lc, y] == 0
-        a[lr[free], lc[free], y[free]] = leaf
-
     def _fill_trees(self, a, r0, c0, nz, nx, H):
         P = self.pal
         rows = (((np.arange(nz) + r0) + 0.5) * self.bs / 0.5).astype(int).clip(0, self.leaf_top.shape[0] - 1)
@@ -882,61 +1072,26 @@ class Site:
             hole = ((gr * 73856093 ^ gc * 19349663 ^ ys * 83492791) % 13) == 0
             free = (a[gr, gc, ys - Y_MIN] == 0) & ~hole
             a[gr[free], gc[free], ys[free] - Y_MIN] = vals[free]
-        leaves = [P(f"{lv}[distance=1,persistent=true,waterlogged=false]") for lv in LEAVES]
         for t in self.trees:
             if not (r0 - 60 <= t["r"] < r0 + nz + 60 and c0 - 60 <= t["c"] < c0 + nx + 60):
                 continue
-            self._crown(a, t, r0, c0, nz, nx, H, leaves[t["kind"]])
-        for t in self.trees:
-            if not (r0 - 60 <= t["r"] < r0 + nz + 60 and c0 - 60 <= t["c"] < c0 + nx + 60):
+            logs, axis, lv, leaf, log = grow(t, self.bs, _hash)
+            # leaves fill air only; wood replaces air and leaves (its own or a neighbour's)
+            lr, lc, ly = lv[:, 2] - r0, lv[:, 0] - c0, lv[:, 1] - Y_MIN
+            ok = (lr >= 0) & (lr < nz) & (lc >= 0) & (lc < nx) & (ly > 0) & (ly < H)
+            lr, lc, ly = lr[ok], lc[ok], ly[ok]
+            free = a[lr, lc, ly] == 0
+            a[lr[free], lc[free], ly[free]] = P(f"{leaf}[distance=1,persistent=true,waterlogged=false]")
+            wr, wc, wy = logs[:, 2] - r0, logs[:, 0] - c0, logs[:, 1] - Y_MIN
+            ok = (wr >= 0) & (wr < nz) & (wc >= 0) & (wc < nx) & (wy > 0) & (wy < H)
+            wr, wc, wy, ax = wr[ok], wc[ok], wy[ok], axis[ok]
+            if not len(wr):
                 continue
-            log = t["kind"]
-            for (r, c, y, axis) in _tree_wood(t, self.bs):
-                lr, lc = r - r0, c - c0
-                if 0 <= lr < nz and 0 <= lc < nx and 0 < y - Y_MIN < H:
-                    cur = a[lr, lc, y - Y_MIN]
-                    if cur == 0 or self.pal.states[cur].split("[")[0].endswith("leaves"):
-                        a[lr, lc, y - Y_MIN] = P(f"{LOGS[log]}[axis={axis}]")
-
-
-def _crown_hb(t, bs):
-    """Vertical semi-axis of the crown in blocks: no taller than it is wide (Dallas oaks and elms are broad)."""
-    return min((t["top"] - t["base"]) / bs / 2, 0.9 * t["rad"] / bs)
-
-
-def _blobs(t, bs):
-    """Crown as a union of 3-5 ellipsoids: (centre offsets, semi-axes) in blocks."""
-    R = t["rad"] / bs
-    hb = _crown_hb(t, bs)
-    rng = np.random.default_rng(t["seed"])
-    out = [((0.0, 0.1 * hb, 0.0), (R, hb))]
-    for _ in range(2 + t["seed"] % 3):
-        ang = rng.uniform(0, 2 * np.pi)
-        d = rng.uniform(0.3, 0.55) * R
-        out.append(((d * np.cos(ang), rng.uniform(-0.35, 0.2) * hb, d * np.sin(ang)),
-                    (R * rng.uniform(0.5, 0.7), hb * rng.uniform(0.55, 0.75))))
-    return out
-
-
-def _tree_wood(t, bs):
-    """Trunk and main branches as (row, col, y, axis)."""
-    out = []
-    w = t["w"]
-    offs = [(0, 0)] if w == 1 else [(0, 0), (0, 1), (1, 0), (1, 1)] if w == 2 else \
-        [(0, 0), (-1, 0), (1, 0), (0, -1), (0, 1)]
-    for y in range(t["y0"], t["y1"] + 1):
-        for dr, dc in offs:
-            out.append((t["r"] + dr, t["c"] + dc, y, "y"))
-    if t["H"] >= 6:
-        yb = int((t["y0"] + t["y1"]) / 2 + (t["y1"] - t["y0"]) * 0.15)
-        reach = max(3, int(t["rad"] / bs * 0.55))
-        rng = _h(f"{t['r']},{t['c']}")
-        for i, (dr, dc) in enumerate(((1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1))[: 4 + rng % 3]):
-            y = yb + (rng >> i) % 4
-            for s in range(1, reach + 1):
-                axis = "z" if dc == 0 else "x" if dr == 0 else ("x" if s % 2 else "z")
-                out.append((t["r"] + dr * s, t["c"] + dc * s, y + s // 2, axis))
-    return out
+            cur = a[wr, wc, wy]
+            leafy = np.array([self.pal.states[i].split("[")[0].endswith("leaves") for i in range(len(self.pal.states))])
+            put = (cur == 0) | leafy[cur]
+            ids = np.array([P(f"{log}[axis={x}]") for x in "xyz"], np.uint16)
+            a[wr[put], wc[put], wy[put]] = ids[ax[put]]
 
 
 # ------------------------------------------------------------ helpers

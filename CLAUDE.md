@@ -43,6 +43,8 @@ Outputs go in `out/` (git-ignored): `.schem`, `_datapack.zip`, `.html` viewer, `
 - `mcbuild/geo.py` — `Frame` (lat/lon ↔ local m, x east / y north), OSM API bbox download + parser (ways, multipolygons, nodes), USGS 3DEP EPT lidar fetch (EPSG:3857 tiles from AWS, cached npz).
 - `mcbuild/site.py` — `Site`: rasters at 0.5 m and block res (ground, surface classes, building ids, roof heights from single-return lidar snapped to planes, lidar-only structures, tree tops/crowns), `region(rx, rz)` fills a 512×512 tile (terrain, facades by style, roofs via the voxel LUT, cornices, trees as ellipsoid blobs, fountains with fluid ticks), `build_world`, `add_hero` (spec replaces a footprint, bbox-centred, `rotate_state`).
 - `mcbuild/world.py` — Anvil writer (1.21.1 DataVersion, isLightOn 0, no heightmaps → game recomputes), void `level.dat`, `read_chunk`/`read_area` readers. `mcbuild/sitepreview.py` — top-down/splat previews.
+- `mcbuild/trees.py` — `grow()`: species from lidar height/spread (`species_for`), trunk + flare + roots, limbs and side branches as tapered log lines, leaf clumps at tips (union, ragged edges, clipped to lidar top). `mcbuild/texrender.py` — textured iso renderer (half-block cells, real 16×16 textures from InventivetalentDev/minecraft-assets 1.21.1, depth buffer); `tools/site_view.py` renders a box of a saved world.
+- Site texture pass: `TEXTURE` variants scattered with clustered hash noise (`_texture`), `_decorate` (curbs, short grass/flowers on lawns, flower beds, coarse dirt/podzol under trees), parking stall lines from parking aisles, zebra crossings from `footway=crossing`.
 - `samples/smu/` — hero specs (`make_heroes.py` → `dallas_hall.json`, `perkins_chapel.json`) and `heroes.json`.
 
 ## Conventions

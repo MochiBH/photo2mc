@@ -171,6 +171,8 @@ A, fluid = site.region(0, 0)
 names = {site.pal.states[i].split("[")[0].split(":")[1] for i in np.unique(A)}
 check("site: building, windows, roof, road, path", {"bricks", "gray_stained_glass_pane", "smooth_quartz", "smooth_stone",
                                                    "gray_concrete"} <= names, str(sorted(names)))
+check("site: texture variants, lawn grass, curbs", {"short_grass", "smooth_stone_slab"} <= names
+      and bool({"terracotta", "granite", "stone", "andesite"} & names), str(sorted(names)))
 check("site: tree, fountain", {"oak_log", "water", "quartz_pillar"} & names >= {"water", "quartz_pillar"}
       and any(n.endswith("_leaves") for n in names) and any(n.endswith("_log") for n in names) and len(fluid) == 1)
 k = next(i for i, B in enumerate(site.blds) if B["name"] == "Test Hall")
