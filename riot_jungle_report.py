@@ -254,7 +254,16 @@ def analyse_game(match, timeline, puuid):
                           "allies": na, "enemies": ne, "situation": situation,
                           "dragon_up": dragon_up, "enemy_took_after": lost,
                           "respawn": t + death_timer(level, t)})
+    prev = None
+    for d in my_deaths:
+        # "free": no enemy died in the same fight, so the death bought nothing
+        d["free"] = not any(o["victimId"] in enemies and abs(o["timestamp"] / 1000.0 - d["t"]) <= 15
+                            and dist((o["position"]["x"], o["position"]["y"]), (d["x"], d["y"])) < NEAR for o in kills)
+        d["soon_after_respawn"] = prev is not None and d["t"] - prev["respawn"] < 90
+        prev = d
     g["deaths"] = my_deaths
+    g["free_deaths"] = sum(d["free"] for d in my_deaths)
+    g["date"] = time.strftime("%Y-%m-%d", time.gmtime(info.get("gameCreation", 0) / 1000.0))
 
     def alive_at(t):
         return not any(d["t"] <= t < d["respawn"] for d in my_deaths)
@@ -319,6 +328,8 @@ def analyse_game(match, timeline, puuid):
                      "took_part": e.get("killerId") == pid or pid in e.get("assistingParticipantIds", []),
                      "obj_zone": raw_zone(*op)})
     g["objectives"] = objs
+    g["first_dragon"] = next((o["taker"] for o in objs if o["type"] == "dragon"), None)
+    g["grubs_mine"] = sum(o["type"] == "voidgrub" and o["taker"] == "mine" for o in objs)
     for minute in (5, 8):
         fr = frame_minute(frames, minute)
         if fr:
@@ -383,6 +394,8 @@ def aggregate(games):
         "dragon_up_pct": pct(sum(d["dragon_up"] for d in deaths), nd),
         "enemy_took_objective_within_90s": sum(bool(d["enemy_took_after"]) for d in deaths),
         "before_15": sum(d["minute"] < 15 for d in deaths),
+        "free": sum(d["free"] for d in deaths),
+        "within_90s_of_respawning": sum(d["soon_after_respawn"] for d in deaths),
         "alone_by_zone": dict(collections.Counter(d["zone"] for d in deaths if d["situation"] == "alone").most_common()),
     }
     out["ganks_pre15"] = {}
@@ -427,6 +440,19 @@ def aggregate(games):
     return out
 
 
+CHECKPOINTS = [("took at least one Voidgrub", lambda g: g["grubs_mine"] > 0),
+               ("took the first dragon", lambda g: g["first_dragon"] == "mine"),
+               ("3 or fewer free deaths", lambda g: g["free_deaths"] <= 3),
+               ("5 or fewer deaths", lambda g: g["d"] <= 5)]
+
+
+def checkpoints(games):
+    def rec(rs):
+        return "%d-%d" % (sum(g["win"] for g in rs), sum(not g["win"] for g in rs))
+    return {name: {"hit": rec([g for g in games if ok(g)]), "missed": rec([g for g in games if not ok(g)])}
+            for name, ok in CHECKPOINTS}
+
+
 def death_band(games):
     lo = [g for g in games if g["d"] <= 5]
     hi = [g for g in games if g["d"] > 5]
@@ -438,7 +464,7 @@ def compact(a):
     """The headline numbers of one group, small enough to paste into a chat."""
     d, f = a["deaths"], a["farm_race"]
     return {"games": a["games"], "record": "%d-%d" % (a["wins"], a["losses"]), "avg_kda": a["avg_kda"],
-            "deaths": {k: d[k] for k in ("total", "per_game", "before_15", "by_zone", "by_minute", "alone", "outnumbered",
+            "deaths": {k: d[k] for k in ("total", "per_game", "before_15", "free", "within_90s_of_respawning", "by_zone", "by_minute", "alone", "outnumbered",
                                          "with_team", "enemy_took_objective_within_90s")},
             "ganks_pre15": {ln: [v["kills"], v["assists"], v["deaths"], v["minutes"], v["empty_minutes"]]
                             for ln, v in a["ganks_pre15"].items()},
@@ -458,6 +484,7 @@ def fmt_group(name, a):
     L = ["", "=" * 70, "%s: %d games, %d-%d, average K/D/A %s/%s/%s" % ((name, a["games"], a["wins"], a["losses"]) + tuple(a["avg_kda"])), "=" * 70]
     d = a["deaths"]
     L += ["DEATHS  %d total, %.1f per game, %d before 15:00" % (d["total"], d["per_game"], d["before_15"]),
+          "  free (no enemy died with me): %d; died again within 90 s of respawning: %d" % (d["free"], d["within_90s_of_respawn" + "ing"]),
           "  where:  " + ", ".join("%s %d" % kv for kv in d["by_zone"].items()),
           "  when:   " + ", ".join("%s min: %d" % kv for kv in d["by_minute"].items()),
           "  alone %d, outnumbered %d, with team %d  (alone or outnumbered: %s%%)" % (d["alone"], d["outnumbered"], d["with_team"], d["alone_or_outnumbered_pct"]),
@@ -533,6 +560,9 @@ def main():
     agg = collections.OrderedDict((k, aggregate(v)) for k, v in groups.items() if v)
     L.append("")
     L.append("RECORD BY DEATHS  5 or fewer: %(5_or_fewer_deaths)s   6 or more: %(6_plus_deaths)s" % death_band(games))
+    L.append("CHECKPOINTS (record when hit / when missed; a free death is one where no enemy died with me)")
+    for name, r in checkpoints(games).items():
+        L.append("  %-28s hit %-5s missed %s" % (name, r["hit"], r["missed"]))
     for k, a in agg.items():
         if k.count(":") < 2:
             L += fmt_group(k.upper(), a)
@@ -543,11 +573,12 @@ def main():
     with open(os.path.join(args.out, "deaths.csv"), "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["match", "champ", "result", "minute", "zone", "map_half", "x", "y", "allies_near", "enemies_near",
-                    "situation", "dragon_up", "enemy_took_within_90s"])
+                    "situation", "dragon_up", "enemy_took_within_90s", "free", "soon_after_respawn"])
         for g in games:
             for d in g["deaths"]:
                 w.writerow([g["id"], g["champ"], "W" if g["win"] else "L", d["minute"], d["zone"], d["map_side"], d["x"], d["y"],
-                            d["allies"], d["enemies"], d["situation"], int(d["dragon_up"]), "+".join(d["enemy_took_after"])])
+                            d["allies"], d["enemies"], d["situation"], int(d["dragon_up"]), "+".join(d["enemy_took_after"]),
+                            int(d["free"]), int(d["soon_after_respawn"])])
     with open(os.path.join(args.out, "objectives.csv"), "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["match", "champ", "result", "objective", "minute", "taker", "alive", "my_zone", "distance", "near", "same_half", "took_part"])
@@ -571,10 +602,14 @@ def main():
     with open(os.path.join(args.out, "map_data_full.json"), "w") as f:
         json.dump(map_data, f, separators=(",", ":"))
     small = {"player": args.riot_id, "games": len(games), "record_by_deaths": death_band(games),
+             "checkpoints_hit_vs_missed": checkpoints(games),
+             "game_list": [[g["date"], g["champ"], "W" if g["win"] else "L", g["d"], g["free_deaths"], g["grubs_mine"],
+                            g["first_dragon"], g["jcs_diff_by_minute"][10] if len(g["jcs_diff_by_minute"]) > 10 else None] for g in games],
              "key": {"ganks_pre15": "[kills, assists, deaths, minutes in lane, minutes with nothing to show]",
                      "objectives": "[count, I was alive, I was within reach the minute before, I took part]; voidgrubs counted one by one",
                      "farm_me_vs_enemy": "[me, enemy jungler] at each minute mark; jcs = jungle CS",
-                     "deaths": "alone = no ally within %d units; outnumbered = enemies > allies + 1" % NEAR},
+                     "game_list": "[date, champion, result, deaths, free deaths, Voidgrubs my team took, first dragon taker, jungle CS gap at 10:00]",
+                     "deaths": "free = no enemy died in the same fight; alone = no ally within %d units; outnumbered = enemies > allies + 1" % NEAR},
              "groups": {k: compact(a) for k, a in agg.items()
                         if k.count(":") == 0 or (k.count(":") == 1 and a["games"] >= 3)}}
     with open(os.path.join(args.out, "map_data.json"), "w") as f:
