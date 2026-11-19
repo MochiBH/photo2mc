@@ -1,5 +1,4 @@
+data/
 out/
 __pycache__/
 *.pyc
-*.zip
-.DS_Store
