@@ -1,0 +1,283 @@
+import { useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
+import { Card, CardContent } from '../wm/card';
+import { ContinuousTabs } from '../wm/continuous-tabs';
+import { ShimmerProgress } from '../wm/shimmer-progress';
+import { Callout, Eyebrow, Lead, Mark, Num, Rise, Screen } from '../ui';
+import { CHECKS, OBJS, WHEN, WHO, ZONE, clock, rec, sgn } from '../lib/legacy';
+import { GameRow } from './Games';
+
+const POS = window.POS || null;
+const LEAKS = [
+  { title: 'You die right before the enemy takes something', big: '34', unit: 'of 120 deaths were followed by an enemy objective within 90 seconds',
+    detail: 'The enemy took 30 dragons. You were dead for 11 and close enough to contest only 7.',
+    fix: 'From one minute before a dragon spawns, no river fights unless two teammates are already standing with you.' },
+  { title: 'Your farm falls behind between minute 6 and 10', big: '55 vs 67', unit: 'jungle CS at 10:00 in losses',
+    detail: "Level at 5:00. About three camps behind by 10:00, and 1,000 gold behind by 15:00. On Kha'Zix you keep up.",
+    fix: 'Between 5:00 and 15:00, clear every camp that is up before you walk to a lane. Only go mid when the enemy is pushed up to your tower.' },
+  { title: 'You give away the top-side early objectives', big: '32', unit: 'of 51 Voidgrubs went to the enemy',
+    detail: 'You were in your own jungle for 17 of them. The enemy also took 11 of 15 Heralds.',
+    fix: 'Be on the top side by 7:30, gank top (your best lane), then take the grubs with your top laner.' },
+];
+const SECTIONS = [{ id: 'checks', label: 'Checkpoints' }, { id: 'leaks', label: 'Leaks' }, { id: 'charts', label: 'Charts' }];
+const toTabs = (list) => list.map(([id, label]) => ({ id, label }));
+const OBJ_SEG = [['s1', 'Your team took it'], ['s2', 'Enemy took it, you were dead'], ['s3', 'Enemy, you were alive but far away'], ['s4', 'Enemy, you were nearby']];
+
+export default function MapView() {
+  const [who, setWho] = useState('all');
+  const [when, setWhen] = useState('all');
+  const [sec, setSec] = useState('checks');
+  if (!POS) return <Lead>Position data didn't load. Reload the page.</Lead>;
+  const grp = POS.groups[who];
+  const G = POS.list.map((g) => ({ g, w: g[2] === 'W' ? 1 : 0 }));
+
+  return (
+    <div className="flex flex-col gap-4">
+      <ContinuousTabs tabs={SECTIONS} value={sec} onChange={(v) => { setSec(v); window.scrollTo({ top: 0, behavior: 'smooth' }); }} label="Map sections" />
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div key={sec} initial={{ opacity: 0, x: 20, filter: 'blur(6px)' }} animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }} exit={{ opacity: 0, x: -20, filter: 'blur(6px)' }} transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}>
+    {sec === 'checks' && <Screen>
+      <Rise className="flex flex-col gap-1.5">
+        <Eyebrow>Three checkpoints that decide your games</Eyebrow>
+        <Lead>From the Riot API, your last {POS.games} ranked jungle games. These three things split your wins from your losses more cleanly than anything else. It is a small sample, so treat them as targets, not laws.</Lead>
+      </Rise>
+      {CHECKS.map((c, i) => {
+        const hit = G.filter((x) => c.ok(x.g)), miss = G.filter((x) => !c.ok(x.g));
+        return (
+          <Rise key={c.name}>
+            <Card>
+              <CardContent className="flex flex-col gap-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div><Eyebrow>Checkpoint {i + 1}</Eyebrow><h3 className="m-0 mt-0.5 text-lg leading-tight font-bold tracking-tight">{c.name}</h3></div>
+                  <div className="text-right leading-none whitespace-nowrap"><Num value={hit.length} className="text-3xl font-extrabold tracking-tight" /><span className="text-sm text-muted-foreground"> / {G.length}</span></div>
+                </div>
+                <ShimmerProgress value={(hit.length / G.length) * 100} label={`Hit in ${hit.length} of ${G.length} games`} />
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="rounded-xl bg-good-soft px-3 py-2"><div className="text-[11px] font-bold tracking-wider text-good uppercase">When you hit it</div><div className="tnum text-lg font-bold">{hit.length ? rec(hit) : '–'}</div></div>
+                  <div className="rounded-xl bg-bad-soft px-3 py-2"><div className="text-[11px] font-bold tracking-wider text-bad uppercase">When you miss it</div><div className="tnum text-lg font-bold">{miss.length ? rec(miss) : '–'}</div></div>
+                </div>
+                <Callout label="How">{c.how}</Callout>
+              </CardContent>
+            </Card>
+          </Rise>
+        );
+      })}
+      <Rise>
+        <Card>
+          <CardContent className="flex flex-col gap-3">
+            <Eyebrow>Game by game</Eyebrow>
+            <ul className="m-0 flex list-none flex-col gap-2 p-0">
+              {G.map((x, i) => {
+                const g = x.g; let d = g[0];
+                try { d = new Date(g[0] + 'T12:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); } catch (e) {}
+                return (
+                  <GameRow key={i} win={!!x.w} champ={g[1]} sub={`${g[3]} deaths`} date={d}>
+                    {CHECKS.map((c) => <Mark key={c.name} ok={c.ok(g)}>{c.chip(g)}</Mark>)}
+                    {g[7] !== null && <span className="tnum inline-flex h-6 items-center rounded-full bg-card px-2.5 text-xs font-semibold text-muted-foreground ring-1 ring-foreground/10">Farm at 10:00 {sgn(g[7])}</span>}
+                  </GameRow>
+                );
+              })}
+            </ul>
+          </CardContent>
+        </Card>
+      </Rise>
+
+    </Screen>}
+    {sec === 'leaks' && <Screen>
+      <Rise className="flex flex-col gap-1.5">
+        <Eyebrow>Why you miss the checkpoints</Eyebrow>
+        <Lead>Your three biggest positional leaks, each with the numbers behind it and one thing to do about it next game.</Lead>
+      </Rise>
+      {LEAKS.map((l, i) => (
+        <Rise key={l.title}>
+          <Card>
+            <CardContent className="flex flex-col gap-2.5">
+              <Eyebrow>Leak {i + 1}</Eyebrow>
+              <h3 className="m-0 text-lg leading-tight font-bold tracking-tight">{l.title}</h3>
+              <p className="m-0 text-sm text-muted-foreground"><span className="tnum mr-1.5 text-3xl leading-none font-extrabold tracking-tight text-foreground">{l.big}</span>{l.unit}</p>
+              <Lead className="text-sm">{l.detail}</Lead>
+              <Callout label="Next game">{l.fix}</Callout>
+            </CardContent>
+          </Card>
+        </Rise>
+      ))}
+
+    </Screen>}
+    {sec === 'charts' && <Screen>
+      <Rise className="flex flex-col gap-1.5">
+        <Eyebrow>The charts behind it</Eyebrow>
+        <ContinuousTabs tabs={toTabs(WHO)} value={who} onChange={setWho} label="Which games" size="sm" />
+      </Rise>
+      <Rise><Rift who={who} when={when} setWhen={setWhen} /></Rise>
+      <Rise><Farm who={who} /></Rise>
+      <Rise><Objectives grp={grp} /></Rise>
+      <Rise>
+        <Card>
+          <CardContent className="flex flex-col gap-3">
+            <h3 className="m-0 text-lg font-bold tracking-tight">Lane visits before 15:00</h3>
+            <div className="overflow-x-auto">
+              <table className="tnum w-full border-collapse text-sm">
+                <thead><tr className="text-[11px] tracking-wider text-muted-foreground uppercase">{['Lane', 'Kills', 'Assists', 'Deaths', 'Empty min'].map((h, i) => <th key={h} className={`px-1.5 py-1 font-bold ${i ? 'text-right' : 'text-left'}`}>{h}</th>)}</tr></thead>
+                <tbody>
+                  {[['top_lane', 'Top'], ['mid_lane', 'Mid'], ['bot_lane', 'Bot']].map(([k, n]) => { const v = grp.ganks[k]; return (
+                    <tr key={k} className="border-t"><td className="px-1.5 py-2 font-semibold">{n}</td><td className="px-1.5 text-right"><Num value={v[0]} /></td><td className="px-1.5 text-right"><Num value={v[1]} /></td><td className="px-1.5 text-right"><Num value={v[2]} /></td><td className="px-1.5 text-right">{v[4]} of {v[3]}</td></tr>
+                  ); })}
+                </tbody>
+              </table>
+            </div>
+            <Lead className="text-sm">Empty minutes are once-a-minute snapshots where you stood in the lane with no kill or assist within a minute. Some mid ones are just you crossing the lane.</Lead>
+          </CardContent>
+        </Card>
+      </Rise>
+      <Rise><p className="m-0 text-xs text-muted-foreground">Riot API match timelines, pulled {POS.pulled}. Showing {grp.games} games ({grp.record}). Positions are recorded once a minute, so who was near you is approximate. </p></Rise>
+    </Screen>}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function Rift({ who, when, setWhen }) {
+  const [sel, setSel] = useState(null);
+  const ds = useMemo(() => POS.deaths.map((d, i) => ({ d, i })).filter(({ d }) =>
+    (who === 'all' || (who === 'wins' && d[4] === 'W') || (who === 'losses' && d[4] === 'L') || d[5] === who) &&
+    (when === 'all' || (when === 'early' ? d[2] < 15 : when === 'late' ? d[2] >= 15 : when === 'free' ? d[9] === 1 : d[10] === 1))), [who, when]);
+  const zones = useMemo(() => { const z = {}; ds.forEach(({ d }) => { z[d[3]] = (z[d[3]] || 0) + 1; }); return Object.entries(z).sort((a, b) => b[1] - a[1]); }, [ds]);
+  const max = zones.length ? zones[0][1] : 1;
+  const alone = ds.filter(({ d }) => d[6] === 0).length, outn = ds.filter(({ d }) => d[6] > 0 && d[7] > d[6] + 1).length, took = ds.filter(({ d }) => d[8]).length;
+  const cur = sel !== null && ds.some((x) => x.i === sel) ? POS.deaths[sel] : null;
+  return (
+    <Card>
+      <CardContent className="flex flex-col gap-3">
+        <h3 className="m-0 text-lg font-bold tracking-tight">Every death, on the map</h3>
+        <ContinuousTabs tabs={toTabs(WHEN)} value={when} onChange={setWhen} label="Which deaths" size="sm" />
+        <svg viewBox="0 0 148 148" role="img" aria-label={`Map of Summoner's Rift with ${ds.length} deaths marked`} className="block h-auto w-full rounded-2xl ring-1 ring-foreground/10" style={{ background: 'var(--map)' }}>
+          <path d="M22 22 L126 126" fill="none" stroke="var(--map-river)" strokeOpacity=".45" strokeWidth="13" strokeLinecap="round" />
+          <path d="M11 100 V20 Q11 11 20 11 H100 M48 137 H128 Q137 137 137 128 V48 M38 110 L110 38" fill="none" stroke="var(--map-lane)" strokeWidth="8" strokeLinecap="round" />
+          <circle cx="0" cy="148" r="45" fill="var(--map-lane)" /><circle cx="148" cy="0" r="45" fill="var(--map-lane)" />
+          {[[50.1, 43.3], [98.7, 103.9]].map(([x, y]) => <circle key={x} cx={x} cy={y} r="5.5" fill="none" stroke="var(--muted-foreground)" strokeWidth=".6" strokeDasharray="1.5 1.5" />)}
+          <g fill="var(--muted-foreground)" fontSize="4" fontWeight="700" style={{ letterSpacing: '.06em', textTransform: 'uppercase' }}>
+            <text x="5" y="143">Blue base</text><text x="143" y="8" textAnchor="end">Red base</text>
+            <text x="50.1" y="35.5" textAnchor="middle">Baron</text><text x="98.7" y="114.5" textAnchor="middle">Dragon</text>
+            <text x="24" y="9">Top lane</text><text x="124" y="145" textAnchor="end">Bot lane</text>
+          </g>
+          <AnimatePresence>
+            {ds.slice().sort((a, b) => (a.d[8] ? 1 : 0) - (b.d[8] ? 1 : 0)).map(({ d, i }, n) => (
+              <motion.circle
+                key={i}
+                cx={d[0] / 100} cy={148 - d[1] / 100}
+                initial={{ r: 0, opacity: 0 }}
+                animate={{ r: sel === i ? 3.2 : 2.1, opacity: 1 }}
+                exit={{ r: 0, opacity: 0, transition: { duration: 0.15 } }}
+                transition={{ type: 'spring', stiffness: 420, damping: 18, delay: sel === i ? 0 : Math.min(n * 0.006, 0.6) }}
+                fill={sel === i ? 'var(--foreground)' : 'var(--bad)'} fillOpacity={sel === i ? 1 : d[8] ? 0.95 : 0.6}
+                stroke={d[8] ? 'var(--gold)' : 'var(--map)'} strokeWidth={d[8] ? 1 : 0.5}
+                style={{ cursor: 'pointer' }}
+                onClick={() => setSel(i)} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setSel(i); }}
+              />
+            ))}
+          </AnimatePresence>
+        </svg>
+        <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-[13px] text-muted-foreground">
+          <span><i className="mr-1.5 inline-block size-2.5 rounded-full bg-bad align-[-1px]" />Death</span>
+          <span><i className="mr-1.5 inline-block size-2.5 rounded-full bg-bad align-[-1px] ring-2 ring-gold" />Enemy took an objective right after</span>
+        </div>
+        <div className="min-h-[44px] text-sm" aria-live="polite">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.p key={cur ? sel : 'none'} initial={{ opacity: 0, y: 6, filter: 'blur(4px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.16 }} className={`m-0 ${cur ? '' : 'text-muted-foreground'}`}>
+              {cur ? <>
+                <b>{cur[5]}, {cur[4] === 'W' ? 'win' : 'loss'}, {clock(cur[2])}</b> · {ZONE[cur[3]] || cur[3]} · {cur[6] === 0 ? 'no teammate near' : `${cur[6]} ${cur[6] === 1 ? 'teammate' : 'teammates'} near`}, {cur[7]} {cur[7] === 1 ? 'enemy' : 'enemies'}
+                {cur[8] ? ` · the enemy took ${cur[8] === 'voidgrub' ? 'Voidgrubs' : cur[8] === 'baron' ? 'Baron' : cur[8] === 'herald' ? 'the Herald' : 'a dragon'} right after` : ''}
+                {cur[9] ? ' · free death' : ' · an enemy died too'}{cur[10] ? ' · within 90 seconds of respawning' : ''}
+              </> : ds.length ? 'Tap a dot to see that death. A free death is one where no enemy died in the same fight.' : 'No deaths in this selection.'}
+            </motion.p>
+          </AnimatePresence>
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <AnimatePresence initial={false}>
+            {zones.map(([k, v]) => (
+              <motion.div key={k} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-[104px_1fr_28px] items-center gap-2 text-sm">
+                <span>{ZONE[k] || k}</span>
+                <span className="h-3"><motion.i className="block h-full min-w-[3px] rounded-r-[4px] bg-bad" initial={{ width: 0 }} animate={{ width: (v / max) * 100 + '%' }} transition={{ type: 'spring', stiffness: 140, damping: 20 }} /></span>
+                <b className="tnum text-right font-semibold"><Num value={v} /></b>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+        {ds.length > 0 && <Lead className="text-sm">{ds.length} deaths. Alone: {alone}. Outnumbered: {outn}. In a fight with teammates near: {ds.length - alone - outn}. Followed by an enemy objective within 90 seconds: {took}.</Lead>}
+      </CardContent>
+    </Card>
+  );
+}
+
+const FX = (m) => 30 + (m / 20) * 270, FY = (v) => 14 + ((5 - v) / 30) * 136;
+function Farm({ who }) {
+  const [min, setMin] = useState(10);
+  const g = POS.groups;
+  const series = [['Wins', 'var(--good)', g.wins.gap], ['Losses', 'var(--bad)', g.losses.gap]];
+  if (who === 'Nunu' || who === "Kha'Zix") series.push([who, 'var(--gold)', g[who].gap]);
+  const grp = g[who], name = WHO.find((w) => w[0] === who)[1];
+  const move = (e) => { const r = e.currentTarget.getBoundingClientRect(); setMin(Math.max(0, Math.min(20, Math.round((((e.clientX - r.left) / r.width) * 320 - 30) / 270 * 20)))); };
+  return (
+    <Card>
+      <CardContent className="flex flex-col gap-3">
+        <h3 className="m-0 text-lg font-bold tracking-tight">The farm race against the enemy jungler</h3>
+        <Lead className="text-sm">Your jungle CS minus theirs, minute by minute. Below the line means you are behind. One camp is about 4.</Lead>
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[13px] text-muted-foreground">
+          {series.map((s) => <span key={s[0]}><i className="mr-1.5 inline-block size-2.5 rounded-full align-[-1px]" style={{ background: s[1] }} />{s[0]}</span>)}
+        </div>
+        <svg viewBox="0 0 320 172" role="img" aria-label="Jungle CS gap to the enemy jungler by minute" className="block h-auto w-full touch-pan-y" onPointerMove={move} onPointerDown={move}>
+          {[0, -10, -20].map((v) => <g key={v}><line x1="30" x2="300" y1={FY(v)} y2={FY(v)} stroke="var(--border)" strokeWidth={v === 0 ? 1.4 : 0.8} /><text x="25" y={FY(v) + 3.5} textAnchor="end" fontSize="10" fill="var(--muted-foreground)">{sgn(v)}</text></g>)}
+          {[0, 5, 10, 15, 20].map((m) => <text key={m} x={FX(m)} y="166" textAnchor="middle" fontSize="10" fill="var(--muted-foreground)">{m}:00</text>)}
+          <text x="300" y={FY(0) - 5} textAnchor="end" fontSize="10" fill="var(--muted-foreground)">level with the enemy jungler</text>
+          <motion.line y1="10" y2="152" stroke="var(--muted-foreground)" strokeWidth=".8" strokeDasharray="3 3" initial={false} animate={{ x1: FX(min), x2: FX(min) }} transition={{ type: 'spring', stiffness: 500, damping: 40 }} />
+          {series.map((s, i) => (
+            <g key={s[0]}>
+              <motion.path fill="none" stroke={s[1]} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" d={'M' + s[2].map((v, m) => FX(m) + ' ' + FY(v).toFixed(1)).join(' L')}
+                initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ duration: 1.1, delay: 0.15 + i * 0.15, ease: [0.22, 1, 0.36, 1] }} />
+              <motion.circle r="4" fill={s[1]} stroke="var(--card)" strokeWidth="2" initial={false} animate={{ cx: FX(min), cy: FY(s[2][min]) }} transition={{ type: 'spring', stiffness: 500, damping: 40 }} />
+            </g>
+          ))}
+        </svg>
+        <p className="m-0 min-h-[42px] text-sm" aria-live="polite">Minute {min}: {series.map((s) => `${s[0].toLowerCase()} ${sgn(s[2][min])}`).join(', ')} jungle CS against the enemy jungler.</p>
+        <div className="overflow-x-auto">
+          <table className="tnum w-full border-collapse text-sm">
+            <caption className="pb-1 text-left text-muted-foreground">{name}: you / enemy jungler</caption>
+            <thead><tr className="text-[11px] tracking-wider text-muted-foreground uppercase">{['At', 'Jungle CS', 'Gold', 'Level'].map((h, i) => <th key={h} className={`px-1.5 py-1 font-bold ${i ? 'text-right' : 'text-left'}`}>{h}</th>)}</tr></thead>
+            <tbody>{Object.keys(grp.farm).map((k) => { const r = grp.farm[k]; return (
+              <tr key={k} className="border-t"><td className="px-1.5 py-2 font-semibold">{k}:00</td><td className="px-1.5 text-right">{Math.round(r.jcs[0])} / {Math.round(r.jcs[1])}</td><td className="px-1.5 text-right">{r.gold[0].toLocaleString()} / {r.gold[1].toLocaleString()}</td><td className="px-1.5 text-right">{r.level[0]} / {r.level[1]}</td></tr>
+            ); })}</tbody>
+          </table>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function Objectives({ grp }) {
+  return (
+    <Card>
+      <CardContent className="flex flex-col gap-3.5">
+        <h3 className="m-0 text-lg font-bold tracking-tight">Who took each objective, and where you were</h3>
+        <Lead className="text-sm">Where you were in the minute before it fell. Voidgrubs are counted one by one.</Lead>
+        <div className="flex flex-col gap-1 text-[13px] text-muted-foreground">
+          {OBJ_SEG.map(([c, label]) => <span key={c}><i className="mr-1.5 inline-block size-2.5 rounded-[3px] align-[-1px]" style={{ background: `var(--${c})` }} />{label}</span>)}
+        </div>
+        {OBJS.map(([k, name]) => {
+          const mine = (grp.obj[k + '_mine'] || [0])[0], e = grp.obj[k + '_enemy'] || [0, 0, 0, 0];
+          const parts = [mine, e[0] - e[1], e[1] - e[2], e[2]], tot = mine + e[0];
+          if (!tot) return null;
+          return (
+            <div key={k} className="flex flex-col gap-1.5">
+              <div className="text-[15px] font-semibold">{name} <span className="tnum text-[13px] font-normal text-muted-foreground">· enemy took {e[0]} of {tot}</span></div>
+              <div className="flex h-4 gap-0.5" role="img" aria-label={`${name}: your team ${mine}, enemy ${e[0]}`}>
+                {parts.map((n, i) => <motion.i key={i} className="block h-full rounded-[3px]" style={{ background: `var(--${OBJ_SEG[i][0]})` }} initial={{ flexGrow: 0 }} animate={{ flexGrow: n, minWidth: n ? 3 : 0 }} transition={{ type: 'spring', stiffness: 120, damping: 20, delay: i * 0.06 }} />)}
+              </div>
+              <div className="tnum text-[13px] text-muted-foreground">Yours {parts[0]} · you were dead {parts[1]} · alive but far {parts[2]} · nearby {parts[3]}</div>
+            </div>
+          );
+        })}
+      </CardContent>
+    </Card>
+  );
+}

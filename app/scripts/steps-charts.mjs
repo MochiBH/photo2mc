@@ -1,0 +1,1 @@
+export default async (p) => { await p.click('nav[aria-label="Map sections"] button:has-text("Charts")'); await p.waitForTimeout(1500); await p.locator('svg[role="img"] circle').nth(40).click({ force: true }); };

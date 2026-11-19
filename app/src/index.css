@@ -1,0 +1,173 @@
+@import "tailwindcss";
+
+/* Dark follows the viewer: the system setting unless the page carries data-theme. */
+@custom-variant dark {
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme="light"]) *) { @slot; }
+  }
+  &:where(:root[data-theme="dark"] *) { @slot; }
+}
+
+/* Layout: one phone-width column of soft cards over a quiet ground, a floating pill dock at the bottom.
+   Tokens are Watermelon UI's neutral theme with its lime primary; status and chart colours are added for the game data. */
+:root {
+  --background: oklch(0.975 0.003 120);
+  --foreground: oklch(0.17 0.005 120);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.17 0.005 120);
+  --primary: oklch(76.8% 0.233 130.85);
+  --primary-foreground: oklch(0.22 0.06 130);
+  --secondary: oklch(0.955 0.004 120);
+  --secondary-foreground: oklch(0.21 0.006 120);
+  --muted: oklch(0.955 0.004 120);
+  --muted-foreground: oklch(0.47 0.01 120);
+  --accent: oklch(0.94 0.004 120);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.58 0.22 27);
+  --border: oklch(0.915 0.004 120);
+  --input: oklch(0.9 0.004 120);
+  --ring: oklch(0.708 0 0);
+  --good: oklch(0.55 0.15 150);
+  --good-soft: oklch(0.95 0.05 150);
+  --bad: oklch(0.58 0.2 25);
+  --bad-soft: oklch(0.955 0.03 25);
+  --gold: oklch(0.62 0.13 75);
+  --gold-soft: oklch(0.96 0.05 90);
+  --s1: #2a78d6;
+  --s2: #eb6834;
+  --s3: #1baf7a;
+  --s4: #eda100;
+  --map: oklch(0.94 0.012 150);
+  --map-lane: oklch(0.985 0.004 120);
+  --map-river: oklch(0.78 0.08 230);
+  --radius: 0.875rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --background: oklch(0.155 0.004 130);
+    --foreground: oklch(0.975 0.003 120);
+    --card: oklch(0.21 0.005 130);
+    --card-foreground: oklch(0.975 0.003 120);
+    --primary: oklch(79% 0.22 130.85);
+    --primary-foreground: oklch(0.2 0.06 130);
+    --secondary: oklch(0.265 0.006 130);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.255 0.005 130);
+    --muted-foreground: oklch(0.72 0.008 120);
+    --accent: oklch(0.31 0.006 130);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.556 0 0);
+    --good: oklch(0.78 0.16 150);
+    --good-soft: oklch(0.3 0.05 150);
+    --bad: oklch(0.72 0.17 25);
+    --bad-soft: oklch(0.3 0.06 25);
+    --gold: oklch(0.82 0.13 85);
+    --gold-soft: oklch(0.32 0.05 85);
+    --s1: #3987e5;
+    --s2: #d95926;
+    --s3: #199e70;
+    --s4: #c98500;
+    --map: oklch(0.2 0.012 150);
+    --map-lane: oklch(0.29 0.008 130);
+    --map-river: oklch(0.5 0.08 230);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: oklch(0.155 0.004 130);
+  --foreground: oklch(0.975 0.003 120);
+  --card: oklch(0.21 0.005 130);
+  --card-foreground: oklch(0.975 0.003 120);
+  --primary: oklch(79% 0.22 130.85);
+  --primary-foreground: oklch(0.2 0.06 130);
+  --secondary: oklch(0.265 0.006 130);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.255 0.005 130);
+  --muted-foreground: oklch(0.72 0.008 120);
+  --accent: oklch(0.31 0.006 130);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --good: oklch(0.78 0.16 150);
+  --good-soft: oklch(0.3 0.05 150);
+  --bad: oklch(0.72 0.17 25);
+  --bad-soft: oklch(0.3 0.06 25);
+  --gold: oklch(0.82 0.13 85);
+  --gold-soft: oklch(0.32 0.05 85);
+  --s1: #3987e5;
+  --s2: #d95926;
+  --s3: #199e70;
+  --s4: #c98500;
+  --map: oklch(0.2 0.012 150);
+  --map-lane: oklch(0.29 0.008 130);
+  --map-river: oklch(0.5 0.08 230);
+}
+
+@theme inline {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-good: var(--good);
+  --color-good-soft: var(--good-soft);
+  --color-bad: var(--bad);
+  --color-bad-soft: var(--bad-soft);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-s1: var(--s1);
+  --color-s2: var(--s2);
+  --color-s3: var(--s3);
+  --color-s4: var(--s4);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+}
+
+@layer base {
+  * { border-color: var(--border); }
+  html, body { margin: 0; }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+  h1, h2, h3 { text-wrap: balance; }
+  button { cursor: pointer; }
+  button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+  .tnum { font-variant-numeric: tabular-nums; }
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
