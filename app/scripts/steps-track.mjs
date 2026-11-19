@@ -1,0 +1,20 @@
+export default async (p) => {
+  await p.click('nav[aria-label="Live sections"] button:has-text("Track")'); await p.waitForTimeout(600);
+  await p.click('button:has-text("Start when the game starts")');
+  for (let i = 0; i < 4; i++) await p.click('[aria-label="Clock forward 1 minute"]');
+  for (let i = 0; i < 2; i++) await p.click('[aria-label="Clock forward 10 seconds"]');
+  await p.waitForTimeout(1200);
+  console.log('at ~4:20 ->', await p.textContent('main .tnum.text-2xl'));
+  await p.click('[aria-label="Clock forward 1 minute"]'); await p.waitForTimeout(1100);
+  console.log('at ~5:20 ->', await p.textContent('main .tnum.text-2xl'));
+  await p.click('button:has-text("They took it") >> nth=0'); await p.waitForTimeout(400);
+  for (let i = 0; i < 3; i++) await p.click('[aria-label="Clock forward 1 minute"]');
+  await p.click('button:has-text("They took them")');
+  await p.click('button:has-text("Died for nothing")'); await p.click('button:has-text("Died for nothing")'); await p.click('button:has-text("Died, we got one too")'); await p.click('button:has-text("Died for nothing")');
+  await p.waitForTimeout(1200);
+  console.log('after ->', await p.textContent('main .tnum.text-2xl'));
+  console.log((await p.textContent('main')).replace(/\s+/g, ' ').slice(-700));
+  await p.click('nav[aria-label="Live sections"] button:has-text("Build")'); await p.waitForTimeout(800);
+  console.log('minibar:', await p.textContent('main button.tnum'));
+  await p.click('main button.tnum'); await p.waitForTimeout(700);
+};

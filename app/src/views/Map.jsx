@@ -6,6 +6,7 @@ import { ShimmerProgress } from '../wm/shimmer-progress';
 import { Callout, Eyebrow, Lead, Mark, Num, Rise, Screen } from '../ui';
 import { CHECKS, OBJS, WHEN, WHO, ZONE, clock, rec, sgn } from '../lib/legacy';
 import { GameRow } from './Games';
+import { RiftBase } from './Rift';
 
 const POS = window.POS || null;
 const LEAKS = [
@@ -139,6 +140,7 @@ export default function MapView() {
 
 function Rift({ who, when, setWhen }) {
   const [sel, setSel] = useState(null);
+  const [zone, setZone] = useState(null);
   const ds = useMemo(() => POS.deaths.map((d, i) => ({ d, i })).filter(({ d }) =>
     (who === 'all' || (who === 'wins' && d[4] === 'W') || (who === 'losses' && d[4] === 'L') || d[5] === who) &&
     (when === 'all' || (when === 'early' ? d[2] < 15 : when === 'late' ? d[2] >= 15 : when === 'free' ? d[9] === 1 : d[10] === 1))), [who, when]);
@@ -151,33 +153,37 @@ function Rift({ who, when, setWhen }) {
       <CardContent className="flex flex-col gap-3">
         <h3 className="m-0 text-lg font-bold tracking-tight">Every death, on the map</h3>
         <ContinuousTabs tabs={toTabs(WHEN)} value={when} onChange={setWhen} label="Which deaths" size="sm" />
-        <svg viewBox="0 0 148 148" role="img" aria-label={`Map of Summoner's Rift with ${ds.length} deaths marked`} className="block h-auto w-full rounded-2xl ring-1 ring-foreground/10" style={{ background: 'var(--map)' }}>
-          <path d="M22 22 L126 126" fill="none" stroke="var(--map-river)" strokeOpacity=".45" strokeWidth="13" strokeLinecap="round" />
-          <path d="M11 100 V20 Q11 11 20 11 H100 M48 137 H128 Q137 137 137 128 V48 M38 110 L110 38" fill="none" stroke="var(--map-lane)" strokeWidth="8" strokeLinecap="round" />
-          <circle cx="0" cy="148" r="45" fill="var(--map-lane)" /><circle cx="148" cy="0" r="45" fill="var(--map-lane)" />
-          {[[50.1, 43.3], [98.7, 103.9]].map(([x, y]) => <circle key={x} cx={x} cy={y} r="5.5" fill="none" stroke="var(--muted-foreground)" strokeWidth=".6" strokeDasharray="1.5 1.5" />)}
-          <g fill="var(--muted-foreground)" fontSize="4" fontWeight="700" style={{ letterSpacing: '.06em', textTransform: 'uppercase' }}>
-            <text x="5" y="143">Blue base</text><text x="143" y="8" textAnchor="end">Red base</text>
-            <text x="50.1" y="35.5" textAnchor="middle">Baron</text><text x="98.7" y="114.5" textAnchor="middle">Dragon</text>
-            <text x="24" y="9">Top lane</text><text x="124" y="145" textAnchor="end">Bot lane</text>
+        <RiftBase label={`Map of Summoner's Rift with ${ds.length} deaths marked`}>
+          <g filter="url(#rift-heat)">
+            <AnimatePresence>
+              {ds.map(({ d, i }) => (
+                <motion.circle key={i} cx={d[0] / 100} cy={148 - d[1] / 100} r="6.5" fill="var(--bad)" initial={{ opacity: 0 }} animate={{ opacity: zone && d[3] !== zone ? 0 : 0.16 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }} />
+              ))}
+            </AnimatePresence>
           </g>
           <AnimatePresence>
-            {ds.slice().sort((a, b) => (a.d[8] ? 1 : 0) - (b.d[8] ? 1 : 0)).map(({ d, i }, n) => (
-              <motion.circle
-                key={i}
-                cx={d[0] / 100} cy={148 - d[1] / 100}
-                initial={{ r: 0, opacity: 0 }}
-                animate={{ r: sel === i ? 3.2 : 2.1, opacity: 1 }}
-                exit={{ r: 0, opacity: 0, transition: { duration: 0.15 } }}
-                transition={{ type: 'spring', stiffness: 420, damping: 18, delay: sel === i ? 0 : Math.min(n * 0.006, 0.6) }}
-                fill={sel === i ? 'var(--foreground)' : 'var(--bad)'} fillOpacity={sel === i ? 1 : d[8] ? 0.95 : 0.6}
-                stroke={d[8] ? 'var(--gold)' : 'var(--map)'} strokeWidth={d[8] ? 1 : 0.5}
-                style={{ cursor: 'pointer' }}
-                onClick={() => setSel(i)} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setSel(i); }}
-              />
-            ))}
+            {ds.slice().sort((a, b) => (a.d[8] ? 1 : 0) - (b.d[8] ? 1 : 0)).map(({ d, i }, n) => {
+              const dim = zone && d[3] !== zone;
+              return (
+                <motion.circle
+                  key={i}
+                  cx={d[0] / 100} cy={148 - d[1] / 100}
+                  initial={{ r: 0, opacity: 0 }}
+                  animate={{ r: sel === i ? 3.4 : 2, opacity: dim ? 0.12 : 1 }}
+                  exit={{ r: 0, opacity: 0, transition: { duration: 0.15 } }}
+                  transition={{ type: 'spring', stiffness: 420, damping: 18, delay: sel === i ? 0 : Math.min(n * 0.006, 0.6) }}
+                  fill={sel === i ? 'var(--foreground)' : 'var(--bad)'} fillOpacity={sel === i ? 1 : d[8] ? 1 : 0.78}
+                  stroke={d[8] ? 'var(--gold)' : 'var(--card)'} strokeWidth={d[8] ? 1.1 : 0.6}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => setSel(i)} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setSel(i); }}
+                />
+              );
+            })}
           </AnimatePresence>
-        </svg>
+          {sel !== null && cur && (
+            <motion.circle key={'ring' + sel} cx={cur[0] / 100} cy={148 - cur[1] / 100} fill="none" stroke="var(--foreground)" strokeWidth=".7" initial={{ r: 3, opacity: 0.9 }} animate={{ r: 9, opacity: 0 }} transition={{ duration: 1.1, repeat: Infinity, ease: 'easeOut' }} />
+          )}
+        </RiftBase>
         <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-[13px] text-muted-foreground">
           <span><i className="mr-1.5 inline-block size-2.5 rounded-full bg-bad align-[-1px]" />Death</span>
           <span><i className="mr-1.5 inline-block size-2.5 rounded-full bg-bad align-[-1px] ring-2 ring-gold" />Enemy took an objective right after</span>
@@ -189,18 +195,19 @@ function Rift({ who, when, setWhen }) {
                 <b>{cur[5]}, {cur[4] === 'W' ? 'win' : 'loss'}, {clock(cur[2])}</b> · {ZONE[cur[3]] || cur[3]} · {cur[6] === 0 ? 'no teammate near' : `${cur[6]} ${cur[6] === 1 ? 'teammate' : 'teammates'} near`}, {cur[7]} {cur[7] === 1 ? 'enemy' : 'enemies'}
                 {cur[8] ? ` · the enemy took ${cur[8] === 'voidgrub' ? 'Voidgrubs' : cur[8] === 'baron' ? 'Baron' : cur[8] === 'herald' ? 'the Herald' : 'a dragon'} right after` : ''}
                 {cur[9] ? ' · free death' : ' · an enemy died too'}{cur[10] ? ' · within 90 seconds of respawning' : ''}
-              </> : ds.length ? 'Tap a dot to see that death. A free death is one where no enemy died in the same fight.' : 'No deaths in this selection.'}
+              </> : ds.length ? 'Tap a dot to see that death, or a zone below to light up just that area. A free death is one where no enemy died in the same fight.' : 'No deaths in this selection.'}
             </motion.p>
           </AnimatePresence>
         </div>
         <div className="flex flex-col gap-1.5">
           <AnimatePresence initial={false}>
             {zones.map(([k, v]) => (
-              <motion.div key={k} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-[104px_1fr_28px] items-center gap-2 text-sm">
+              <motion.button type="button" key={k} layout initial={{ opacity: 0 }} animate={{ opacity: zone && zone !== k ? 0.45 : 1 }} exit={{ opacity: 0 }} whileTap={{ scale: 0.98 }} onClick={() => setZone(zone === k ? null : k)} aria-pressed={zone === k}
+                className={`grid min-h-9 grid-cols-[104px_1fr_28px] items-center gap-2 rounded-lg px-2 text-left text-sm transition-colors ${zone === k ? 'bg-muted' : ''}`}>
                 <span>{ZONE[k] || k}</span>
                 <span className="h-3"><motion.i className="block h-full min-w-[3px] rounded-r-[4px] bg-bad" initial={{ width: 0 }} animate={{ width: (v / max) * 100 + '%' }} transition={{ type: 'spring', stiffness: 140, damping: 20 }} /></span>
                 <b className="tnum text-right font-semibold"><Num value={v} /></b>
-              </motion.div>
+              </motion.button>
             ))}
           </AnimatePresence>
         </div>

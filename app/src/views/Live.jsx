@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Check, Flame, MessageCircle, RotateCcw } from 'lucide-react';
+import { ArrowRight, Check, Flame, MessageCircle, RotateCcw } from 'lucide-react';
+import { ShimmerButton } from '../wm/shimmer-button';
+import Track, { fmt, gameSeconds, nextUp, objectives } from './Track';
 import { Card, CardContent } from '../wm/card';
 import { Button } from '../wm/button';
 import { Input } from '../wm/input';
@@ -12,8 +14,9 @@ import {
   BD, BSTORE, CN, RUNES, allyFeatures, buildKha, buildNotes, buildNunu, champOf, gamePlan, gankOrder, norm, nunuRole, setBst, teamFeatures, withBought,
 } from '../lib/legacy';
 
-const BLANK = { me: 'Nunu', role: 'auto', state: 'even', allies: [0, 1, 2, 3].map(() => ({ c: '', f: 0 })), rows: [0, 1, 2, 3, 4].map(() => ({ c: '', r: '', f: 0 })), bought: [] };
+const BLANK = { me: 'Nunu', role: 'auto', state: 'even', sec: 'teams', clock: null, events: [], deaths: [], allies: [0, 1, 2, 3].map(() => ({ c: '', f: 0 })), rows: [0, 1, 2, 3, 4].map(() => ({ c: '', r: '', f: 0 })), bought: [] };
 const valid = (v) => v && Array.isArray(v.rows) && v.rows.length === 5 && Array.isArray(v.allies) && v.allies.length === 4 && Array.isArray(v.bought);
+const SECS = [{ id: 'teams', label: 'Teams' }, { id: 'track', label: 'Track' }, { id: 'build', label: 'Build & plan' }];
 const ALLY_PH = ['Top', 'Mid', 'Bot', 'Support'], ENEMY_PH = ['Top', 'Jungle', 'Mid', 'Bot', 'Support'];
 
 function Fed({ on, onClick, tone, label }) {
@@ -33,6 +36,21 @@ function ChampInput({ id, value, onChange, placeholder, label }) {
   return <Input id={id} list="champ-list" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} aria-label={label} aria-invalid={bad} autoComplete="off" autoCapitalize="words" spellCheck={false} />;
 }
 
+function MiniBar({ bst, onOpen }) {
+  const [now, setNow] = useState(Date.now());
+  const running = bst.clock.paused == null;
+  useEffect(() => { if (!running) return; const i = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(i); }, [running]);
+  const t = gameSeconds(bst.clock, now), nx = nextUp(objectives(bst.events, t));
+  const hot = nx && (nx.status === 'up' || nx.status === 'soon');
+  return (
+    <motion.button type="button" onClick={onOpen} layout whileTap={{ scale: 0.98 }}
+      className={cn('tnum flex min-h-11 items-center justify-between gap-3 rounded-full px-4 text-sm font-semibold ring-1', nx && nx.status === 'up' ? 'bg-primary text-primary-foreground ring-primary' : hot ? 'bg-gold-soft ring-gold/40' : 'bg-card ring-foreground/10')}>
+      <span>{fmt(t)}{running ? '' : ' · paused'}</span>
+      <span>{nx ? (nx.status === 'up' ? `${nx.name} is up` : `${nx.name} in ${fmt(nx.wait)}`) : 'No objectives left'}</span>
+    </motion.button>
+  );
+}
+
 export default function Live() {
   const { askCoach } = useApp();
   const [bst, setB] = useLocal(BSTORE, BLANK, valid);
@@ -50,6 +68,7 @@ export default function Live() {
   const nextItem = items.find((it) => !it.got);
   const title = (bst.me === "Kha'Zix" ? "Kha'Zix" : tank ? 'Tank Nunu' : 'AP Nunu') + (F.n ? ' against ' + F.list.join(', ') : ' · standard build');
 
+  const goSec = (sec) => { patch({ sec }); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   function toggleBought(n) { setB((b) => ({ ...b, bought: b.bought.includes(n) ? b.bought.filter((x) => x !== n) : [...b.bought, n] })); }
   function ask() {
     const who = bst.me === "Kha'Zix" ? "Kha'Zix" : tank ? 'tank Nunu' : 'AP Nunu';
@@ -63,13 +82,17 @@ export default function Live() {
   }
 
   return (
-    <Screen>
+    <div className="flex flex-col gap-4">
       <datalist id="champ-list">{CN.map((n) => <option key={n} value={n} />)}</datalist>
-      <Rise className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <Eyebrow>Live game helper</Eyebrow>
-        <Lead>Fill in all ten champions in champion select, each in its lane row. During the game, tap Fed on anyone who gets ahead and tick items as you buy them.</Lead>
-      </Rise>
-
+        <ContinuousTabs tabs={SECS} value={bst.sec} onChange={goSec} label="Live sections" />
+      </div>
+      {bst.clock && bst.sec !== 'track' && <MiniBar bst={bst} onOpen={() => goSec('track')} />}
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div key={bst.sec} initial={{ opacity: 0, x: 20, filter: 'blur(6px)' }} animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }} exit={{ opacity: 0, x: -20, filter: 'blur(6px)' }} transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}>
+    {bst.sec === 'teams' && <Screen>
+      <Rise><Lead>Fill in all ten champions in champion select, each in its lane row. Tap Fed on anyone who gets ahead during the game.</Lead></Rise>
       <Rise>
         <Card>
           <CardContent className="flex flex-col gap-3">
@@ -117,15 +140,10 @@ export default function Live() {
         </Card>
       </Rise>
 
-      <Rise>
-        <Card>
-          <CardContent className="flex items-center justify-between gap-3">
-            <h3 className="m-0 text-base font-bold tracking-tight">Your game</h3>
-            <ContinuousTabs tabs={[{ id: 'behind', label: 'Behind' }, { id: 'even', label: 'Even' }, { id: 'ahead', label: 'Ahead' }]} value={bst.state} onChange={(v) => patch({ state: v })} label="How your game is going" size="sm" />
-          </CardContent>
-        </Card>
-      </Rise>
-
+      <Rise><ShimmerButton onClick={() => goSec('track')}>Go to the tracker <ArrowRight size={18} /></ShimmerButton></Rise>
+    </Screen>}
+    {bst.sec === 'track' && <Track bst={bst} patch={patch} />}
+    {bst.sec === 'build' && <Screen>
       <Rise>
         <Card>
           <CardContent className="flex flex-col gap-3.5" aria-live="polite">
@@ -220,11 +238,14 @@ export default function Live() {
         </Card>
       </Rise>
 
-      <Rise className="flex flex-col gap-2.5">
-        <Button variant="outline" size="lg" onClick={ask}><MessageCircle /> Ask your coach about this game</Button>
-        <Button variant={armed ? 'destructive' : 'ghost'} size="lg" onClick={clear}><RotateCcw /> {armed ? 'Tap again to clear both teams' : 'New game: clear everything'}</Button>
-        <p className="m-0 text-xs text-muted-foreground">Item prices and the standard builds are from OP.GG ({BD.pulled}, ranked). The rules that adjust the build and the plan, and each champion's tags, were written by Claude, so treat this as a strong starting point and tell Claude when something looks wrong.</p>
-      </Rise>
-    </Screen>
+      <Rise><Button variant="outline" size="lg" onClick={ask} className="w-full"><MessageCircle /> Ask your coach about this game</Button></Rise>
+    </Screen>}
+        </motion.div>
+      </AnimatePresence>
+      <div className="flex flex-col gap-2.5">
+        <Button variant={armed ? 'destructive' : 'ghost'} size="lg" onClick={clear}><RotateCcw /> {armed ? 'Tap again to clear everything' : 'New game: clear teams, clock and tracker'}</Button>
+        <p className="m-0 text-xs text-muted-foreground">Item prices and the standard builds are from OP.GG ({BD.pulled}, ranked). The rules that adjust the build and the plan, and each champion's tags, were written by Claude, so treat this as a strong starting point and tell Claude when something looks wrong. Objective timers use Season 2026 times: dragon 5:00 then every 5:00, Voidgrubs 8:00, Herald 15:00, Baron 20:00 then every 6:00.</p>
+      </div>
+    </div>
   );
 }
