@@ -1,7 +1,9 @@
 import { cn } from './utils';
 
-/* Watermelon UI card, as smoked glass. `glow` adds a light travelling round the edge, for the one hero card on a screen. */
-export function Card({ className, glow = false, ...props }) {
+/* Watermelon UI card, as smoked glass. `glow` adds a light travelling round the edge, for the one hero card on a screen.
+   The light and the soft glow under it are their own small elements (see .glow-ring and .glow-halo) so that they move
+   without the card being repainted. */
+export function Card({ className, glow = false, children, ...props }) {
   return (
     <div
       data-slot="card"
@@ -12,7 +14,10 @@ export function Card({ className, glow = false, ...props }) {
         className,
       )}
       {...props}
-    />
+    >
+      {glow && <><span className="glow-halo" aria-hidden="true" /><span className="glow-ring" aria-hidden="true"><i /></span></>}
+      {children}
+    </div>
   );
 }
 export function CardHeader({ className, ...props }) {

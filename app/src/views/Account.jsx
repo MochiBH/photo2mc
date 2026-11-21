@@ -8,7 +8,7 @@ import { ShimmerButton } from '../wm/shimmer-button';
 import { ShimmerProgress } from '../wm/shimmer-progress';
 import { ContinuousTabs } from '../wm/continuous-tabs';
 import { cn } from '../wm/utils';
-import { Eyebrow, Lead, Rise, Screen } from '../ui';
+import { Eyebrow, Lead, Rise, Screen, SHARP } from '../ui';
 import { DEMO, useSession } from '../session';
 import { SplitTitle } from '../fx/text';
 import { shake } from '../fx/fx';
@@ -30,7 +30,7 @@ function Shell({ children }) {
           <SplitTitle text="Coach" className="text-neon pb-[0.1em]" delay={380} />
         </h1>
       </div>
-      <motion.div initial={{ opacity: 0, y: 24, filter: 'blur(10px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ type: 'spring', stiffness: 200, damping: 24, delay: 0.5 }} className="flex flex-col gap-5">
+      <motion.div initial={{ opacity: 0, y: 24, filter: 'blur(10px)' }} animate={{ opacity: 1, y: 0, ...SHARP }} transition={{ type: 'spring', stiffness: 200, damping: 24, delay: 0.5 }} className="flex flex-col gap-5">
         {children}
       </motion.div>
     </div>

@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { Card, CardContent } from '../wm/card';
 import { ContinuousTabs } from '../wm/continuous-tabs';
 import { ShimmerProgress } from '../wm/shimmer-progress';
-import { Callout, Eyebrow, Lead, Mark, Num, Rise, Screen } from '../ui';
+import { Callout, Eyebrow, Lead, Mark, Num, Rise, SHARP, Screen } from '../ui';
 import { OBJS, WHEN, ZONE, clock, sgn } from '../lib/legacy';
 import { TABS_FOR_STATS, checksFor, rec } from '../lib/roles';
 import { insights, strengths } from '../lib/insights';
@@ -31,7 +31,7 @@ export default function MapView() {
     <div className="flex flex-col gap-4">
       <ContinuousTabs tabs={SECTIONS} value={sec} onChange={(v) => { setSec(v); window.scrollTo({ top: 0, behavior: 'smooth' }); }} label="Map sections" />
       <AnimatePresence mode="wait" initial={false}>
-        <motion.div key={sec} initial={{ opacity: 0, x: 20, filter: 'blur(6px)' }} animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }} exit={{ opacity: 0, x: -20, filter: 'blur(6px)' }} transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}>
+        <motion.div key={sec} initial={{ opacity: 0, x: 20, filter: 'blur(6px)' }} animate={{ opacity: 1, x: 0, ...SHARP }} exit={{ opacity: 0, x: -20, filter: 'blur(6px)' }} transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}>
     {sec === 'checks' && <Screen>
       <Rise className="flex flex-col gap-1.5">
         <Eyebrow>Three checkpoints that decide your games</Eyebrow>
@@ -152,14 +152,17 @@ function Rift({ POS, who, when, setWhen }) {
       <CardContent className="flex flex-col gap-3">
         <h3 className="m-0 text-lg font-bold tracking-tight">Every death, on the map</h3>
         <ContinuousTabs tabs={toTabs(WHEN)} value={when} onChange={setWhen} label="Which deaths" size="sm" />
-        <RiftBase label={`Map of Summoner's Rift with ${ds.length} deaths marked`}>
+        <RiftBase label={`Map of Summoner's Rift with ${ds.length} deaths marked`} under={<>
+          {/* The heat glow is a blur, so it is drawn once and the whole layer fades in (.rift-under); only later changes fade spot by spot. */}
+          <defs><filter id="rift-heat" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4.5" /></filter></defs>
           <g filter="url(#rift-heat)">
-            <AnimatePresence>
+            <AnimatePresence initial={false}>
               {ds.map(({ d, i }) => (
                 <motion.circle key={i} cx={d[0] / 100} cy={148 - d[1] / 100} r="6.5" fill="var(--bad)" initial={{ opacity: 0 }} animate={{ opacity: zone && d[3] !== zone ? 0 : 0.16 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }} />
               ))}
             </AnimatePresence>
           </g>
+        </>}>
           <AnimatePresence>
             {ds.slice().sort((a, b) => (a.d[8] ? 1 : 0) - (b.d[8] ? 1 : 0)).map(({ d, i }, n) => {
               const dim = zone && d[3] !== zone;
@@ -189,7 +192,7 @@ function Rift({ POS, who, when, setWhen }) {
         </div>
         <div className="min-h-[44px] text-sm" aria-live="polite">
           <AnimatePresence mode="wait" initial={false}>
-            <motion.p key={cur ? sel : 'none'} initial={{ opacity: 0, y: 6, filter: 'blur(4px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.16 }} className={`m-0 ${cur ? '' : 'text-muted-foreground'}`}>
+            <motion.p key={cur ? sel : 'none'} initial={{ opacity: 0, y: 6, filter: 'blur(4px)' }} animate={{ opacity: 1, y: 0, ...SHARP }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.16 }} className={`m-0 ${cur ? '' : 'text-muted-foreground'}`}>
               {cur ? <>
                 <b>{champName(cur[5])}, {cur[4] === 'W' ? 'win' : 'loss'}, {clock(cur[2])}</b> · {ZONE[cur[3]] || cur[3]} · {cur[6] === 0 ? 'no teammate near' : `${cur[6]} ${cur[6] === 1 ? 'teammate' : 'teammates'} near`}, {cur[7]} {cur[7] === 1 ? 'enemy' : 'enemies'}
                 {cur[8] ? ` · the enemy took ${cur[8] === 'voidgrub' ? 'Voidgrubs' : cur[8] === 'baron' ? 'Baron' : cur[8] === 'herald' ? 'the Herald' : 'a dragon'} right after` : ''}

@@ -1,24 +1,26 @@
-import { motion } from 'motion/react';
+import { useLayoutEffect, useRef } from 'react';
 import NumberFlow from '@number-flow/react';
 import { cn } from './wm/utils';
 
-const list = { hidden: {}, show: { transition: { staggerChildren: 0.035, delayChildren: 0.02 } } };
-const item = {
-  hidden: { opacity: 0, y: 16, filter: 'blur(6px)' },
-  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { type: 'spring', stiffness: 260, damping: 26 } },
-};
+/* Motion's blur-in, finished cleanly. Spread it into an `animate` target: the element sharpens to blur(0) and then the
+   filter is taken off altogether. An element left holding even a zero blur is drawn through an extra off-screen pass for
+   as long as it is on the page, which is what made long screens slow to scroll on a phone. */
+export const SHARP = { filter: 'blur(0px)', transitionEnd: { filter: 'none' } };
 
-/* A screen: its direct <Rise> children come in one after another. */
+/* A screen: its direct <Rise> children come in one after another (rise up, fade in, sharpen). The motion is the CSS
+   animation `rise-in` in index.css, timed to match the spring it replaced, so the browser can run it without script and
+   leaves nothing on the element afterwards. Anything that starts below the bottom of the screen is simply there: nobody
+   would see it arrive, and animating it costs as much as animating what you can see. */
 export function Screen({ className, children }) {
-  return (
-    <motion.div variants={list} initial="hidden" animate="show" className={cn('flex flex-col gap-4', className)}>
-      {children}
-    </motion.div>
-  );
+  const ref = useRef(null);
+  useLayoutEffect(() => {
+    const fold = window.innerHeight;
+    for (const el of ref.current.children) if (el.classList.contains('rise') && el.getBoundingClientRect().top > fold) el.dataset.still = '';
+  }, []);
+  return <div ref={ref} className={cn('screen flex flex-col gap-4', className)}>{children}</div>;
 }
-export function Rise({ className, children, as = 'div', ...props }) {
-  const Tag = motion[as];
-  return <Tag variants={item} className={className} {...props}>{children}</Tag>;
+export function Rise({ className, children, as: Tag = 'div', ...props }) {
+  return <Tag className={cn('rise', className)} {...props}>{children}</Tag>;
 }
 
 export function Eyebrow({ children, className }) {

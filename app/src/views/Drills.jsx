@@ -6,7 +6,7 @@ import { Button } from '../wm/button';
 import { ShimmerButton } from '../wm/shimmer-button';
 import { ContinuousTabs } from '../wm/continuous-tabs';
 import { cn } from '../wm/utils';
-import { Callout, Eyebrow, Lead, Num, Rise, Screen } from '../ui';
+import { Callout, Eyebrow, Lead, Num, Rise, Screen, SHARP } from '../ui';
 import { useApp } from '../store';
 import { KEYS } from '../lib/legacy';
 import { burst } from '../fx/fx';
@@ -129,7 +129,7 @@ export default function Drills() {
                 <motion.div
                   key={cur.id + ':' + (run ? run.i : st.n - (answered !== null ? 1 : 0))}
                   initial={{ opacity: 0, x: 28, filter: 'blur(6px)' }}
-                  animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+                  animate={{ opacity: 1, x: 0, ...SHARP }}
                   exit={{ opacity: 0, x: -28, filter: 'blur(6px)' }}
                   transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
                   className="flex flex-col gap-3.5"

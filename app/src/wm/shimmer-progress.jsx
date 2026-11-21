@@ -17,12 +17,7 @@ export function ShimmerProgress({ value, className, tone = 'primary', label }) {
         transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
         className={cn('relative h-full overflow-hidden rounded-full', fill)}
       >
-        <motion.div
-          initial={{ x: '-100%' }}
-          animate={{ x: '200%' }}
-          transition={{ duration: 2.4, repeat: Infinity, ease: 'linear', repeatDelay: 1.2 }}
-          className="absolute inset-y-0 w-full bg-linear-to-r from-transparent via-white/45 to-transparent"
-        />
+        <div className="bar-sheen absolute inset-y-0 w-full bg-linear-to-r from-transparent via-white/45 to-transparent" />
       </motion.div>
     </div>
   );

@@ -13,11 +13,15 @@ const BUFFS = [[3800, 7900, 's1'], [7800, 4100, 's2'], [11000, 6900, 's1'], [710
 const LANES = 'M11 104 V22 Q11 11 22 11 H104 M44 137 H126 Q137 137 137 126 V44 M36 112 L112 36';
 const mix = (a, pct, b = 'var(--map)') => `color-mix(in oklab, ${a} ${pct}%, ${b})`;
 
-export function RiftBase({ label, className, labels = true, children }) {
+/* The map is up to three drawings stacked in one frame: the Rift itself, an optional layer under the marks (`under`, used
+   for the heat glow), and the marks on top (`children`). Each of the two upper drawings is its own layer, so a pulsing ring
+   or a dot popping in redraws only that thin layer and not the whole map beneath it. */
+export function RiftBase({ label, className, labels = true, under, children }) {
   const id = useId().replace(/:/g, ''), root = useRef(null);
   useDrawIn(root);
   return (
-    <svg ref={root} viewBox="0 0 148 148" role="img" aria-label={label} className={cn('block h-auto w-full rounded-3xl ring-1 ring-foreground/10', className)} style={{ background: 'var(--map)' }}>
+    <div className={cn('relative overflow-hidden rounded-3xl ring-1 ring-foreground/10', className)} style={{ background: 'var(--map)' }}>
+    <svg ref={root} viewBox="0 0 148 148" role="img" aria-label={label} className="block h-auto w-full">
       <defs>
         <linearGradient id={id + 'river'} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="var(--map-river)" stopOpacity=".75" />
@@ -29,7 +33,6 @@ export function RiftBase({ label, className, labels = true, children }) {
         <pattern id={id + 'grain'} width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
           <circle cx="1.5" cy="1.5" r=".55" fill="var(--foreground)" fillOpacity=".07" />
         </pattern>
-        <filter id="rift-heat" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4.5" /></filter>
       </defs>
       <rect width="148" height="148" fill={`url(#${id}grain)`} />
       {/* river with its two pits */}
@@ -63,7 +66,9 @@ export function RiftBase({ label, className, labels = true, children }) {
           <text x={PITS.dragon[0]} y={PITS.dragon[1] + 12.6} textAnchor="middle">Dragon</text>
         </g>
       )}
-      {children}
     </svg>
+    {under && <svg viewBox="0 0 148 148" aria-hidden="true" className="rift-layer rift-under">{under}</svg>}
+    {children && <svg viewBox="0 0 148 148" className="rift-layer">{children}</svg>}
+    </div>
   );
 }

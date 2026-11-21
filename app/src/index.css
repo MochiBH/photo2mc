@@ -43,8 +43,8 @@
 }
 
 @theme inline {
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: "Unbounded", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Unbounded Variable", "Unbounded", "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -81,13 +81,16 @@
   --radius-3xl: calc(var(--radius) + 12px);
 }
 
-@property --spin {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0deg;
+@keyframes ring-spin { from { transform: scale(4) rotate(0deg); } to { transform: scale(4) rotate(360deg); } }
+@keyframes rift-fade { from { opacity: 0; } }
+/* how a card arrives: see Screen and Rise in ui.jsx */
+@keyframes rise-in { from { opacity: 0; transform: translateY(16px); filter: blur(6px); } }
+@keyframes bar-sheen { 0% { transform: translateX(-100%); } 66.667%, 100% { transform: translateX(200%); } }
+/* the backdrop lights: only `transform` moves, so the browser slides a finished picture around instead of repainting it */
+@keyframes light-drift {
+  from { transform: translate3d(var(--x0), var(--y0), 0) scale(var(--s0)); }
+  to { transform: translate3d(var(--x1), var(--y1), 0) scale(var(--s1)); }
 }
-@keyframes spin-border { to { --spin: 360deg; } }
-@keyframes sheen { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
 
 @layer base {
   * { border-color: var(--border); }
@@ -118,41 +121,92 @@
 }
 
 @layer components {
-  /* lime-to-cyan ink for headline words and hero numbers */
+  /* lime-to-cyan ink for headline words and hero numbers; startSheen() in fx/fx.js drifts the gradient through it */
   .text-neon {
     background: linear-gradient(100deg, var(--primary) 0%, var(--cyan) 55%, var(--primary) 110%);
     background-size: 200% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    animation: sheen 6s linear infinite;
   }
+  .rise {
+    animation: rise-in 450ms cubic-bezier(0.2, 0.85, 0.3, 1) backwards;
+    /* the spring this replaced (stiffness 260, damping 26), where the browser can draw it exactly */
+    animation-timing-function: linear(0, 0.0653, 0.2096, 0.3781, 0.5394, 0.6779, 0.7882, 0.8707, 0.929, 0.9679, 0.9919, 1.0054, 1.0118, 1.0138, 1.0132, 1.0113, 1.009, 1.0067, 1);
+    animation-delay: calc(20ms + var(--rise-i, 0) * 35ms);
+  }
+  .rise[data-still] { animation: none; }
+  .screen > :nth-child(1) { --rise-i: 0; }
+  .screen > :nth-child(2) { --rise-i: 1; }
+  .screen > :nth-child(3) { --rise-i: 2; }
+  .screen > :nth-child(4) { --rise-i: 3; }
+  .screen > :nth-child(5) { --rise-i: 4; }
+  .screen > :nth-child(6) { --rise-i: 5; }
+  .screen > :nth-child(7) { --rise-i: 6; }
+  .screen > :nth-child(8) { --rise-i: 7; }
+  .screen > :nth-child(n + 9) { --rise-i: 8; }
+  /* the layers of the map above the Rift drawing (views/Rift.jsx) */
+  .rift-layer { position: absolute; inset: 0; width: 100%; height: 100%; will-change: transform; }
+  .rift-under { pointer-events: none; animation: rift-fade 0.5s ease-in-out backwards; }
+  /* the pass of light over a progress bar: 2.4s across, 1.2s rest, moved by transform only */
+  .bar-sheen { transform: translateX(-100%); animation: bar-sheen 3.6s linear infinite; }
   .bg-neon { background-image: linear-gradient(120deg, var(--primary), var(--cyan)); }
   .glow-lime { box-shadow: 0 10px 34px -12px var(--primary), inset 0 1px 0 rgb(255 255 255 / 0.35); }
-  /* a light that travels round the edge of a hero card */
+  /* A light that travels round the edge of a hero card, over a soft glow. Both are real elements inside the card (wm/card.jsx)
+     and both are built to cost nothing while they run: the light is a fixed gradient that only rotates, and the glow is a
+     small picture scaled up. Neither uses a blur filter or repaints the card. */
   .glow-border { position: relative; isolation: isolate; }
-  .glow-border::before {
-    content: "";
+  .glow-ring {
     position: absolute;
     inset: 0;
     z-index: -1;
     padding: 1.5px;
+    overflow: hidden;
     border-radius: inherit;
-    background: conic-gradient(from var(--spin), transparent 0deg, var(--primary) 70deg, var(--cyan) 130deg, transparent 200deg, var(--violet) 290deg, transparent 360deg);
+    pointer-events: none;
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-    animation: spin-border 5s linear infinite;
-    pointer-events: none;
   }
-  .glow-border::after {
-    content: "";
+  /* a square big enough to cover the card at any angle (drawn at a quarter size), turning about the card's centre */
+  .glow-ring > i {
     position: absolute;
-    inset: 8%;
+    top: 50%;
+    left: 50%;
+    width: 75%;
+    aspect-ratio: 1;
+    margin: -37.5% 0 0 -37.5%;
+    background: conic-gradient(transparent 0deg, var(--primary) 70deg, var(--cyan) 130deg, transparent 200deg, var(--violet) 290deg, transparent 360deg);
+    transform: scale(4);
+    animation: ring-spin 5s linear infinite;
+  }
+  /* The glow: what a 46px blur of the card's middle 84% would look like, drawn directly. A blurred rectangle is a ramp
+     along each axis multiplied together, so two masks stand in for the blur. Quarter size, scaled up. */
+  .glow-halo {
+    --ramp: rgb(0 0 0 / 0.0000) 0.00px, rgb(0 0 0 / 0.0049) 5.75px, rgb(0 0 0 / 0.0215) 11.50px, rgb(0 0 0 / 0.0656) 17.25px, rgb(0 0 0 / 0.1577) 23.00px, rgb(0 0 0 / 0.3080) 28.75px, rgb(0 0 0 / 0.5000) 34.50px, rgb(0 0 0 / 0.6920) 40.25px, rgb(0 0 0 / 0.8423) 46.00px, rgb(0 0 0 / 0.9344) 51.75px, rgb(0 0 0 / 0.9785) 57.50px, rgb(0 0 0 / 0.9951) 63.25px, rgb(0 0 0 / 1.0000) 69.00px, rgb(0 0 0 / 1.0000) calc(100% - 69.00px), rgb(0 0 0 / 0.9951) calc(100% - 63.25px), rgb(0 0 0 / 0.9785) calc(100% - 57.50px), rgb(0 0 0 / 0.9344) calc(100% - 51.75px), rgb(0 0 0 / 0.8423) calc(100% - 46.00px), rgb(0 0 0 / 0.6920) calc(100% - 40.25px), rgb(0 0 0 / 0.5000) calc(100% - 34.50px), rgb(0 0 0 / 0.3080) calc(100% - 28.75px), rgb(0 0 0 / 0.1577) calc(100% - 23.00px), rgb(0 0 0 / 0.0656) calc(100% - 17.25px), rgb(0 0 0 / 0.0215) calc(100% - 11.50px), rgb(0 0 0 / 0.0049) calc(100% - 5.75px), rgb(0 0 0 / 0.0000) calc(100% - 0.00px);
+    position: absolute;
+    top: 50%;
+    left: 50%;
     z-index: -2;
-    border-radius: inherit;
-    background: linear-gradient(120deg, color-mix(in oklab, var(--primary) 34%, transparent), color-mix(in oklab, var(--cyan) 26%, transparent), color-mix(in oklab, var(--violet) 30%, transparent));
-    filter: blur(46px);
+    width: calc((84% + 276px) / 4);
+    height: calc((84% + 276px) / 4);
+    --a: color-mix(in oklab, var(--primary) 34%, transparent);
+    --b: color-mix(in oklab, var(--cyan) 26%, transparent);
+    --c: color-mix(in oklab, var(--violet) 30%, transparent);
+    /* lime to cyan to violet; the five middle stops round off the corner at cyan the way the blur did */
+    background: linear-gradient(120deg, var(--a) 47.1px,
+      color-mix(in oklab, var(--b) 55.86%, color-mix(in oklab, var(--a) 99.57%, var(--c))) calc(50% - 23px),
+      color-mix(in oklab, var(--b) 74.45%, color-mix(in oklab, var(--a) 92.87%, var(--c))) calc(50% - 11.5px),
+      color-mix(in oklab, var(--b) 82.54%, color-mix(in oklab, var(--a) 50%, var(--c))) 50%,
+      color-mix(in oklab, var(--b) 74.45%, color-mix(in oklab, var(--a) 7.13%, var(--c))) calc(50% + 11.5px),
+      color-mix(in oklab, var(--b) 55.86%, color-mix(in oklab, var(--a) 0.43%, var(--c))) calc(50% + 23px),
+      var(--c) calc(100% - 47.1px));
+    -webkit-mask-image: linear-gradient(to right, var(--ramp)), linear-gradient(to bottom, var(--ramp));
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(to right, var(--ramp)), linear-gradient(to bottom, var(--ramp));
+    mask-composite: intersect;
+    transform: translate(-50%, -50%) scale(4);
+    will-change: transform;
     pointer-events: none;
   }
 }

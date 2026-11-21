@@ -7,6 +7,7 @@ import { ripple } from './fx/fx';
 import { FluidTabs } from './wm/fluid-tabs';
 import { ContinuousTabs } from './wm/continuous-tabs';
 import { AppCtx, useLocal } from './store';
+import { SHARP } from './ui';
 import { SessionProvider, useSession, useSynced } from './session';
 import { content } from './lib/content';
 import Learn from './views/Learn';
@@ -28,7 +29,8 @@ const VIEWS = { home: Home, learn: Learn, drills: Drills, map: MapView, live: Li
 const EMPTY = { n: 0, streak: 0, right: 0, wrong: 0, q: {}, lessons: {} };
 
 export default function App() {
-  return <SessionProvider><Backdrop /><div className="relative z-10"><Gate /></div></SessionProvider>;
+  // overflow-x-clip: a card's glow reaches past the screen edge, and must not make the page wider than the screen
+  return <SessionProvider><Backdrop /><div className="relative z-10 overflow-x-clip"><Gate /></div></SessionProvider>;
 }
 
 /* The mark: a tiny Rift, its three lanes drawn in. */
@@ -90,7 +92,7 @@ function Main() {
           <motion.main
             key={tab + role}
             initial={{ opacity: 0, y: 12, filter: 'blur(8px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            animate={{ opacity: 1, y: 0, ...SHARP }}
             exit={{ opacity: 0, y: -8, filter: 'blur(8px)' }}
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
             className="min-w-0"

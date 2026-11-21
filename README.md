@@ -30,6 +30,11 @@ Animation is split in two: Motion drives layout and presence inside the componen
 showpiece effects in `app/src/fx/` (the rippling dot-grid backdrop, particle bursts, letter reveals, self-drawing
 gauges and map lanes). The look is dark only.
 
+The effects are built so a phone can run them without repainting the page: the backdrop lights and a hero card's
+travelling edge only ever move by `transform`, nothing keeps a blur filter once its animation ends, and cards that
+start below the screen skip their entrance. Fonts are bundled with the site, files under `/assets` are cached for a
+year, and a returning player sees their last known stats at once while the account is checked in the background.
+
 Screens: Home (record, form, checkpoints, rules, game list), Learn and Drills (a jungle course and a support course), Map (checkpoints, leaks worked out from
 your games, death map and charts), Live (teams, in-game tracker, build and plan for any jungle or support champion)
 and Me (profile, refresh, sign out). A switch in the header flips between your jungle and support games.
@@ -74,6 +79,7 @@ node scripts/check-sync.mjs "Name#TAG" na     # real sync loop against Riot with
 SUPABASE_URL=... SUPABASE_ANON_KEY=... RIOT_API_KEY=... PLAYER_PASSWORD=... node scripts/check-live.mjs <username>   # real sign-in + sync
 node scripts/check-insights.mjs "Name#TAG" na support   # the checkpoints, leaks and strengths a player would see
 node scripts/make-demo.mjs && VITE_DEMO=1 npx vite build && node scripts/shot.mjs live dark scripts/steps-live.mjs support
+VITE_DEMO=1 npx vite build && node scripts/perf.mjs   # how busy the page is in a phone-sized, slowed-down browser
 ```
 
 `VITE_DEMO=1` builds a no-login version that reads `public/demo-stats.json` (git-ignored) for local checks only.

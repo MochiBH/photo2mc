@@ -19,5 +19,5 @@ try {
   const text = (await p.textContent('main')).replace(/\s+/g, ' ').slice(0, 260);
   console.log(username, '| header:', (await p.textContent('header')).replace(/\s+/g, ' ').slice(0, 60), '| scrollWidth', await p.evaluate(() => document.documentElement.scrollWidth), '| errors', JSON.stringify(errs));
   console.log('  ', text);
-  await p.screenshot({ path: `/tmp/claude-0/-home-user-photo2mc/93c1a049-80d7-56e5-9ff2-49537b11ab3e/scratchpad/live-${username}${tab ? '-' + tab : ''}.png` });
+  await p.screenshot({ path: `${process.env.OUT || 'dist'}/live-${username}${tab ? '-' + tab : ''}.png` });
 } finally { await b.close(); }

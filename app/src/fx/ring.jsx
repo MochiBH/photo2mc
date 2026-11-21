@@ -11,7 +11,7 @@ export function Ring({ value, size = 132, stroke = 12, tone = 'neon', children, 
     if (calm) { d.setAttribute('draw', '0 ' + pct); if (num.current) num.current.textContent = Math.round(pct * 100); return; }
     const a = animate(d, { draw: ['0 0', '0 ' + pct], duration: 1500, ease: 'outExpo', delay: 150 });
     const n = { v: 0 };
-    const b = num.current ? animate(n, { v: pct * 100, duration: 1500, ease: 'outExpo', delay: 150, onUpdate: () => { num.current.textContent = Math.round(n.v); } }) : null;
+    const b = num.current ? animate(n, { v: pct * 100, duration: 1500, ease: 'outExpo', delay: 150, onUpdate: () => { if (num.current) num.current.textContent = Math.round(n.v); } }) : null;
     return () => { a.pause(); if (b) b.pause(); };
   }, [pct]);
   const paint = tone === 'neon' ? `url(#${id})` : `var(--${tone})`;

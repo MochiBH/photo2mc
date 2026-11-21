@@ -26,7 +26,7 @@ export function Expand({ title, children, defaultOpen = false, className }) {
           <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} transition={SPRING} className="overflow-hidden">
             <motion.div
               initial={{ opacity: 0, filter: 'blur(8px)', y: 24 }}
-              animate={{ opacity: 1, filter: 'blur(0px)', y: 0, transition: { type: 'spring', duration: 0.45, bounce: 0, delay: 0.08 } }}
+              animate={{ opacity: 1, filter: 'blur(0px)', y: 0, transition: { type: 'spring', duration: 0.45, bounce: 0, delay: 0.08 }, transitionEnd: { filter: 'none' } }}
               exit={{ opacity: 0, filter: 'blur(8px)', y: 12, transition: { duration: 0.15 } }}
               className="px-4 pt-1 pb-4"
             >

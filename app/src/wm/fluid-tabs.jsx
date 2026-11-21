@@ -29,7 +29,7 @@ export function FluidTabs({ tabs, active, onChange, label }) {
             )}
             <motion.div
               transition={{ duration: 0.3, ease: 'easeOut' }}
-              animate={{ filter: isActive ? ['blur(0px)', 'blur(4px)', 'blur(0px)'] : 'blur(0px)' }}
+              animate={{ filter: isActive ? ['blur(0px)', 'blur(4px)', 'blur(0px)'] : 'blur(0px)', transitionEnd: { filter: 'none' } }}
               className={`relative z-10 flex items-center gap-1.5 transition-colors duration-200 ${isActive ? 'font-bold text-primary-foreground' : 'font-semibold text-white/55 group-hover:text-white'}`}
             >
               <motion.div animate={{ scale: isActive ? 1.08 : 1, rotate: isActive ? [0, -10, 0] : 0 }} transition={{ scale: { type: 'spring', stiffness: 300, damping: 15 }, rotate: { duration: 0.4 } }} className="flex shrink-0 items-center justify-center">

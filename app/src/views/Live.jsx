@@ -7,7 +7,7 @@ import { Input } from '../wm/input';
 import { ShimmerButton } from '../wm/shimmer-button';
 import { ContinuousTabs } from '../wm/continuous-tabs';
 import { cn, spring } from '../wm/utils';
-import { Eyebrow, Lead, Num, Rise, Screen } from '../ui';
+import { Eyebrow, Lead, Num, Rise, Screen, SHARP } from '../ui';
 import { useSession, useSynced } from '../session';
 import { CN, RUNES, champOf, norm } from '../lib/legacy';
 import { BUILDS, champsFor, gold } from '../lib/champs';
@@ -80,7 +80,7 @@ export default function Live() {
       </div>
       {bst.clock && bst.sec !== 'track' && <MiniBar bst={bst} onOpen={() => goSec('track')} />}
       <AnimatePresence mode="wait" initial={false}>
-        <motion.div key={bst.sec} initial={{ opacity: 0, x: 20, filter: 'blur(6px)' }} animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }} exit={{ opacity: 0, x: -20, filter: 'blur(6px)' }} transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}>
+        <motion.div key={bst.sec} initial={{ opacity: 0, x: 20, filter: 'blur(6px)' }} animate={{ opacity: 1, x: 0, ...SHARP }} exit={{ opacity: 0, x: -20, filter: 'blur(6px)' }} transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}>
           {bst.sec === 'teams' && (
             <Screen>
               <Rise><Lead>Pick your champion, then fill in the other nine in champion select, each in its lane row. Tap Fed on anyone who gets ahead during the game.</Lead></Rise>
@@ -159,7 +159,7 @@ export default function Live() {
                       {L.items.map((it, i) => {
                         const isNext = it === nextItem;
                         return (
-                          <motion.li key={it.item} layout initial={{ opacity: 0, scale: 0.92, filter: 'blur(6px)' }} animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }} exit={{ opacity: 0, scale: 0.92, filter: 'blur(6px)' }} transition={{ type: 'spring', stiffness: 320, damping: 30 }}
+                          <motion.li key={it.item} layout initial={{ opacity: 0, scale: 0.92, filter: 'blur(6px)' }} animate={{ opacity: 1, scale: 1, ...SHARP }} exit={{ opacity: 0, scale: 0.92, filter: 'blur(6px)' }} transition={{ type: 'spring', stiffness: 320, damping: 30 }}
                             className={cn('grid grid-cols-[28px_1fr_auto] items-start gap-3 rounded-xl p-2.5 transition-colors', isNext ? 'bg-primary/12 ring-1 ring-primary/50' : 'bg-muted/60')}>
                             <span className={cn('grid size-7 place-items-center rounded-lg text-sm font-bold', it.got ? 'bg-good-soft text-good' : isNext ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground ring-1 ring-foreground/10')}>{it.got ? <Check size={16} strokeWidth={3} /> : i + 1}</span>
                             <span className="min-w-0">
@@ -183,7 +183,7 @@ export default function Live() {
                     <h3 className="m-0 text-lg font-bold tracking-tight">Game plan</h3>
                     <AnimatePresence initial={false} mode="popLayout">
                       {L.plan.map(([head, text]) => (
-                        <motion.div key={head} layout initial={{ opacity: 0, x: -16, filter: 'blur(6px)' }} animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }} exit={{ opacity: 0, x: 16, filter: 'blur(6px)' }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                        <motion.div key={head} layout initial={{ opacity: 0, x: -16, filter: 'blur(6px)' }} animate={{ opacity: 1, x: 0, ...SHARP }} exit={{ opacity: 0, x: 16, filter: 'blur(6px)' }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                           className={cn('rounded-xl px-3.5 py-3', /is fed$|behind$/.test(head) ? 'bg-bad-soft' : /ahead$/.test(head) ? 'bg-good-soft' : 'bg-muted/60')}>
                           <div className="mb-1 text-[11px] font-bold tracking-[0.12em] text-muted-foreground uppercase">{head}</div>
                           {head === 'Gank first' && L.ganks.length > 0 ? (

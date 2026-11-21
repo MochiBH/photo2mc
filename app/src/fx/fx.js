@@ -4,6 +4,24 @@ import { animate, utils } from 'animejs';
 export const calm = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 export const TONE = { lime: ['#b9ff3d', '#5cf2d6', '#ffffff'], melon: ['#ff4d73', '#ff9a5c', '#ffffff'], gold: ['#ffd24d', '#b9ff3d', '#ffffff'] };
 
+/** The slow lime-to-cyan drift through `.text-neon` words. Moving a gradient through text means repainting the text, and a
+    CSS animation would wake the page sixty times a second to do it. This shifts the gradient twelve times a second, by a
+    couple of percent each time, which looks the same and lets the page rest in between. Returns a function that stops it. */
+export function startSheen() {
+  if (calm || typeof document === 'undefined') return () => {};
+  const born = new WeakMap();
+  const id = setInterval(() => {
+    if (document.hidden) return;
+    const now = performance.now();
+    for (const el of document.querySelectorAll('.text-neon')) {
+      let t0 = born.get(el);
+      if (t0 === undefined) born.set(el, (t0 = now));
+      el.style.backgroundPosition = ((((now - t0) % 6000) / 6000) * 200).toFixed(1) + '% 50%';
+    }
+  }, 84);
+  return () => clearInterval(id);
+}
+
 let rippleImpl = null;
 export const setRipple = (fn) => { rippleImpl = fn; };
 /** A wave through the dot grid from a point on screen (client coordinates). */

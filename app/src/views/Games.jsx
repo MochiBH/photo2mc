@@ -1,4 +1,3 @@
-import { motion } from 'motion/react';
 import { RefreshCw } from 'lucide-react';
 import { Card, CardContent } from '../wm/card';
 import { Button } from '../wm/button';
@@ -8,7 +7,7 @@ import { useSession } from '../session';
 
 export function GameRow({ win, champ, sub, date, children }) {
   return (
-    <motion.li layout className="relative flex flex-col gap-2 overflow-hidden rounded-2xl bg-white/[0.045] py-2.5 pr-3 pl-4 ring-1 ring-white/6">
+    <li className="relative flex flex-col gap-2 overflow-hidden rounded-2xl bg-white/[0.045] py-2.5 pr-3 pl-4 ring-1 ring-white/6">
       <span className={cn('absolute inset-y-0 left-0 w-1', win ? 'bg-good shadow-[0_0_12px_var(--good)]' : 'bg-bad shadow-[0_0_12px_var(--bad)]')} />
       <div className="flex items-baseline gap-2.5 text-[15px]">
         <span className={cn('w-9 font-bold', win ? 'text-good' : 'text-bad')}>{win ? 'Win' : 'Loss'}</span>
@@ -17,7 +16,7 @@ export function GameRow({ win, champ, sub, date, children }) {
         <span className="ml-auto text-xs text-muted-foreground">{date}</span>
       </div>
       <div className="flex flex-wrap gap-1.5">{children}</div>
-    </motion.li>
+    </li>
   );
 }
 export const shortDate = (t) => { try { return new Date(t).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); } catch (e) { return ''; } };

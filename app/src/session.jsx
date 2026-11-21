@@ -9,20 +9,33 @@ export const supa = !DEMO && URL_ && KEY ? createClient(URL_, KEY) : null;
 const Ctx = createContext(null);
 export const useSession = () => useContext(Ctx);
 const STALE_MS = 30 * 60 * 1000;
-const local = { get: (k) => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+const local = {
+  get: (k) => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } },
+  set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+  del: (k) => { try { localStorage.removeItem(k); } catch (e) {} },
+};
+/* The signed-in player's profile and stats as last seen in this browser. Opening the site shows these at once and checks
+   the account in the background, instead of sitting on a spinner while three requests come back. Removed on sign-out. */
+const ME = 'jc.me';
+const remembered = () => { const m = !DEMO && supa ? local.get(ME) : null; return m && m.id && m.profile && m.profile.riot_name ? m : null; };
 
 export function SessionProvider({ children }) {
-  const [phase, setPhase] = useState('loading');           // loading | config | signedOut | needsProfile | ready
-  const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState(null);
-  const [statsAll, setStatsAll] = useState(null);
-  const [statsAt, setStatsAt] = useState(null);
-  const [cloud, setCloud] = useState({});
+  const [seen] = useState(remembered);
+  const [phase, setPhase] = useState(seen ? 'ready' : 'loading');           // loading | config | signedOut | needsProfile | ready
+  const [user, setUser] = useState(seen ? { id: seen.id, email: seen.email } : null);
+  const [profile, setProfile] = useState(seen ? seen.profile : null);
+  const [statsAll, setStatsAll] = useState(seen ? seen.stats || null : null);
+  const [statsAt, setStatsAt] = useState(seen ? seen.statsAt || null : null);
+  const [cloud, setCloud] = useState(() => (seen ? local.get('jc.cloud.' + seen.id) || {} : {}));
   const [sync, setSync] = useState({ busy: false, done: 0, total: 0, error: '' });
   const token = useRef(null), dirty = useRef(false), cloudRef = useRef({}), syncing = useRef(false);
+  const shown = useRef(null), loaded = useRef(false), touched = useRef(new Set()), wanted = useRef(seen ? seen.id : null), fetching = useRef(null);
   cloudRef.current = cloud;
+  shown.current = { id: user ? user.id : null, ready: phase === 'ready', statsAt };
 
   const load = useCallback(async (u) => {
+    const showing = shown.current.ready && shown.current.id === u.id;   // already on screen from what this browser remembers
+    wanted.current = u.id; fetching.current = u.id;
     setUser(u);
     const cached = local.get('jc.cloud.' + u.id) || {};
     if (DEMO) {
@@ -37,8 +50,15 @@ export function SessionProvider({ children }) {
       supa.from('player_stats').select('stats,updated_at').eq('user_id', u.id).maybeSingle(),
       supa.from('app_state').select('data').eq('user_id', u.id).maybeSingle(),
     ]);
-    setCloud({ ...cached, ...((a.data && a.data.data) || {}) });
-    setStatsAll(s.data ? s.data.stats : null); setStatsAt(s.data ? s.data.updated_at : null);
+    if (fetching.current === u.id) fetching.current = null;
+    if (wanted.current !== u.id) return;   // signed out, or someone else signed in, while this was in flight
+    if (showing && (p.error || s.error || a.error)) return;   // the refresh failed: keep showing what this browser remembers
+    loaded.current = true;
+    // The account's saved state wins over this browser's copy, except for anything changed since the page opened.
+    setCloud((c) => { const out = { ...cached, ...((a.data && a.data.data) || {}) }; if (showing) for (const k of touched.current) if (k in c) out[k] = c[k]; return out; });
+    // If a sync finished while this was in flight, the numbers on screen are newer than the row just read: keep them.
+    const mine = showing ? shown.current.statsAt : null;
+    if (!(mine && s.data && new Date(s.data.updated_at) < new Date(mine))) { setStatsAll(s.data ? s.data.stats : null); setStatsAt(s.data ? s.data.updated_at : null); }
     setProfile(p.data || null);
     setPhase(p.data && p.data.riot_name ? 'ready' : 'needsProfile');
   }, []);
@@ -47,31 +67,47 @@ export function SessionProvider({ children }) {
     if (DEMO) { load({ id: 'demo', email: 'demo@local' }); return; }
     if (!supa) { setPhase('config'); return; }
     let live = true;
-    supa.auth.getSession().then(({ data }) => { if (!live) return; token.current = data.session ? data.session.access_token : null; if (data.session) load(data.session.user); else setPhase('signedOut'); });
+    const forget = () => { local.del(ME); wanted.current = null; loaded.current = false; touched.current.clear(); setUser(null); setProfile(null); setStatsAll(null); setStatsAt(null); setCloud({}); setPhase('signedOut'); };
+    supa.auth.getSession().then(({ data }) => {
+      if (!live) return;
+      token.current = data.session ? data.session.access_token : null;
+      if (!data.session) return forget();
+      if (shown.current.id && shown.current.id !== data.session.user.id) { setProfile(null); setStatsAll(null); setStatsAt(null); setCloud({}); setPhase('loading'); }
+      if (fetching.current !== data.session.user.id) load(data.session.user);   // unless the sign-in event already started it
+    });
     const { data: sub } = supa.auth.onAuthStateChange((event, session) => {
       token.current = session ? session.access_token : null;
-      if (event === 'SIGNED_OUT') { setUser(null); setProfile(null); setStatsAll(null); setCloud({}); setPhase('signedOut'); }
-      else if (event === 'SIGNED_IN' && session) setUser((u) => { if (!u || u.id !== session.user.id) load(session.user); return u; });
+      if (event === 'SIGNED_OUT') forget();
+      else if (event === 'SIGNED_IN' && session && wanted.current !== session.user.id) load(session.user);   // a new sign-in, not a refresh of the one on screen
     });
     return () => { live = false; sub.subscription.unsubscribe(); };
   }, [load]);
 
   /* per-player app state: kept in this browser and saved to the account a moment after each change */
   const setKey = useCallback((name, next) => {
+    touched.current.add(name);
     setCloud((c) => { const value = typeof next === 'function' ? next(c[name]) : next; const out = { ...c, [name]: value }; dirty.current = true; return out; });
   }, []);
   useEffect(() => {
     if (!user || !dirty.current) return;
     local.set('jc.cloud.' + user.id, cloud);
     if (DEMO) { dirty.current = false; return; }
+    if (!loaded.current) return;   // not until the account's copy has been read, or this browser's older copy would overwrite it
     const t = setTimeout(() => { dirty.current = false; supa.from('app_state').upsert({ user_id: user.id, data: cloudRef.current, updated_at: new Date().toISOString() }).then(() => {}); }, 1500);
     return () => clearTimeout(t);
   }, [cloud, user]);
+
+  useEffect(() => {     // remember what is on screen for the next visit
+    if (DEMO || !user || !profile || !profile.riot_name || phase !== 'ready') return;
+    local.set(ME, { id: user.id, email: user.email, profile, stats: statsAll, statsAt });
+  }, [user, profile, statsAll, statsAt, phase]);
 
   const runSync = useCallback(async () => {
     if (syncing.current || DEMO) return;
     syncing.current = true; setSync({ busy: true, done: 0, total: 0, error: '' });
     try {
+      if (!token.current) { const { data } = await supa.auth.getSession(); token.current = data.session ? data.session.access_token : null; }
+      if (!token.current) return;   // signed out in the meantime; the sign-in screen takes over
       for (let guard = 0; guard < 40; guard++) {
         const res = await fetch('/api/sync', { method: 'POST', headers: { Authorization: 'Bearer ' + token.current } });
         const body = await res.json().catch(() => ({}));
