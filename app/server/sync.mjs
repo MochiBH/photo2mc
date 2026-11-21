@@ -1,10 +1,18 @@
-// One step of pulling a player's ranked games from Riot and analysing them. The browser calls this repeatedly until done,
-// so each call stays short: at most BATCH new games (two Riot requests each).
-import { analyseGame, buildStats } from './analysis.mjs';
+// One step of pulling a player's ranked and normal games from Riot and analysing them. The browser calls this repeatedly
+// until done, so each call stays short: at most BATCH new games (two Riot requests each).
+import { QUEUES, analyseGame, buildStats } from './analysis.mjs';
 import { riotClient } from './riot.mjs';
 
 export const BATCH = 3;
 export const ROLES = ['jungle', 'support'];
+const PER_QUEUE = 20;
+
+/** What is saved for a player: ranked numbers per role at the top (where older copies of the site look for them), then
+    the same for normal games and for both kinds together. */
+export function allStats(games) {
+  const set = (queue, limit) => Object.fromEntries(ROLES.map((role) => [role, buildStats(games, role, limit, queue)]));
+  return { ...set('ranked', PER_QUEUE), normal: set('normal', PER_QUEUE), both: set('both', PER_QUEUE * 2) };
+}
 
 /** db: { knownIds(userId, ids), putGame(row), listGames(userId, limit), saveStats(userId, stats), savePuuid(userId, puuid) } */
 export async function runSync(db, profile, { riot = riotClient(profile.region), batch = BATCH } = {}) {
@@ -13,7 +21,8 @@ export async function runSync(db, profile, { riot = riotClient(profile.region), 
     puuid = (await riot.account(profile.riot_name, profile.riot_tag)).puuid;
     await db.savePuuid(profile.id, puuid);
   }
-  const ids = await riot.matchIds(puuid, 20);
+  const lists = await Promise.all(Object.values(QUEUES).map((queue) => riot.matchIds(puuid, PER_QUEUE, queue)));
+  const ids = [...new Set(lists.flat())];
   const known = new Set(await db.knownIds(profile.id, ids));
   const todo = ids.filter((id) => !known.has(id));
   for (const id of todo.slice(0, batch)) {
@@ -24,8 +33,8 @@ export async function runSync(db, profile, { riot = riotClient(profile.region), 
   }
   const remaining = Math.max(0, todo.length - batch);
   if (remaining) return { done: false, remaining, total: ids.length };
-  const games = (await db.listGames(profile.id, 60)).map((r) => r.analysis).filter(Boolean);
-  const stats = Object.fromEntries(ROLES.map((role) => [role, buildStats(games, role)]));
+  const games = (await db.listGames(profile.id, 160)).map((r) => r.analysis).filter(Boolean);
+  const stats = allStats(games);
   await db.saveStats(profile.id, stats);
   return { done: true, remaining: 0, total: ids.length, stats };
 }

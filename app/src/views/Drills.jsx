@@ -94,6 +94,8 @@ export default function Drills() {
   const rec = cur ? st.q[cur.id] : null;
   const again = !run && rec && rec.miss > 0 && answered === null;
   const correct = cur ? cur.a ?? 0 : 0;
+  // `no` holds one line per wrong option, in order, saying why it is wrong (generated matchup questions have none)
+  const whyNot = (oi) => (cur && Array.isArray(cur.no) && oi !== correct ? cur.no[oi < correct ? oi : oi - 1] : null);
 
   return (
     <Screen>
@@ -142,6 +144,7 @@ export default function Drills() {
                   <div className="flex flex-col gap-2">
                     {order.map((oi, i) => {
                       const isRight = answered !== null && oi === correct, isWrong = answered !== null && oi === answered && oi !== correct;
+                      const reason = answered !== null ? whyNot(oi) : null;   // shown for every wrong option, picked or not
                       return (
                         <motion.button
                           key={oi}
@@ -149,7 +152,7 @@ export default function Drills() {
                           disabled={answered !== null}
                           onClick={(e) => answer(oi, e)}
                           initial={{ opacity: 0, y: 10 }}
-                          animate={isWrong ? { opacity: 1, y: 0, x: [0, -8, 8, -5, 5, 0] } : isRight ? { opacity: 1, y: 0, scale: [1, 1.03, 1] } : { opacity: answered !== null ? 0.5 : 1, y: 0 }}
+                          animate={isWrong ? { opacity: 1, y: 0, x: [0, -8, 8, -5, 5, 0] } : isRight ? { opacity: 1, y: 0, scale: [1, 1.03, 1] } : { opacity: answered !== null && !reason ? 0.5 : 1, y: 0 }}
                           transition={{ delay: answered === null ? 0.06 + i * 0.05 : 0, duration: 0.35 }}
                           whileTap={answered === null ? { scale: 0.98 } : undefined}
                           className={cn(
@@ -157,12 +160,17 @@ export default function Drills() {
                             isRight && 'border-good bg-good-soft', isWrong && 'border-bad bg-bad-soft',
                           )}
                         >
-                          <kbd className={cn('grid h-8 w-9 place-items-center rounded-lg border bg-card font-sans text-sm font-bold', isRight && 'border-good text-good', isWrong && 'border-bad text-bad')}>
-                            {isRight ? <Check size={16} strokeWidth={3} /> : isWrong ? <X size={16} strokeWidth={3} /> : KEYS[i]}
+                          <kbd className={cn('grid h-8 w-9 place-items-center rounded-lg border bg-card font-sans text-sm font-bold', isRight && 'border-good text-good', isWrong && 'border-bad text-bad', reason && !isWrong && 'text-muted-foreground')}>
+                            {isRight ? <Check size={16} strokeWidth={3} /> : isWrong || reason ? <X size={16} strokeWidth={3} /> : KEYS[i]}
                           </kbd>
                           <span className="pt-1 text-[15px] leading-snug">
-                            {cur.opts[oi]}
+                            <span className={cn(reason && !isWrong && 'text-muted-foreground')}>{cur.opts[oi]}</span>
                             {(isRight || isWrong) && <span className={cn('mt-1 block text-[11px] font-bold tracking-wider uppercase', isRight ? 'text-good' : 'text-bad')}>{isRight ? 'Best play' : 'Your pick'}</span>}
+                            {reason && (
+                              <motion.span initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 28 }} className="block overflow-hidden">
+                                <span className="mt-1 block text-[13px] leading-snug text-muted-foreground"><b className="font-semibold text-bad">Why not:</b> {reason}</span>
+                              </motion.span>
+                            )}
                           </span>
                         </motion.button>
                       );

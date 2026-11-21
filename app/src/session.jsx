@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { ALLOWED, loginEmail, validUsername } from '../server/players.mjs';
+import { QUEUE_TABS, hasQueues, isQueue, statsFor } from './lib/queues';
 
 const URL_ = import.meta.env.VITE_SUPABASE_URL, KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 export const DEMO = import.meta.env.VITE_DEMO === '1';   // local checks only: no accounts, stats from /demo-stats.json
@@ -121,7 +122,8 @@ export function SessionProvider({ children }) {
   }, []);
 
   useEffect(() => {     // first visit, or numbers older than half an hour: refresh quietly
-    if (phase === 'ready' && !DEMO && (!statsAt || Date.now() - new Date(statsAt).getTime() > STALE_MS)) runSync();
+    // ...or numbers saved before normal games were added, which have only the ranked set
+    if (phase === 'ready' && !DEMO && (!statsAt || Date.now() - new Date(statsAt).getTime() > STALE_MS || (statsAll && !hasQueues(statsAll)))) runSync();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
@@ -138,8 +140,13 @@ export function SessionProvider({ children }) {
   }, [profile, user, runSync]);
 
   const role = cloud.viewRole || (profile && profile.role) || 'jungle';
+  const queue = isQueue(cloud.viewQueue) ? cloud.viewQueue : 'both';   // which games: ranked, normal or both
   const value = useMemo(() => ({
-    phase, user, profile, role, setRole: (r) => setKey('viewRole', r), stats: statsAll ? statsAll[role] : null, statsAt, sync, runSync, saveProfile, cloud, setKey,
+    phase, user, profile, role, setRole: (r) => setKey('viewRole', r), statsAt, sync, runSync, saveProfile, cloud, setKey,
+    queue, setQueue: (q) => setKey('viewQueue', q),
+    stats: statsAll ? statsFor(statsAll, queue)[role] || null : null,
+    // how many games each choice holds for this role, for the switch; empty until the saved numbers include normals
+    queueCounts: hasQueues(statsAll) ? Object.fromEntries(QUEUE_TABS.map((t) => [t.id, (statsFor(statsAll, t.id)[role] || {}).games || 0])) : {},
     signIn: async (username, password) => {
       if (!validUsername(username) || !ALLOWED.includes(username)) return { error: { message: 'This site is private. Check your username.' } };
       const out = await supa.auth.signInWithPassword({ email: loginEmail(username), password });
@@ -149,7 +156,7 @@ export function SessionProvider({ children }) {
     changePassword: (password) => supa.auth.updateUser({ password }),
     username: user && user.email ? user.email.split('@')[0] : '',
     signOut: () => (DEMO ? null : supa.auth.signOut()),
-  }), [phase, user, profile, role, statsAll, statsAt, sync, runSync, saveProfile, cloud, setKey]);
+  }), [phase, user, profile, role, queue, statsAll, statsAt, sync, runSync, saveProfile, cloud, setKey]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

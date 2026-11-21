@@ -12,9 +12,10 @@ import { useSession } from '../session';
 import { RULES, checksFor, rec } from '../lib/roles';
 import { insights } from '../lib/insights';
 import { champName } from '../lib/champs';
+import { queueWords } from '../lib/queues';
 import { Ring } from '../fx/ring';
 import { calm } from '../fx/fx';
-import { GameRow, NoGames, shortDate } from './Games';
+import { GameRow, NoGames, NormalTag, shortDate } from './Games';
 
 /* The last ten results as a row of bars that grow in one after another: tall lime for a win, short pink for a loss. */
 function Form({ games }) {
@@ -37,7 +38,7 @@ export default function Home() {
   const { stats, role, sync, runSync, statsAt } = useSession();
   const { go } = useApp();
   if (!stats || !stats.games) return <NoGames role={role} />;
-  const G = stats.list, n = G.length, all = stats.groups.all, wins = G.filter((g) => g.w).length;
+  const G = stats.list, n = G.length, all = stats.groups.all, wins = G.filter((g) => g.w).length, mixed = stats.queue === 'both';
   let streak = 1; while (streak < n && G[streak].w === G[0].w) streak++;
   const leak = insights(stats)[0], checks = checksFor(stats, role), rules = RULES[role];
   const tiles = [['KDA', all.kda.join('/')], ['Deaths a game', (all.deaths / n).toFixed(1)], role === 'support' ? ['Vision a min', all.vision.per_min] : ['Jungle CS a min', all.jcs_min]];
@@ -51,7 +52,7 @@ export default function Home() {
             <div className="flex items-center gap-4">
               <Ring value={wins / n} label={`Win rate ${Math.round((wins / n) * 100)}%`} />
               <div className="min-w-0">
-                <Eyebrow>Last {n} ranked {role} games</Eyebrow>
+                <Eyebrow>Last {n} {queueWords(stats).adj}{role} games</Eyebrow>
                 <div className="font-display text-neon tnum mt-1 text-[44px] leading-none font-black tracking-tight">{rec(G)}</div>
                 <span className={cn('mt-2 inline-flex h-7 items-center gap-1.5 rounded-full px-3 text-xs font-bold', G[0].w ? 'bg-good-soft text-good' : 'bg-bad-soft text-bad')}>
                   <Flame size={13} strokeWidth={2.6} />{streak} {G[0].w ? (streak === 1 ? 'win' : 'wins') : streak === 1 ? 'loss' : 'losses'}{streak > 1 ? ' in a row' : ' last game'}
@@ -132,6 +133,7 @@ export default function Home() {
           <ul className="m-0 flex list-none flex-col gap-2 p-0">
             {G.map((g) => (
               <GameRow key={g.id} win={!!g.w} champ={champName(g.c)} sub={`${g.k}/${g.d}/${g.a}`} date={shortDate(g.t)}>
+                {mixed && g.q === 'n' && <NormalTag />}
                 {rules.map((r) => <Mark key={r.name} ok={r.ok(g)}>{r.chip(g)}</Mark>)}
                 <span className="tnum inline-flex h-6 items-center rounded-full bg-white/[0.06] px-2.5 text-xs font-semibold text-muted-foreground ring-1 ring-white/10">Dragons {g.od}–{g.ed}</span>
               </GameRow>
@@ -140,7 +142,7 @@ export default function Home() {
         </CardContent></Card>
       </Rise>
       <Rise className="flex flex-col gap-2.5">
-        <p className="m-0 text-xs text-muted-foreground">Ranked solo games from the Riot API, last updated {when}.</p>
+        <p className="m-0 text-xs text-muted-foreground">{queueWords(stats).source} from the Riot API, last updated {when}.</p>
         <Button variant="outline" size="lg" disabled={sync.busy} onClick={runSync}><RefreshCw className={sync.busy ? 'animate-spin' : ''} /> {sync.busy ? 'Updating…' : 'Update now'}</Button>
       </Rise>
     </Screen>

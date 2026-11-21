@@ -4,6 +4,7 @@ import { Button } from '../wm/button';
 import { cn } from '../wm/utils';
 import { Lead } from '../ui';
 import { useSession } from '../session';
+import { queueWords } from '../lib/queues';
 
 export function GameRow({ win, champ, sub, date, children }) {
   return (
@@ -21,12 +22,18 @@ export function GameRow({ win, champ, sub, date, children }) {
 }
 export const shortDate = (t) => { try { return new Date(t).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); } catch (e) { return ''; } };
 
+/* Marks a normal game in a list that mixes both kinds. */
+export function NormalTag() {
+  return <span className="inline-flex h-6 items-center rounded-full bg-white/[0.06] px-2.5 text-xs font-semibold text-muted-foreground ring-1 ring-white/10">Normal</span>;
+}
+
 export function NoGames({ role }) {
-  const { sync, runSync, profile } = useSession();
+  const { sync, runSync, profile, queue } = useSession();
+  const words = queueWords(queue);
   return (
     <Card><CardContent className="flex flex-col gap-3">
-      <h3 className="m-0 text-lg font-bold tracking-tight">{sync.busy ? 'Pulling your games…' : `No ranked ${role} games yet`}</h3>
-      <Lead className="text-sm">{sync.busy ? 'This takes about 15 seconds the first time.' : `Nothing found for ${profile.riot_name}#${profile.riot_tag} as ${role} in the last 20 ranked solo games. Play some, switch role at the top, or check the Riot ID on the Me tab.`}</Lead>
+      <h3 className="m-0 text-lg font-bold tracking-tight">{sync.busy ? 'Pulling your games…' : `No ${words.adj}${role} games yet`}</h3>
+      <Lead className="text-sm">{sync.busy ? 'This takes about 15 seconds the first time.' : `Nothing found for ${profile.riot_name}#${profile.riot_tag} as ${role} in the last 20 ${words.pool}. Play some, switch role or the kind of game at the top, or check the Riot ID on the Me tab.`}</Lead>
       {!sync.busy && <Button variant="outline" size="lg" onClick={runSync}><RefreshCw /> Check again</Button>}
     </CardContent></Card>
   );

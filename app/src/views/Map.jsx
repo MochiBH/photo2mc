@@ -8,8 +8,9 @@ import { OBJS, WHEN, ZONE, clock, sgn } from '../lib/legacy';
 import { TABS_FOR_STATS, checksFor, rec } from '../lib/roles';
 import { insights, strengths } from '../lib/insights';
 import { champName } from '../lib/champs';
+import { queueWords } from '../lib/queues';
 import { useSession } from '../session';
-import { GameRow, NoGames, shortDate } from './Games';
+import { GameRow, NoGames, NormalTag, shortDate } from './Games';
 import { RiftBase } from './Rift';
 
 const SECTIONS = [{ id: 'checks', label: 'Checkpoints' }, { id: 'leaks', label: 'Leaks' }, { id: 'charts', label: 'Charts' }];
@@ -35,7 +36,7 @@ export default function MapView() {
     {sec === 'checks' && <Screen>
       <Rise className="flex flex-col gap-1.5">
         <Eyebrow>Three checkpoints that decide your games</Eyebrow>
-        <Lead>From the Riot API, your last {POS.games} ranked {role} games. These are the three things that split your own wins from your own losses most cleanly, and they are re-picked as you play. It is a small sample, so treat them as targets, not laws.</Lead>
+        <Lead>From the Riot API, your last {POS.games} {queueWords(POS).adj}{role} games. These are the three things that split your own wins from your own losses most cleanly, and they are re-picked as you play. It is a small sample, so treat them as targets, not laws.</Lead>
       </Rise>
       {checks.map((c, i) => {
         const hit = G.filter((g) => c.ok(g)), miss = G.filter((g) => !c.ok(g));
@@ -65,6 +66,7 @@ export default function MapView() {
             <ul className="m-0 flex list-none flex-col gap-2 p-0">
               {G.map((g) => (
                 <GameRow key={g.id} win={!!g.w} champ={champName(g.c)} sub={`${g.d} deaths`} date={shortDate(g.t)}>
+                  {POS.queue === 'both' && g.q === 'n' && <NormalTag />}
                   {checks.map((c) => <Mark key={c.name} ok={c.ok(g)}>{c.chip(g)}</Mark>)}
                   {role === 'jungle' && g.gap10 !== null && <span className="tnum inline-flex h-6 items-center rounded-full bg-card px-2.5 text-xs font-semibold text-muted-foreground ring-1 ring-foreground/10">Farm at 10:00 {sgn(g.gap10)}</span>}
                 </GameRow>

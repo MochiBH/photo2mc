@@ -9,6 +9,7 @@ import { ShimmerProgress } from '../wm/shimmer-progress';
 import { ContinuousTabs } from '../wm/continuous-tabs';
 import { cn } from '../wm/utils';
 import { Eyebrow, Lead, Rise, Screen, SHARP } from '../ui';
+import { queueWords } from '../lib/queues';
 import { DEMO, useSession } from '../session';
 import { SplitTitle } from '../fx/text';
 import { shake } from '../fx/fx';
@@ -139,7 +140,7 @@ export function Setup() {
   const { signOut } = useSession();
   return (
     <Shell>
-      <Lead>One-time setup. Your Riot ID lets the site pull your ranked games and work out your stats.</Lead>
+      <Lead>One-time setup. Your Riot ID lets the site pull your ranked and normal games and work out your stats.</Lead>
       <Card><CardContent><ProfileForm first /></CardContent></Card>
       {!DEMO && <Button variant="ghost" onClick={signOut} className="text-muted-foreground"><LogOut /> Sign out</Button>}
     </Shell>
@@ -157,7 +158,7 @@ export function SyncBanner() {
   if (!sync.busy) return null;
   return (
     <motion.div layout initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-2 rounded-2xl bg-card px-4 py-3 ring-1 ring-foreground/10" role="status">
-      <div className="flex items-center justify-between text-sm font-semibold"><span>{stats ? 'Checking for new games…' : 'Pulling your ranked games from Riot…'}</span><span className="tnum text-muted-foreground">{sync.total ? `${sync.done}/${sync.total}` : ''}</span></div>
+      <div className="flex items-center justify-between text-sm font-semibold"><span>{stats ? 'Checking for new games…' : 'Pulling your games from Riot…'}</span><span className="tnum text-muted-foreground">{sync.total ? `${sync.done}/${sync.total}` : ''}</span></div>
       <ShimmerProgress value={sync.total ? (sync.done / sync.total) * 100 : 5} label="Sync progress" />
     </motion.div>
   );
@@ -177,7 +178,7 @@ export default function Me() {
       <Rise>
         <Card><CardContent className="flex flex-col gap-3">
           <h3 className="m-0 text-lg font-bold tracking-tight">Your stats</h3>
-          <Lead className="text-sm">Last updated {when}. {stats ? `${stats.games} ranked ${role} games on record.` : 'No games pulled yet.'} New games are picked up when you open the site; you can also pull them now.</Lead>
+          <Lead className="text-sm">Last updated {when}. {stats ? `${stats.games} ${queueWords(stats).adj}${role} games on record.` : 'No games pulled yet.'} New games are picked up when you open the site; you can also pull them now.</Lead>
           <Button variant="outline" size="lg" onClick={runSync} disabled={sync.busy || DEMO}><RefreshCw className={sync.busy ? 'animate-spin' : ''} /> {sync.busy ? 'Updating…' : 'Update my stats now'}</Button>
         </CardContent></Card>
       </Rise>

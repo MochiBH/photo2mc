@@ -10,6 +10,7 @@ import { AppCtx, useLocal } from './store';
 import { SHARP } from './ui';
 import { SessionProvider, useSession, useSynced } from './session';
 import { content } from './lib/content';
+import { QUEUE_TABS } from './lib/queues';
 import Learn from './views/Learn';
 import Drills from './views/Drills';
 import Home from './views/Home';
@@ -54,7 +55,7 @@ function Gate() {
 }
 
 function Main() {
-  const { profile, role, setRole } = useSession();
+  const { profile, role, setRole, queue, setQueue, queueCounts } = useSession();
   const [tab, setTab] = useLocal('jungle-coach.tab.v3', 'home', (v) => TABS.some((t) => t.id === v));
   const [st, setSt] = useSynced('drills.' + role, EMPTY, (v) => v && typeof v === 'object' && v.q);
   const [quiz, setQuiz] = useState(null);
@@ -87,10 +88,18 @@ function Main() {
           </div>
           <ContinuousTabs tabs={[{ id: 'jungle', label: 'JG', aria: 'Jungle' }, { id: 'support', label: 'SUP', aria: 'Support' }]} value={role} onChange={(r) => { ripple(innerWidth - 70, 40, 'lime'); setRole(r); }} label="Role" size="sm" className="shrink-0" />
         </header>
+        {/* Which games the numbers come from. Only the two screens made of those numbers show it. */}
+        <AnimatePresence initial={false}>
+          {(tab === 'home' || tab === 'map') && (
+            <motion.div key="queue" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }} className="-my-1 overflow-hidden">
+              <ContinuousTabs tabs={QUEUE_TABS.map((t) => ({ ...t, count: queueCounts[t.id] }))} value={queue} onChange={(q) => { ripple(innerWidth / 2, 110, 'lime'); setQueue(q); }} label="Which games" size="sm" />
+            </motion.div>
+          )}
+        </AnimatePresence>
         <SyncBanner />
         <AnimatePresence mode="wait" initial={false}>
           <motion.main
-            key={tab + role}
+            key={tab + role + (tab === 'home' || tab === 'map' ? queue : '')}
             initial={{ opacity: 0, y: 12, filter: 'blur(8px)' }}
             animate={{ opacity: 1, y: 0, ...SHARP }}
             exit={{ opacity: 0, y: -8, filter: 'blur(8px)' }}

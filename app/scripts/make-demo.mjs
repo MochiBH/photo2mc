@@ -8,7 +8,10 @@ async function pull(riotId) {
   const [riot_name, riot_tag] = riotId.split('#');
   const games = new Map(); let stats = null; const profile = { id: 'u', riot_name, riot_tag, region, puuid: null };
   const db = { knownIds: async (_, ids) => ids.filter((i) => games.has(i)), putGame: async (r) => { games.set(r.match_id, r); }, listGames: async () => [...games.values()].filter((r) => r.role !== 'other').sort((a, b) => b.created.localeCompare(a.created)), saveStats: async (_, s) => { stats = s; }, savePuuid: async (_, p) => { profile.puuid = p; } };
-  for (;;) { const r = await runSync(db, profile); if (r.done) break; }
+  for (;;) {
+    try { const r = await runSync(db, profile); if (r.done) break; }
+    catch (e) { if (e.status !== 429) throw e; await new Promise((r) => setTimeout(r, ((e.retryAfter || 10) + 1) * 1000)); }   // Riot's rate limit: wait and carry on
+  }
   return { stats, puuid: profile.puuid };
 }
 const a = await pull(jg);
@@ -18,7 +21,9 @@ if (!supId) {   // borrow a support from the jungler's latest game, just to have
   const p = m.info.participants.find((x) => x.teamPosition === 'UTILITY' && x.puuid !== a.puuid);
   supId = `${p.riotIdGameName}#${p.riotIdTagline}`;
 }
-await new Promise((r) => setTimeout(r, 60000));   // stay under the rate limit between the two pulls
 const b = await pull(supId);
-writeFileSync(new URL('../public/demo-stats.json', import.meta.url), JSON.stringify({ jungle: a.stats.jungle, support: b.stats.support }));
-console.log('jungle', a.stats.jungle.games, a.stats.jungle.groups.all.record, '| support', b.stats.support.games, b.stats.support.groups.all.record, b.stats.support.champs.join(','));
+// the jungler's jungle numbers and the support's support numbers, for ranked games, normal games and both
+const mix = (of) => ({ jungle: of(a.stats).jungle, support: of(b.stats).support });
+const out = { ...mix((s) => s), normal: mix((s) => s.normal), both: mix((s) => s.both) };
+writeFileSync(new URL('../public/demo-stats.json', import.meta.url), JSON.stringify(out));
+for (const [kind, set] of [['ranked', out], ['normal', out.normal], ['both', out.both]]) console.log(kind.padEnd(7), 'jungle', set.jungle.games, set.jungle.groups.all.record, '| support', set.support.games, set.support.groups.all.record, set.support.champs.join(','));

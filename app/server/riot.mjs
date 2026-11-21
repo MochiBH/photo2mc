@@ -26,7 +26,7 @@ export function riotClient(region, key = process.env.RIOT_API_KEY) {
   const q = encodeURIComponent;
   return {
     account: (name, tag) => get(`/riot/account/v1/accounts/by-riot-id/${q(name)}/${q(tag)}`),
-    matchIds: (puuid, count = 20) => get(`/lol/match/v5/matches/by-puuid/${puuid}/ids?queue=420&count=${count}`),
+    matchIds: (puuid, count = 20, queue = 420) => get(`/lol/match/v5/matches/by-puuid/${puuid}/ids?queue=${queue}&count=${count}`),
     match: (id) => get(`/lol/match/v5/matches/${id}`),
     timeline: (id) => get(`/lol/match/v5/matches/${id}/timeline`),
   };

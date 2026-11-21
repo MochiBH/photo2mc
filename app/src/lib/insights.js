@@ -63,7 +63,7 @@ export function insights(stats) {
     fix: role === 'support' ? 'One minute before each dragon, leave lane with your ADC and put your wards around the pit.' : 'One minute before each dragon, finish the camp you are on and walk to the pit.' });
   const cwGame = all.vision.control / n, wantCw = role === 'support' ? 3 : 2;
   add((wantCw - cwGame) * (role === 'support' ? 1.6 : 0.9), {
-    title: 'You barely buy control wards', big: String(all.vision.control), unit: `control wards bought in ${n} games`,
+    title: 'You barely buy control wards', big: String(all.vision.control), unit: `control ward${all.vision.control === 1 ? '' : 's'} bought in ${n} games`,
     detail: `That is ${cwGame.toFixed(1)} a game. ${role === 'support' ? 'Three or more is normal for a support.' : 'Two a game is a good target for a jungler.'}`,
     fix: 'Buy one on every recall once you have your first item, and place it beside the next objective.' });
   if (role === 'support') {

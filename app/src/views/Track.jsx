@@ -8,12 +8,18 @@ import { ContinuousTabs } from '../wm/continuous-tabs';
 import { cn, spring } from '../wm/utils';
 import { Eyebrow, Lead, Mark, Num } from '../ui';
 import { PITS, RiftBase } from './Rift';
-import { burst, rippleFrom, shake } from '../fx/fx';
+import { rippleFrom, shake } from '../fx/fx';
 
-/* Season 2026 timers, in seconds of game time. */
-const SPAWN = { dragon: 300, grubs: 480, herald: 900, baron: 1200 };
-const RESPAWN = { dragon: 300, elder: 360, baron: 360 };
-const NAMES = { dragon: 'Dragon', grubs: 'Voidgrubs', herald: 'Rift Herald', baron: 'Baron' };
+/* Season 2026: when each objective first appears, in seconds of game time. The tracker runs off the clock alone. Marking
+   who took what used to live here too, but it changed nothing in the build or the plan, and the game shows its own
+   respawn timers, so it was taps for nothing. */
+const FIRST = [
+  { k: 'dragon', name: 'Dragon', spawn: 300, pit: 'dragon', then: 'The next one comes 5:00 after each dragon dies. The scoreboard (hold Tab) shows the timer.' },
+  { k: 'grubs', name: 'Voidgrubs', spawn: 480, pit: 'baron', then: 'They only come once.' },
+  { k: 'herald', name: 'Rift Herald', spawn: 900, pit: 'baron', then: 'It only comes once.' },
+  { k: 'baron', name: 'Baron', spawn: 1200, pit: 'baron', then: 'It comes back 6:00 after it dies. The scoreboard (hold Tab) shows the timer.' },
+];
+const FRESH = 60;   // how long after it appears an objective still counts as "up now"
 export const fmt = (s) => { s = Math.max(0, Math.round(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
 
 export function gameSeconds(clock, now) {
@@ -21,26 +27,14 @@ export function gameSeconds(clock, now) {
   return clock.paused != null ? clock.paused : Math.max(0, (now - clock.t0) / 1000);
 }
 
-/* Where every objective stands right now, from the list of taps. */
-export function objectives(events, t) {
-  const of = (k) => events.filter((e) => e.k === k);
-  const count = (k, by) => of(k).filter((e) => e.by === by).length;
-  const out = [];
-  const add = (k, o) => {
-    const up = o.spawn != null && t != null && t >= o.spawn, wait = o.spawn != null && t != null ? o.spawn - t : null;
-    const status = o.done ? 'done' : o.gone ? 'gone' : t == null ? 'idle' : up ? 'up' : wait <= 90 ? 'soon' : 'wait';
-    out.push({ k, name: NAMES[k], us: count(k, 'us'), them: count(k, 'them'), last: of(k).at(-1), status, wait, ...o });
-  };
-  const d = of('dragon'), us = count('dragon', 'us'), them = count('dragon', 'them'), soul = us >= 4 ? 'us' : them >= 4 ? 'them' : null, lastD = d.at(-1);
-  add('dragon', { name: soul ? 'Elder dragon' : 'Dragon', soul, spawn: lastD ? (lastD.t != null ? lastD.t + (soul ? RESPAWN.elder : RESPAWN.dragon) : null) : SPAWN.dragon, pit: 'dragon' });
-  add('grubs', { spawn: SPAWN.grubs, done: of('grubs').length > 0, pit: 'baron' });
-  add('herald', { spawn: SPAWN.herald, done: of('herald').length > 0, gone: !of('herald').length && t != null && t >= SPAWN.baron - 15, pit: 'baron' });
-  const lastB = of('baron').at(-1);
-  add('baron', { spawn: lastB ? (lastB.t != null ? lastB.t + RESPAWN.baron : null) : SPAWN.baron, pit: 'baron' });
-  return out;
+/* Where each first spawn stands on the clock: idle (clock not started), wait, soon (90 seconds out), up (just appeared), past. */
+export function objectives(t) {
+  return FIRST.map((o) => {
+    const wait = t == null ? null : o.spawn - t;
+    return { ...o, wait, status: t == null ? 'idle' : wait > 90 ? 'wait' : wait > 0 ? 'soon' : wait > -FRESH ? 'up' : 'past' };
+  });
 }
-const live = (o) => o.status !== 'done' && o.status !== 'gone' && o.spawn != null;
-export const nextUp = (list) => list.filter(live).sort((a, b) => a.spawn - b.spawn)[0] || null;
+export const nextUp = (list) => list.find((o) => o.status !== 'past') || null;
 
 function cue(o, role) {
   const sup = role === 'support';
@@ -52,17 +46,6 @@ function cue(o, role) {
   if (o.status === 'idle') return { tone: 'wait', head: `${o.name} first, at ${fmt(o.spawn)}`, text: 'Start the clock when the game starts and this counts down for you.' };
   return { tone: 'wait', head: `${o.name} in ${fmt(o.wait)}`, text: sup ? (o.wait > 150 ? 'Plenty of time. Help your lane, and keep a ward on the river entrance nearest you.' : 'Push the wave with your ADC so you can both leave lane for this.') : o.wait > 150 ? 'Time to clear your camps. Finish on the side this spawns on.' : 'Finish the camp you are on and start moving toward it.' };
 }
-function dragonRead(o, facts) {
-  if (o.soul === 'us') return 'You have the Soul. Group, take Elder and Baron, and end it.';
-  if (o.soul === 'them') return 'They have the Soul. Do not fight them head on: catch someone alone first.';
-  if (o.them === 3) return 'They are one dragon from Soul. Everything goes into stopping the next one.';
-  if (o.us === 3) return 'You are one dragon from Soul. Be at the pit a minute early and fight nowhere else.';
-  if (o.them === 2 && o.us < 2) return 'They have two. A third puts them one from Soul, so this next dragon is the one to contest.';
-  if (o.us > o.them) return `You are ahead on dragons.${facts ? ` In your recent games you are ${facts.drakeAhead} when you finish ahead.` : ''}`;
-  if (o.them > o.us) return `You are behind on dragons${facts ? ` (${facts.drakeBehind} when you finish behind)` : ''}. The next one matters more than any kill.`;
-  return null;
-}
-
 function useNow(running) {
   const [now, setNow] = useState(Date.now());
   useEffect(() => { if (!running) return; setNow(Date.now()); const i = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(i); }, [running]);
@@ -73,17 +56,13 @@ export default function Track({ bst, patch, role = 'jungle', facts = null }) {
   const clock = bst.clock, running = !!clock && clock.paused == null;
   const now = useNow(running);
   const t = gameSeconds(clock, now);
-  const list = objectives(bst.events, t), next = nextUp(list), c = cue(next, role);
-  const dragon = list[0], grubs = list[1];
+  const list = objectives(t), next = nextUp(list), c = cue(next, role);
   const deaths = bst.deaths, free = deaths.filter((d) => d.free).length;
   const lastDeath = deaths.at(-1), justDied = lastDeath && t != null && lastDeath.t != null && t - lastDeath.t < 75;
-  const firstDragon = bst.events.find((e) => e.k === 'dragon');
 
   const start = () => patch({ clock: { t0: Date.now(), paused: null } });
   const toggle = () => patch({ clock: running ? { ...clock, paused: t } : { t0: Date.now() - clock.paused * 1000, paused: null } });
   const nudge = (d) => patch({ clock: clock.paused != null ? { ...clock, paused: Math.max(0, clock.paused + d) } : { ...clock, t0: clock.t0 - d * 1000 } });
-  const take = (k, by, e) => { if (by === 'them') rippleFrom(e, 'melon'); else burst(e, by === 'us' ? 'lime' : 'gold', 26); patch({ events: [...bst.events, { k, by, t: t == null ? null : Math.round(t) }] }); };
-  const undo = (k) => { const i = bst.events.map((e) => e.k).lastIndexOf(k); if (i >= 0) patch({ events: bst.events.filter((_, n) => n !== i) }); };
   const die = (isFree, e) => { rippleFrom(e, 'melon'); if (isFree) shake(document.getElementById('death-card')); patch({ deaths: [...deaths, { t: t == null ? null : Math.round(t), free: isFree }] }); };
 
   return (
@@ -130,7 +109,7 @@ export default function Track({ bst, patch, role = 'jungle', facts = null }) {
           <h3 className="m-0 text-lg font-bold tracking-tight">Objectives</h3>
           <RiftBase label="Objective map with timers" labels={false} className="mx-auto max-w-[300px]">
             {['dragon', 'baron'].map((pit) => {
-              const here = list.filter((o) => o.pit === pit && live(o)).sort((a, b) => a.spawn - b.spawn)[0];
+              const here = list.find((o) => o.pit === pit && o.status !== 'past');
               const [x, y] = PITS[pit];
               const hot = here && (here.status === 'up' || here.status === 'soon');
               return (
@@ -140,42 +119,26 @@ export default function Track({ bst, patch, role = 'jungle', facts = null }) {
                   <rect x={x - 21} y={y + (pit === 'dragon' ? 10.5 : -24.5)} width="42" height="14" rx="7" fill="var(--card)" stroke="var(--foreground)" strokeOpacity=".14" strokeWidth=".5" />
                   <text x={x} y={y + (pit === 'dragon' ? 16 : -19)} textAnchor="middle" fontSize="4.2" fontWeight="700" fill="var(--muted-foreground)" style={{ textTransform: 'uppercase', letterSpacing: '.06em' }}>{here ? here.name : pit === 'dragon' ? 'Dragon' : 'Baron pit'}</text>
                   <text x={x} y={y + (pit === 'dragon' ? 22 : -13)} textAnchor="middle" fontSize="5.4" fontWeight="800" fill="var(--foreground)" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                    {!here ? 'nothing left' : here.status === 'up' ? 'UP NOW' : here.status === 'idle' ? 'at ' + fmt(here.spawn) : 'in ' + fmt(here.wait)}
+                    {!here ? 'check Tab' : here.status === 'up' ? 'UP NOW' : here.status === 'idle' ? 'at ' + fmt(here.spawn) : 'in ' + fmt(here.wait)}
                   </text>
                 </g>
               );
             })}
           </RiftBase>
-          {list.map((o) => {
-            const state = o.status === 'done' ? (o.last.by === 'us' ? 'Your team took them' : o.last.by === 'split' ? 'Split between both teams' : 'Enemy took them')
-              : o.status === 'gone' ? 'Gone: Baron replaced it'
-              : o.status === 'up' ? 'Up now' : o.status === 'idle' ? (o.spawn != null ? `Spawns at ${fmt(o.spawn)}` : 'Start the clock for the next timer') : `Spawns in ${fmt(o.wait)}`;
-            const closed = o.status === 'done' || o.status === 'gone';
-            return (
-              <motion.div key={o.k} layout transition={spring} className={cn('flex flex-col gap-2.5 rounded-xl p-3', o.status === 'up' ? 'bg-primary/12 ring-1 ring-primary/50' : o.status === 'soon' ? 'bg-gold-soft' : 'bg-muted/60')}>
-                <div className="flex items-center justify-between gap-2">
-                  <div className="min-w-0">
-                    <div className="text-base leading-tight font-bold tracking-tight">{o.name}</div>
-                    <div className="tnum text-[13px] text-muted-foreground">{state}</div>
-                  </div>
-                  {(o.k === 'dragon' || o.k === 'baron') && (
-                    <div className="tnum flex items-baseline gap-1 text-2xl font-extrabold tracking-tight" aria-label={`You ${o.us}, enemy ${o.them}`}>
-                      <Num value={o.us} className="text-good" /><span className="text-base text-muted-foreground">–</span><Num value={o.them} className="text-bad" />
-                    </div>
-                  )}
-                  {o.last && <Button variant="ghost" size="icon" onClick={() => undo(o.k)} aria-label={`Undo last ${o.name} tap`} className="size-9 text-muted-foreground"><Undo2 /></Button>}
+          <div className="flex flex-col gap-2">
+            {list.map((o) => (
+              <motion.div key={o.k} layout transition={spring} className={cn('flex flex-col gap-0.5 rounded-xl px-3 py-2.5', o.status === 'up' ? 'bg-primary/12 ring-1 ring-primary/50' : o.status === 'soon' ? 'bg-gold-soft' : 'bg-muted/60')}>
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="text-base leading-tight font-bold tracking-tight">{o.name}</span>
+                  <span className={cn('tnum text-sm font-semibold whitespace-nowrap', o.status === 'up' ? 'text-primary' : o.status === 'soon' ? 'text-gold' : 'text-muted-foreground')}>
+                    {o.status === 'idle' ? `at ${fmt(o.spawn)}` : o.status === 'past' ? `came at ${fmt(o.spawn)}` : o.status === 'up' ? 'Up now' : `in ${fmt(o.wait)}`}
+                  </span>
                 </div>
-                {!closed && (
-                  <div className={cn('grid gap-2', o.k === 'grubs' ? 'grid-cols-3' : 'grid-cols-2')}>
-                    <TapButton tone="good" onClick={(e) => take(o.k, 'us', e)}>We took {o.k === 'grubs' ? 'them' : 'it'}</TapButton>
-                    {o.k === 'grubs' && <TapButton onClick={(e) => take(o.k, 'split', e)}>Split</TapButton>}
-                    <TapButton tone="bad" onClick={(e) => take(o.k, 'them', e)}>They took {o.k === 'grubs' ? 'them' : 'it'}</TapButton>
-                  </div>
-                )}
-                {o.k === 'dragon' && dragonRead(o, facts) && <p className="m-0 text-sm leading-snug">{dragonRead(o, facts)}</p>}
+                {o.status === 'past' && <p className="m-0 text-[13px] leading-snug text-muted-foreground">{o.then}</p>}
               </motion.div>
-            );
-          })}
+            ))}
+          </div>
+          <Lead className="text-sm">Nothing to tap here. These count down from the clock to the first time each one appears.</Lead>
         </CardContent>
       </Card>
 
@@ -213,8 +176,6 @@ export default function Track({ bst, patch, role = 'jungle', facts = null }) {
         <CardContent className="flex flex-col gap-3">
           <h3 className="m-0 text-lg font-bold tracking-tight">This game's checkpoints</h3>
           <div className="flex flex-col gap-2">
-            <Check3 label="Take the first dragon" state={!firstDragon ? null : firstDragon.by === 'us'} />
-            {role === 'jungle' && <Check3 label="Take at least one Voidgrub" state={!grubs.last ? null : grubs.last.by !== 'them'} />}
             <Check3 label="Five deaths or fewer" state={deaths.length > 5 ? false : true} note={deaths.length > 5 ? null : `${deaths.length} so far`} />
             <Check3 label="Three free deaths or fewer" state={free > 3 ? false : true} note={free > 3 ? null : `${free} so far`} />
           </div>

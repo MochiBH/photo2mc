@@ -37,7 +37,12 @@ year, and a returning player sees their last known stats at once while the accou
 
 Screens: Home (record, form, checkpoints, rules, game list), Learn and Drills (a jungle course and a support course), Map (checkpoints, leaks worked out from
 your games, death map and charts), Live (teams, in-game tracker, build and plan for any jungle or support champion)
-and Me (profile, refresh, sign out). A switch in the header flips between your jungle and support games.
+and Me (profile, refresh, sign out). A switch in the header flips between your jungle and support games, and one under
+it on Home and Map picks which games count: ranked solo, normal draft, or both. Swiftplay is not read, because it runs
+on different timers.
+
+The tracker needs no taps for objectives: it counts down from the game clock to the first dragon, Voidgrubs, Rift
+Herald and Baron. In Drills, once you answer, every wrong option shows why it is wrong.
 
 ### Deploy
 
@@ -64,7 +69,7 @@ change the production branch in the Vercel project's settings.
 
 ### How stats work
 
-`POST /api/sync` (in `app/api/sync.js`) checks the signed-in user is on that list, pulls up to three new ranked games per call
+`POST /api/sync` (in `app/api/sync.js`) checks the signed-in user is on that list, pulls up to three new games per call (ranked solo and normal draft)
 from Riot, analyses each one (`app/server/analysis.mjs`) and stores the result in Supabase. The browser repeats
 the call until it reports done, then reads the rolled-up stats. It runs automatically when stats are more than
 30 minutes old, and from the Update button.

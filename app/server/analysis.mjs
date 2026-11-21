@@ -7,6 +7,10 @@ export const NEAR = 3000, OBJ_NEAR = 3500, GAP = 8;
 const MARKS = [5, 10, 15, 20];
 const OBJ_NAMES = { DRAGON: 'dragon', HORDE: 'voidgrub', RIFTHERALD: 'herald', BARON_NASHOR: 'baron', ATAKHAN: 'atakhan' };
 export const ROLE_POSITION = { jungle: 'JUNGLE', support: 'UTILITY' };
+/* The two kinds of game the site reads: ranked solo (queue 420) and normal draft (queue 400). Swiftplay is left out on
+   purpose: it runs on faster timers, so its farm and objective numbers would not compare. */
+export const QUEUES = { ranked: 420, normal: 400 };
+const kindOf = (g) => g.queue || 'ranked';   // games analysed before normals were added carry no kind; they were all ranked
 
 export function rawZone(x, y) {
   if (Math.hypot(x, y) < BASE_R) return 'blue_base';
@@ -51,7 +55,7 @@ export function analyseGame(match, timeline, puuid, role = 'jungle') {
   const drakes = (t) => (t && t.objectives && t.objectives.dragon && t.objectives.dragon.kills) || 0;
 
   const g = {
-    id: match.metadata.matchId, role, champ: me.championName, win: !!me.win, minutes: r1(info.gameDuration / 60), seconds: info.gameDuration,
+    id: match.metadata.matchId, role, queue: info.queueId === QUEUES.normal ? 'normal' : 'ranked', champ: me.championName, win: !!me.win, minutes: r1(info.gameDuration / 60), seconds: info.gameDuration,
     side: team === 100 ? 'blue' : 'red', k: me.kills, d: me.deaths, a: me.assists, rival: foe ? foe.championName : null,
     created: info.gameCreation || 0, date: new Date(info.gameCreation || 0).toISOString().slice(0, 10),
     jcs: me.neutralMinionsKilled || 0, cs: (me.totalMinionsKilled || 0) + (me.neutralMinionsKilled || 0),
@@ -175,15 +179,16 @@ export function group(games) {
 }
 
 /** Everything the app shows for one player: newest games first, at most `limit`. */
-export function buildStats(all, role, limit = 20) {
-  const games = all.filter((g) => g && g.role === role).sort((a, b) => b.created - a.created).slice(0, limit);
+/** The numbers one screen shows: the latest `limit` games in a role, of one kind (`queue` 'ranked' or 'normal') or of both. */
+export function buildStats(all, role, limit = 20, queue = 'both') {
+  const games = all.filter((g) => g && g.role === role && (queue === 'both' || kindOf(g) === queue)).sort((a, b) => b.created - a.created).slice(0, limit);
   const champs = Object.entries(tally(games.map((g) => g.champ))).filter(([, c]) => c >= 2).slice(0, 4).map(([c]) => c);
   const groups = { all: group(games), wins: group(games.filter((g) => g.win)), losses: group(games.filter((g) => !g.win)) };
   for (const c of champs) groups[c] = group(games.filter((g) => g.champ === c));
   return {
-    role, games: games.length, champs, updated: new Date().toISOString(), groups,
+    role, queue, games: games.length, champs, updated: new Date().toISOString(), groups,
     deaths: games.flatMap((g) => g.deaths.map((d) => [d.x, d.y, d.minute, d.zone, g.win ? 'W' : 'L', g.champ, d.allies, d.enemies, d.took[0] || '', d.free ? 1 : 0, d.quick ? 1 : 0])),
-    list: games.map((g) => ({ id: g.id, t: g.created, date: g.date, c: g.champ, w: g.win ? 1 : 0, s: g.seconds, k: g.k, d: g.d, a: g.a, j: g.jcs, kp: g.kp, cw: g.vision.control_bought,
+    list: games.map((g) => ({ id: g.id, t: g.created, date: g.date, q: kindOf(g) === 'normal' ? 'n' : 'r', c: g.champ, w: g.win ? 1 : 0, s: g.seconds, k: g.k, d: g.d, a: g.a, j: g.jcs, kp: g.kp, cw: g.vision.control_bought,
       vs: g.vision.per_min, od: g.dragons[0], ed: g.dragons[1], free: g.free_deaths, grubs: g.grubs_mine, fd: g.first_dragon, gap10: g.diff.length > 10 ? g.diff[10] : null, rival: g.rival,
       e15: g.deaths.filter((d) => d.minute < 15).length, vsc: g.vision.score, rvs: g.vision.rival_score })),
   };

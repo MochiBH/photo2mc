@@ -16,7 +16,7 @@ import { facts as factsOf } from '../lib/insights';
 import { burst } from '../fx/fx';
 import Track, { fmt, gameSeconds, nextUp, objectives } from './Track';
 
-const BLANK = { me: '', role: 'auto', state: 'even', sec: 'teams', clock: null, events: [], deaths: [], allies: [0, 1, 2, 3].map(() => ({ c: '', f: 0 })), rows: [0, 1, 2, 3, 4].map(() => ({ c: '', r: '', f: 0 })), bought: [] };
+const BLANK = { me: '', role: 'auto', state: 'even', sec: 'teams', clock: null, deaths: [], allies: [0, 1, 2, 3].map(() => ({ c: '', f: 0 })), rows: [0, 1, 2, 3, 4].map(() => ({ c: '', r: '', f: 0 })), bought: [] };
 const valid = (v) => v && Array.isArray(v.rows) && v.rows.length === 5 && Array.isArray(v.allies) && v.allies.length === 4 && Array.isArray(v.bought);
 const SECS = [{ id: 'teams', label: 'Teams' }, { id: 'track', label: 'Track' }, { id: 'build', label: 'Build & plan' }];
 
@@ -37,13 +37,13 @@ function MiniBar({ bst, onOpen }) {
   const [now, setNow] = useState(Date.now());
   const running = bst.clock.paused == null;
   useEffect(() => { if (!running) return; const i = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(i); }, [running]);
-  const t = gameSeconds(bst.clock, now), nx = nextUp(objectives(bst.events, t));
+  const t = gameSeconds(bst.clock, now), nx = nextUp(objectives(t));
   const hot = nx && (nx.status === 'up' || nx.status === 'soon');
   return (
     <motion.button type="button" onClick={onOpen} layout whileTap={{ scale: 0.98 }}
       className={cn('tnum flex min-h-11 items-center justify-between gap-3 rounded-full px-4 text-sm font-semibold ring-1', nx && nx.status === 'up' ? 'bg-primary text-primary-foreground ring-primary' : hot ? 'bg-gold-soft ring-gold/40' : 'bg-card ring-foreground/10')}>
       <span>{fmt(t)}{running ? '' : ' · paused'}</span>
-      <span>{nx ? (nx.status === 'up' ? `${nx.name} is up` : `${nx.name} in ${fmt(nx.wait)}`) : 'No objectives left'}</span>
+      <span>{nx ? (nx.status === 'up' ? `${nx.name} is up` : `${nx.name} in ${fmt(nx.wait)}`) : 'Respawn timers: hold Tab'}</span>
     </motion.button>
   );
 }
