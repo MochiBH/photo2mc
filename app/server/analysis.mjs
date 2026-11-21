@@ -170,6 +170,7 @@ export function group(games) {
     vision: { control: sum(games, (g) => g.vision.control_bought), placed: avg(games.map((g) => g.vision.placed)), killed: avg(games.map((g) => g.vision.killed)), score: avg(games.map((g) => g.vision.score)),
       per_min: avg(games.map((g) => g.vision.per_min)), rival_score: avg(games.map((g) => g.vision.rival_score)) },
     jcs_min: avg(games.map((g) => g.jcs / (g.seconds / 60))),
+    early_free: deaths.filter((d) => d.minute < 15 && d.free).length, early_zones: tally(deaths.filter((d) => d.minute < 15).map((d) => d.zone)),
   };
 }
 
@@ -183,6 +184,7 @@ export function buildStats(all, role, limit = 20) {
     role, games: games.length, champs, updated: new Date().toISOString(), groups,
     deaths: games.flatMap((g) => g.deaths.map((d) => [d.x, d.y, d.minute, d.zone, g.win ? 'W' : 'L', g.champ, d.allies, d.enemies, d.took[0] || '', d.free ? 1 : 0, d.quick ? 1 : 0])),
     list: games.map((g) => ({ id: g.id, t: g.created, date: g.date, c: g.champ, w: g.win ? 1 : 0, s: g.seconds, k: g.k, d: g.d, a: g.a, j: g.jcs, kp: g.kp, cw: g.vision.control_bought,
-      vs: g.vision.per_min, od: g.dragons[0], ed: g.dragons[1], free: g.free_deaths, grubs: g.grubs_mine, fd: g.first_dragon, gap10: g.diff.length > 10 ? g.diff[10] : null, rival: g.rival })),
+      vs: g.vision.per_min, od: g.dragons[0], ed: g.dragons[1], free: g.free_deaths, grubs: g.grubs_mine, fd: g.first_dragon, gap10: g.diff.length > 10 ? g.diff[10] : null, rival: g.rival,
+      e15: g.deaths.filter((d) => d.minute < 15).length, vsc: g.vision.score, rvs: g.vision.rival_score })),
   };
 }

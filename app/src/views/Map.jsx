@@ -5,8 +5,8 @@ import { ContinuousTabs } from '../wm/continuous-tabs';
 import { ShimmerProgress } from '../wm/shimmer-progress';
 import { Callout, Eyebrow, Lead, Mark, Num, Rise, Screen } from '../ui';
 import { OBJS, WHEN, ZONE, clock, sgn } from '../lib/legacy';
-import { CHECKS, TABS_FOR_STATS, rec } from '../lib/roles';
-import { insights } from '../lib/insights';
+import { TABS_FOR_STATS, checksFor, rec } from '../lib/roles';
+import { insights, strengths } from '../lib/insights';
 import { champName } from '../lib/champs';
 import { useSession } from '../session';
 import { GameRow, NoGames, shortDate } from './Games';
@@ -25,7 +25,7 @@ export default function MapView() {
   const WHO = TABS_FOR_STATS(POS).map(([id, label]) => [id, champName(label)]);
   const view = POS.groups[who] ? who : 'all';
   const grp = POS.groups[view];
-  const G = POS.list, checks = CHECKS[role], LEAKS = insights(POS);
+  const G = POS.list, checks = checksFor(POS, role), LEAKS = insights(POS), GOOD = strengths(POS);
 
   return (
     <div className="flex flex-col gap-4">
@@ -35,7 +35,7 @@ export default function MapView() {
     {sec === 'checks' && <Screen>
       <Rise className="flex flex-col gap-1.5">
         <Eyebrow>Three checkpoints that decide your games</Eyebrow>
-        <Lead>From the Riot API, your last {POS.games} ranked {role} games. These three things split your wins from your losses more cleanly than anything else. It is a small sample, so treat them as targets, not laws.</Lead>
+        <Lead>From the Riot API, your last {POS.games} ranked {role} games. These are the three things that split your own wins from your own losses most cleanly, and they are re-picked as you play. It is a small sample, so treat them as targets, not laws.</Lead>
       </Rise>
       {checks.map((c, i) => {
         const hit = G.filter((g) => c.ok(g)), miss = G.filter((g) => !c.ok(g));
@@ -94,6 +94,14 @@ export default function MapView() {
         </Rise>
       ))}
 
+      {GOOD.length > 0 && (
+        <Rise>
+          <Card><CardContent className="flex flex-col gap-2.5">
+            <Eyebrow>What you already do well</Eyebrow>
+            <ul className="m-0 flex list-none flex-col gap-2 p-0">{GOOD.map((g) => <li key={g} className="rounded-xl bg-good-soft px-3.5 py-2.5 text-[15px] leading-snug">{g}</li>)}</ul>
+          </CardContent></Card>
+        </Rise>
+      )}
     </Screen>}
     {sec === 'charts' && <Screen>
       <Rise className="flex flex-col gap-1.5">

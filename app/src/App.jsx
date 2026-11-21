@@ -23,7 +23,6 @@ const TABS = [
 ];
 const VIEWS = { learn: Learn, drills: Drills, games: Games, map: MapView, live: Live, me: Me };
 const EMPTY = { n: 0, streak: 0, right: 0, wrong: 0, q: {}, lessons: {} };
-const OWNER = 'the gonzoogler#weeee';   // the course notes written from this player's own games only show for him
 
 export default function App() {
   return <SessionProvider><Gate /></SessionProvider>;
@@ -43,8 +42,8 @@ function Main() {
   const [tab, setTab] = useLocal('jungle-coach.tab.v2', 'learn', (v) => TABS.some((t) => t.id === v));
   const [st, setSt] = useSynced('drills.' + role, EMPTY, (v) => v && typeof v === 'object' && v.q);
   const [quiz, setQuiz] = useState(null);
-  const personal = `${profile.riot_name}#${profile.riot_tag}`.toLowerCase() === OWNER;
-  const course = useMemo(() => content(role, personal), [role, personal]);
+  const riotId = `${profile.riot_name}#${profile.riot_tag}`.toLowerCase();
+  const course = useMemo(() => content(role, riotId), [role, riotId]);
 
   const go = useCallback((id) => { setTab(id); window.scrollTo(0, 0); }, [setTab]);
   const ctx = useMemo(() => ({
