@@ -21,6 +21,8 @@ The API key is never in code. Set `RIOT_API_KEY`, or run somewhere the
 
 ## The website (`app/`)
 
+Live at https://jungle-coach-forge-quant.vercel.app (private: username sign-in for two players).
+
 A React 19 + Tailwind 4 + Motion site for Vercel, with Supabase logins and each player's own stats pulled from
 the Riot API. Components are adapted from [Watermelon UI](https://ui.watermelon.sh) (MIT, see `app/src/wm/NOTICE.md`).
 
