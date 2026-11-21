@@ -34,33 +34,29 @@ and Me (profile, refresh, sign out). A switch in the header flips between your j
 
 ### Deploy
 
-1. **Supabase.** In your project open SQL editor, paste `app/supabase/schema.sql`, run it. Then copy from
-   Project Settings > API: the project URL, the `anon` key and the `service_role` key.
+1. **Supabase.** In the project's SQL editor run `app/supabase/schema.sql`. Copy the project URL and the
+   publishable (anon) key from Project Settings > API.
 2. **Vercel.** New Project > import this repository > set **Root Directory** to `app` (framework: Vite).
    Add these environment variables, then deploy:
 
    | Name | Value | Where it is used |
    |---|---|---|
    | `VITE_SUPABASE_URL` | Supabase project URL | browser and server |
-   | `VITE_SUPABASE_ANON_KEY` | Supabase `anon` key | browser |
-   | `SUPABASE_SERVICE_ROLE_KEY` | Supabase `service_role` key | server only |
+   | `VITE_SUPABASE_ANON_KEY` | Supabase publishable (anon) key | browser and server |
    | `RIOT_API_KEY` | your Riot API key | server only |
 
-3. **Accounts.** The site is private: only the usernames in `app/server/players.mjs` (`mochi` and `evlijah`,
-   or the `ALLOWED_USERNAMES` environment variable) can have an account. Open the site and sign in with your
-   username and the password you want. The first sign-in for a username creates the account with that password
-   and fills in its Riot ID, region, role and mains; after that the same password signs you in. Change it on the
-   Me tab. There are no emails: each username maps to a made-up address on a reserved domain inside Supabase.
-4. **Lock it.** In Supabase > Authentication > Sign In / Providers, turn off "Allow new users to sign up". The
-   site's own account creation still works; this only stops strangers creating accounts with the public key.
-   If someone else claims a username before you do, delete that user under Authentication > Users and sign in again.
+   No database secret is needed: the stats function acts as the signed-in player, under row-level security.
+3. **Accounts.** Sign-in is a username and a password, with no emails. The site is private: only the usernames
+   in `app/server/players.mjs` can sign in or pull stats. To add a player, run `app/supabase/add-player.sql`
+   with their details, then add the username to that list. Players change their own password on the Me tab.
+4. **Lock it.** In Supabase > Authentication > Sign In / Providers, turn off "Allow new users to sign up", so
+   nobody can create accounts with the public key.
 
 Vercel builds from the repository's production branch (normally `main`); either merge this work into `main` or
 change the production branch in the Vercel project's settings.
 
 ### How stats work
 
-`POST /api/join` checks the username against the player list and creates the account on a first sign-in.
 `POST /api/sync` (in `app/api/sync.js`) checks the signed-in user is on that list, pulls up to three new ranked games per call
 from Riot, analyses each one (`app/server/analysis.mjs`) and stores the result in Supabase. The browser repeats
 the call until it reports done, then reads the rolled-up stats. It runs automatically when stats are more than
@@ -73,7 +69,7 @@ cd app && npm install
 npm run dev                                   # needs app/.env.local (see app/.env.example); /api needs `vercel dev`
 node scripts/check-analysis.mjs               # JS analysis vs the Python report on the same raw games
 node scripts/check-sync.mjs "Name#TAG" na     # real sync loop against Riot with an in-memory database
-node scripts/check-join.mjs                   # username sign-in rules against a stand-in for Supabase
+SUPABASE_URL=... SUPABASE_ANON_KEY=... RIOT_API_KEY=... PLAYER_PASSWORD=... node scripts/check-live.mjs <username>   # real sign-in + sync
 node scripts/check-insights.mjs "Name#TAG" na support   # the checkpoints, leaks and strengths a player would see
 node scripts/make-demo.mjs && VITE_DEMO=1 npx vite build && node scripts/shot.mjs live dark scripts/steps-live.mjs support
 ```

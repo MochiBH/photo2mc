@@ -1,5 +1,6 @@
 -- Jungle Coach: run this once in the Supabase SQL editor (Dashboard > SQL editor > New query > Run).
--- Each signed-in player can read and write only their own rows. Match data is written by the server only.
+-- Each signed-in player can read and write only their own rows. The stats function acts as the signed-in player,
+-- so the server needs no database secret.
 
 create table if not exists public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
@@ -42,20 +43,22 @@ alter table public.player_stats enable row level security;
 alter table public.app_state enable row level security;
 
 drop policy if exists "own profile" on public.profiles;
-create policy "own profile" on public.profiles for all using (auth.uid() = id) with check (auth.uid() = id);
+create policy "own profile" on public.profiles for all to authenticated using ((select auth.uid()) = id) with check ((select auth.uid()) = id);
 
 drop policy if exists "read own games" on public.player_games;
-create policy "read own games" on public.player_games for select using (auth.uid() = user_id);
+drop policy if exists "own games" on public.player_games;
+create policy "own games" on public.player_games for all to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
 drop policy if exists "read own stats" on public.player_stats;
-create policy "read own stats" on public.player_stats for select using (auth.uid() = user_id);
+drop policy if exists "own stats" on public.player_stats;
+create policy "own stats" on public.player_stats for all to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
 drop policy if exists "own state" on public.app_state;
-create policy "own state" on public.app_state for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+create policy "own state" on public.app_state for all to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
 -- A player may change their Riot ID but must not be able to point the cached account id at someone else by hand:
 -- clear it whenever the Riot ID or region changes, so the server looks it up again.
-create or replace function public.profiles_reset_puuid() returns trigger language plpgsql as $$
+create or replace function public.profiles_reset_puuid() returns trigger language plpgsql set search_path = '' as $$
 begin
   if new.riot_name is distinct from old.riot_name or new.riot_tag is distinct from old.riot_tag or new.region is distinct from old.region then
     new.puuid := null;

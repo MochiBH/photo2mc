@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
+import { ALLOWED, loginEmail, validUsername } from '../server/players.mjs';
 
 const URL_ = import.meta.env.VITE_SUPABASE_URL, KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 export const DEMO = import.meta.env.VITE_DEMO === '1';   // local checks only: no accounts, stats from /demo-stats.json
@@ -103,12 +104,9 @@ export function SessionProvider({ children }) {
   const role = cloud.viewRole || (profile && profile.role) || 'jungle';
   const value = useMemo(() => ({
     phase, user, profile, role, setRole: (r) => setKey('viewRole', r), stats: statsAll ? statsAll[role] : null, statsAt, sync, runSync, saveProfile, cloud, setKey,
-    signIn: async (username, password) => {   // the server checks the username and creates the account on a first sign-in
-      let res, body = {};
-      try { res = await fetch('/api/join', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) }); body = await res.json().catch(() => ({})); }
-      catch (e) { return { error: { message: 'Could not reach the server. Check your connection and try again.' } }; }
-      if (!res.ok) return { error: { message: body.error || 'Could not sign in (error ' + res.status + ').' } };
-      const out = await supa.auth.signInWithPassword({ email: body.email, password });
+    signIn: async (username, password) => {
+      if (!validUsername(username) || !ALLOWED.includes(username)) return { error: { message: 'This site is private. Check your username.' } };
+      const out = await supa.auth.signInWithPassword({ email: loginEmail(username), password });
       if (out.error && /invalid login/i.test(out.error.message || '')) return { error: { message: 'Wrong password for that username.' } };
       return out;
     },

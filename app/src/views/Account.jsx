@@ -71,7 +71,6 @@ export function SignIn() {
             <label className={label}>Password<Input id="auth-password" type="password" autoComplete="current-password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Your password" /></label>
             {msg && <p className="m-0 text-sm text-bad" role="alert">{msg}</p>}
             <ShimmerButton type="submit" disabled={busy}>{busy ? 'One moment…' : 'Sign in'}</ShimmerButton>
-            <p className="m-0 text-xs text-muted-foreground">First time here? The password you sign in with becomes your password.</p>
           </form>
         </CardContent>
       </Card>
