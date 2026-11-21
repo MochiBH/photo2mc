@@ -10,6 +10,8 @@ import { ContinuousTabs } from '../wm/continuous-tabs';
 import { cn } from '../wm/utils';
 import { Eyebrow, Lead, Rise, Screen } from '../ui';
 import { DEMO, useSession } from '../session';
+import { SplitTitle } from '../fx/text';
+import { Logo } from '../App';
 import { champOf, norm } from '../lib/legacy';
 import { REGION_LIST, champsFor } from '../lib/champs';
 
@@ -19,12 +21,15 @@ const label = 'flex flex-col gap-1.5 text-[11px] font-bold tracking-[0.1em] text
 
 function Shell({ children }) {
   return (
-    <div className="mx-auto flex min-h-dvh max-w-[460px] flex-col justify-center gap-5 py-10" style={{ paddingLeft: 'max(16px, env(safe-area-inset-left, 0px))', paddingRight: 'max(16px, env(safe-area-inset-right, 0px))' }}>
-      <motion.div initial={{ opacity: 0, y: 16, filter: 'blur(8px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ type: 'spring', stiffness: 240, damping: 26 }} className="flex flex-col gap-5">
-        <div>
-          <div className="mb-3 grid size-12 place-items-center rounded-2xl bg-primary text-xl font-extrabold text-primary-foreground">JC</div>
-          <h1 className="m-0 text-[32px] leading-none font-extrabold tracking-tight">Jungle Coach</h1>
-        </div>
+    <div className="mx-auto flex min-h-dvh max-w-[460px] flex-col justify-center gap-6 py-10" style={{ paddingLeft: 'max(16px, env(safe-area-inset-left, 0px))', paddingRight: 'max(16px, env(safe-area-inset-right, 0px))' }}>
+      <div className="flex flex-col gap-4">
+        <motion.div initial={{ scale: 0, rotate: -40 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', stiffness: 220, damping: 14 }} className="self-start"><Logo size={64} /></motion.div>
+        <h1 className="font-display m-0 text-[44px] leading-[0.95] font-black tracking-tight uppercase">
+          <SplitTitle text="Jungle" className="pb-[0.1em] text-foreground" delay={150} /><br />
+          <SplitTitle text="Coach" className="text-neon pb-[0.1em]" delay={380} />
+        </h1>
+      </div>
+      <motion.div initial={{ opacity: 0, y: 24, filter: 'blur(10px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ type: 'spring', stiffness: 200, damping: 24, delay: 0.5 }} className="flex flex-col gap-5">
         {children}
       </motion.div>
     </div>
@@ -60,7 +65,7 @@ export function SignIn() {
   return (
     <Shell>
       <Lead>Your own stats, a live game tracker and builds for jungle and support. Sign in to see yours.</Lead>
-      <Card>
+      <Card glow>
         <CardContent>
           <form onSubmit={submit} className="flex flex-col gap-3.5">
             <ContinuousTabs tabs={[{ id: 'in', label: 'Sign in' }, { id: 'up', label: 'Create account' }]} value={mode} onChange={(m) => { setMode(m); setMsg(null); }} label="Sign in or create an account" />
@@ -105,7 +110,7 @@ export function ProfileForm({ first, onSaved }) {
       <label className={label}>Riot ID<Input id="pf-riot" required value={riot} onChange={(e) => { const v = e.target.value; setRiot(v); const p = PRESETS[v.trim().replace(/\s*#\s*/, '#').toLowerCase()]; if (p && first) { setRegion(p.region); setRole(p.role); setMains(p.mains); } }} placeholder="Name#TAG" autoCapitalize="off" autoCorrect="off" spellCheck={false} /></label>
       <div className="grid grid-cols-2 gap-2.5">
         <label className={label}>Region
-          <select id="pf-region" value={region} onChange={(e) => setRegion(e.target.value)} className="h-11 w-full min-w-0 rounded-xl border border-input bg-card px-3 text-base font-normal tracking-normal text-foreground normal-case dark:bg-input/30">
+          <select id="pf-region" value={region} onChange={(e) => setRegion(e.target.value)} className="h-12 w-full min-w-0 rounded-2xl border border-white/12 bg-black/30 px-3 text-base font-normal tracking-normal text-foreground normal-case">
             {REGION_LIST.map(([id, text]) => <option key={id} value={id}>{text}</option>)}
           </select>
         </label>

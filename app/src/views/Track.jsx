@@ -8,6 +8,7 @@ import { ContinuousTabs } from '../wm/continuous-tabs';
 import { cn, spring } from '../wm/utils';
 import { Eyebrow, Lead, Mark, Num } from '../ui';
 import { PITS, RiftBase } from './Rift';
+import { burst, rippleFrom, shake } from '../fx/fx';
 
 /* Season 2026 timers, in seconds of game time. */
 const SPAWN = { dragon: 300, grubs: 480, herald: 900, baron: 1200 };
@@ -81,9 +82,9 @@ export default function Track({ bst, patch, role = 'jungle', facts = null }) {
   const start = () => patch({ clock: { t0: Date.now(), paused: null } });
   const toggle = () => patch({ clock: running ? { ...clock, paused: t } : { t0: Date.now() - clock.paused * 1000, paused: null } });
   const nudge = (d) => patch({ clock: clock.paused != null ? { ...clock, paused: Math.max(0, clock.paused + d) } : { ...clock, t0: clock.t0 - d * 1000 } });
-  const take = (k, by) => patch({ events: [...bst.events, { k, by, t: t == null ? null : Math.round(t) }] });
+  const take = (k, by, e) => { if (by === 'them') rippleFrom(e, 'melon'); else burst(e, by === 'us' ? 'lime' : 'gold', 26); patch({ events: [...bst.events, { k, by, t: t == null ? null : Math.round(t) }] }); };
   const undo = (k) => { const i = bst.events.map((e) => e.k).lastIndexOf(k); if (i >= 0) patch({ events: bst.events.filter((_, n) => n !== i) }); };
-  const die = (isFree) => patch({ deaths: [...deaths, { t: t == null ? null : Math.round(t), free: isFree }] });
+  const die = (isFree, e) => { rippleFrom(e, 'melon'); if (isFree) shake(document.getElementById('death-card')); patch({ deaths: [...deaths, { t: t == null ? null : Math.round(t), free: isFree }] }); };
 
   return (
     <div className="flex flex-col gap-4">
@@ -93,7 +94,7 @@ export default function Track({ bst, patch, role = 'jungle', facts = null }) {
           <div className="flex items-end justify-between gap-3">
             <div>
               <Eyebrow>Game clock</Eyebrow>
-              <div className="tnum text-[44px] leading-none font-extrabold tracking-tight">{t == null ? '0:00' : fmt(t)}</div>
+              <div className="font-display text-neon tnum text-[46px] leading-none font-black tracking-tight">{t == null ? '0:00' : fmt(t)}</div>
             </div>
             {clock && <Button variant="secondary" size="icon" onClick={toggle} aria-label={running ? 'Pause the clock' : 'Resume the clock'}>{running ? <Pause /> : <Play />}</Button>}
           </div>
@@ -116,7 +117,7 @@ export default function Track({ bst, patch, role = 'jungle', facts = null }) {
           className={cn('relative overflow-hidden rounded-2xl px-4 py-3.5 ring-1', c.tone === 'up' ? 'bg-primary text-primary-foreground ring-primary' : c.tone === 'soon' ? 'bg-gold-soft ring-gold/40' : 'bg-card ring-foreground/10')}>
           {c.tone !== 'wait' && <motion.span aria-hidden="true" className={cn('absolute top-3.5 right-4 size-3 rounded-full', c.tone === 'up' ? 'bg-primary-foreground' : 'bg-gold')} animate={{ scale: [1, 1.6, 1], opacity: [1, 0.4, 1] }} transition={{ duration: 1.2, repeat: Infinity }} />}
           <div className="text-[11px] font-bold tracking-[0.12em] uppercase opacity-70">Next objective</div>
-          <div className="tnum mt-0.5 text-2xl leading-tight font-extrabold tracking-tight">{c.head}</div>
+          <div className="font-display tnum mt-1 text-[21px] leading-tight font-black tracking-tight">{c.head}</div>
           <AnimatePresence mode="wait" initial={false}>
             <motion.p key={c.text} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="m-0 mt-1 text-[15px] leading-snug">{c.text}</motion.p>
           </AnimatePresence>
@@ -166,9 +167,9 @@ export default function Track({ bst, patch, role = 'jungle', facts = null }) {
                 </div>
                 {!closed && (
                   <div className={cn('grid gap-2', o.k === 'grubs' ? 'grid-cols-3' : 'grid-cols-2')}>
-                    <TapButton tone="good" onClick={() => take(o.k, 'us')}>We took {o.k === 'grubs' ? 'them' : 'it'}</TapButton>
-                    {o.k === 'grubs' && <TapButton onClick={() => take(o.k, 'split')}>Split</TapButton>}
-                    <TapButton tone="bad" onClick={() => take(o.k, 'them')}>They took {o.k === 'grubs' ? 'them' : 'it'}</TapButton>
+                    <TapButton tone="good" onClick={(e) => take(o.k, 'us', e)}>We took {o.k === 'grubs' ? 'them' : 'it'}</TapButton>
+                    {o.k === 'grubs' && <TapButton onClick={(e) => take(o.k, 'split', e)}>Split</TapButton>}
+                    <TapButton tone="bad" onClick={(e) => take(o.k, 'them', e)}>They took {o.k === 'grubs' ? 'them' : 'it'}</TapButton>
                   </div>
                 )}
                 {o.k === 'dragon' && dragonRead(o, facts) && <p className="m-0 text-sm leading-snug">{dragonRead(o, facts)}</p>}
@@ -179,7 +180,7 @@ export default function Track({ bst, patch, role = 'jungle', facts = null }) {
       </Card>
 
       {/* deaths */}
-      <Card>
+      <Card id="death-card">
         <CardContent className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-2">
             <h3 className="m-0 text-lg font-bold tracking-tight">Deaths</h3>
@@ -190,8 +191,8 @@ export default function Track({ bst, patch, role = 'jungle', facts = null }) {
             <Budget label="Free deaths" value={free} max={3} />
           </div>
           <div className="grid grid-cols-2 gap-2">
-            <TapButton onClick={() => die(false)}><Skull size={15} /> Died, we got one too</TapButton>
-            <TapButton tone="bad" onClick={() => die(true)}><Skull size={15} /> Died for nothing</TapButton>
+            <TapButton onClick={(e) => die(false, e)}><Skull size={15} /> Died, we got one too</TapButton>
+            <TapButton tone="bad" onClick={(e) => die(true, e)}><Skull size={15} /> Died for nothing</TapButton>
           </div>
           <AnimatePresence initial={false}>
             {(justDied || deaths.length >= 4 || free >= 3) && (

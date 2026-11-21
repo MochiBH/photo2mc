@@ -14,7 +14,7 @@ try {
   p.on('console', (m) => { if (m.type() === 'error' && !/fonts\.g|ERR_|Failed to load resource/.test(m.text())) errs.push(m.text()); });
   await p.goto('http://localhost:4319/');
   await p.waitForSelector('nav[aria-label="Sections"]', { timeout: 15000 });
-  if (role === 'support') { await p.click('nav[aria-label="Role"] button:has-text("Support")'); await p.waitForTimeout(500); }
+  if (role === 'support') { await p.click('nav[aria-label="Role"] button[aria-label="Support"]'); await p.waitForTimeout(500); }
   await p.click(`nav[aria-label="Sections"] button[aria-label="${tab[0].toUpperCase() + tab.slice(1)}"]`);
   await p.waitForTimeout(900);
   if (steps) { const fn = (await import(new URL(steps, 'file://' + process.cwd() + '/').href)).default; await fn(p); await p.waitForTimeout(900); }

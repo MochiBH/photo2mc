@@ -12,11 +12,11 @@ export function TickProgress({ value, total, ticks = 14, label }) {
             initial={false}
             animate={{ scaleY: i < filled ? 1 : 0.7 }}
             transition={{ type: 'spring', stiffness: 400, damping: 20, delay: i * 0.02 }}
-            className={`h-4 w-[3.5px] rounded-full transition-colors duration-500 ${i < filled ? 'bg-[#22C55E]' : 'bg-[#E5E5E7] dark:bg-[#2A2A2A]'}`}
+            className={`h-4 w-[3.5px] rounded-full transition-colors duration-500 ${i < filled ? 'bg-primary shadow-[0_0_8px_var(--primary)]' : 'bg-white/12'}`}
           />
         ))}
       </div>
-      <span className="tnum min-w-8 text-right text-[13px] font-bold text-[#71717A] dark:text-[#999]">
+      <span className="tnum min-w-8 text-right text-[13px] font-bold text-white/60">
         {value}/{total}
       </span>
     </div>

@@ -13,6 +13,7 @@ import { CN, RUNES, champOf, norm } from '../lib/legacy';
 import { BUILDS, champsFor, gold } from '../lib/champs';
 import { ALLY_ROWS, ENEMY_ROWS, computeLive } from '../lib/live';
 import { facts as factsOf } from '../lib/insights';
+import { burst } from '../fx/fx';
 import Track, { fmt, gameSeconds, nextUp, objectives } from './Track';
 
 const BLANK = { me: '', role: 'auto', state: 'even', sec: 'teams', clock: null, events: [], deaths: [], allies: [0, 1, 2, 3].map(() => ({ c: '', f: 0 })), rows: [0, 1, 2, 3, 4].map(() => ({ c: '', r: '', f: 0 })), bought: [] };
@@ -166,7 +167,7 @@ export default function Live() {
                               <span className={cn('block text-base leading-tight font-semibold', it.got && 'text-muted-foreground line-through')}>{it.item}</span>
                               <span className={cn('mt-0.5 block text-sm leading-snug text-muted-foreground', it.got && 'opacity-60')}>{it.why}</span>
                             </span>
-                            <motion.button type="button" whileTap={{ scale: 0.9 }} onClick={() => toggleBought(it.item)} aria-pressed={!!it.got} aria-label={(it.got ? 'Bought: ' : 'Mark as bought: ') + it.item}
+                            <motion.button type="button" whileTap={{ scale: 0.9 }} onClick={(e) => { if (!it.got) burst(e, 'lime', 16); toggleBought(it.item); }} aria-pressed={!!it.got} aria-label={(it.got ? 'Bought: ' : 'Mark as bought: ') + it.item}
                               className={cn('tnum h-9 min-w-14 rounded-lg border px-2 text-xs font-semibold transition-colors', it.got ? 'border-good bg-good-soft text-good' : 'bg-card text-muted-foreground dark:bg-input/30')}>{it.got ? 'Got' : gold(it.item).toLocaleString()}</motion.button>
                           </motion.li>
                         );

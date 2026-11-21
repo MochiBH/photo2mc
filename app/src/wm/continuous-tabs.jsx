@@ -9,27 +9,14 @@ export function ContinuousTabs({ tabs, value, onChange, label, size = 'md', clas
     <div className={cn('no-scrollbar -mx-1 overflow-x-auto px-1 py-1', className)}>
       <nav
         aria-label={label}
-        className="relative inline-flex items-center gap-0.5 rounded-full border border-[#E5E5E9] bg-linear-to-b from-[#ffffff] to-[#e9e9f2] p-1 shadow-[inset_0_-2px_4px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.9),0_4px_12px_rgba(0,0,0,0.03)] transition-all duration-300 dark:border-zinc-800 dark:from-zinc-900 dark:to-zinc-950 dark:shadow-[inset_0_-2px_4px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.05)]"
+        className="relative inline-flex items-center gap-0.5 rounded-full border border-white/10 bg-linear-to-b from-white/[0.07] to-white/[0.02] p-1 shadow-[inset_0_-2px_4px_rgb(0_0_0/0.45),inset_0_1px_0_rgb(255_255_255/0.07)]"
       >
         {tabs.map((tab) => {
           const isActive = value === tab.id;
           return (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => onChange(tab.id)}
-              aria-pressed={isActive}
-              className={cn('relative rounded-full outline-none', size === 'sm' ? 'px-3 py-1.5' : 'px-4 py-2')}
-            >
-              {isActive && (
-                <motion.div layoutId={pill} transition={pillSpring} className="absolute inset-0 rounded-full bg-[#252528] shadow-xs dark:bg-zinc-100" />
-              )}
-              <span
-                className={cn(
-                  'relative z-10 flex items-center gap-1.5 text-sm font-semibold whitespace-nowrap transition-colors duration-200',
-                  isActive ? 'text-[#EDEDEC] dark:text-zinc-950' : 'text-[#343437] hover:text-[#62625D] dark:text-zinc-400 dark:hover:text-zinc-200',
-                )}
-              >
+            <button key={tab.id} type="button" onClick={() => onChange(tab.id)} aria-pressed={isActive} aria-label={tab.aria} title={tab.aria} className={cn('relative rounded-full outline-none', size === 'sm' ? 'px-3 py-1.5' : 'px-4 py-2')}>
+              {isActive && <motion.div layoutId={pill} transition={pillSpring} className="absolute inset-0 rounded-full bg-white shadow-[0_0_18px_-4px_rgb(255_255_255/0.7)]" />}
+              <span className={cn('relative z-10 flex items-center gap-1.5 text-sm font-semibold whitespace-nowrap transition-colors duration-200', isActive ? 'text-zinc-950' : 'text-white/60 hover:text-white')}>
                 {tab.label}
                 {tab.count !== undefined && <span className="tnum text-xs font-medium opacity-70">{tab.count}</span>}
               </span>

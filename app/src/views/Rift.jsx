@@ -1,4 +1,5 @@
-import { useId } from 'react';
+import { useId, useRef } from 'react';
+import { useDrawIn } from '../fx/draw';
 import { cn } from '../wm/utils';
 
 /* Summoner's Rift as a schematic. Map units run 0..14800 with blue base bottom-left; the drawing is 148 units square, y flipped. */
@@ -13,9 +14,10 @@ const LANES = 'M11 104 V22 Q11 11 22 11 H104 M44 137 H126 Q137 137 137 126 V44 M
 const mix = (a, pct, b = 'var(--map)') => `color-mix(in oklab, ${a} ${pct}%, ${b})`;
 
 export function RiftBase({ label, className, labels = true, children }) {
-  const id = useId().replace(/:/g, '');
+  const id = useId().replace(/:/g, ''), root = useRef(null);
+  useDrawIn(root);
   return (
-    <svg viewBox="0 0 148 148" role="img" aria-label={label} className={cn('block h-auto w-full rounded-3xl ring-1 ring-foreground/10', className)} style={{ background: 'var(--map)' }}>
+    <svg ref={root} viewBox="0 0 148 148" role="img" aria-label={label} className={cn('block h-auto w-full rounded-3xl ring-1 ring-foreground/10', className)} style={{ background: 'var(--map)' }}>
       <defs>
         <linearGradient id={id + 'river'} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="var(--map-river)" stopOpacity=".75" />
@@ -32,7 +34,7 @@ export function RiftBase({ label, className, labels = true, children }) {
       <rect width="148" height="148" fill={`url(#${id}grain)`} />
       {/* river with its two pits */}
       <path d="M20 20 L128 128" fill="none" stroke={mix('var(--foreground)', 16)} strokeWidth="16" strokeLinecap="round" />
-      <path d="M20 20 L128 128" fill="none" stroke={`url(#${id}river)`} strokeWidth="13.5" strokeLinecap="round" />
+      <path data-draw d="M20 20 L128 128" fill="none" stroke={`url(#${id}river)`} strokeWidth="13.5" strokeLinecap="round" />
       {Object.entries(PITS).map(([k, [x, y]]) => (
         <g key={k}>
           <circle cx={x} cy={y} r="8.4" fill={mix('var(--foreground)', 16)} />
@@ -41,7 +43,7 @@ export function RiftBase({ label, className, labels = true, children }) {
       ))}
       {/* lanes */}
       <path d={LANES} fill="none" stroke={mix('var(--foreground)', 14)} strokeWidth="9.5" strokeLinecap="round" />
-      <path d={LANES} fill="none" stroke="var(--map-lane)" strokeWidth="7.5" strokeLinecap="round" />
+      {LANES.split(' M').map((d, i) => <path key={i} data-draw d={(i ? 'M' : '') + d} fill="none" stroke="var(--map-lane)" strokeWidth="7.5" strokeLinecap="round" />)}
       <path d={LANES} fill="none" stroke={mix('var(--foreground)', 10, 'var(--map-lane)')} strokeWidth=".5" strokeDasharray="1.5 2.5" strokeLinecap="round" />
       {/* bases */}
       <circle cx="0" cy="148" r="44" fill={`url(#${id}blue)`} stroke={mix('var(--s1)', 45)} strokeWidth=".8" />
@@ -50,7 +52,7 @@ export function RiftBase({ label, className, labels = true, children }) {
       <circle cx="134" cy="14" r="4.2" fill="var(--bad)" stroke="var(--map)" strokeWidth="1.2" />
       {/* turrets and buff camps */}
       {Object.entries(TURRETS).map(([side, list]) => list.map(([x, y]) => { const [cx, cy] = toMap(x, y); return (
-        <rect key={side + x} x={cx - 1.5} y={cy - 1.5} width="3" height="3" rx=".6" transform={`rotate(45 ${cx} ${cy})`} fill={side === 'blue' ? 'var(--s1)' : 'var(--bad)'} stroke="var(--map)" strokeWidth=".6" fillOpacity=".85" />
+        <rect data-pop key={side + x} style={{ transformBox: 'fill-box', transformOrigin: 'center' }} x={cx - 1.5} y={cy - 1.5} width="3" height="3" rx=".6" transform={`rotate(45 ${cx} ${cy})`} fill={side === 'blue' ? 'var(--s1)' : 'var(--bad)'} stroke="var(--map)" strokeWidth=".6" fillOpacity=".85" />
       ); }))}
       {BUFFS.map(([x, y, c]) => { const [cx, cy] = toMap(x, y); return <circle key={x} cx={cx} cy={cy} r="2.2" fill="none" stroke={`var(--${c})`} strokeOpacity=".55" strokeWidth=".9" />; })}
       {labels && (

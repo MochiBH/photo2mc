@@ -13,6 +13,8 @@ Single script, `riot_jungle_report.py` (Python 3, standard library only). See RE
 
 - React 19 + Tailwind 4 + Motion on Vite, deployed on Vercel with Root Directory `app`. Supabase for logins and data. See README "The website".
 - `app/src/wm/` holds the Watermelon UI components (adapted, MIT). New UI should reuse them and their motion style (spring pills, blur-in).
+- `app/src/fx/` holds the anime.js effects: `backdrop.jsx` (aurora + canvas dot grid; `ripple()` sends a wave through it), `fx.js` (`burst`, `shake`, `rippleFrom`), `text.jsx` (`SplitTitle`, `Scramble`), `ring.jsx` (self-drawing gauge), `draw.js` (`useDrawIn` for `data-draw` strokes and `data-pop` marks). Use these for new showpiece motion; keep Motion for layout and presence. Everything in `fx/` must stay still under `prefers-reduced-motion` (the `calm` flag).
+- The design is dark only: tokens in `src/index.css`, lime for actions and wins, melon pink only for deaths, losses and the enemy, cyan and violet as atmosphere. Display type is Unbounded (`font-display`), used for the title, hero numbers and timers only.
 - `app/src/session.jsx` owns sign-in, the profile, stats, the sync loop and per-player saved state (`useSynced`). Nothing personal is hard-coded in views; everything comes from `useSession().stats` for the active role.
 - Server: `app/api/sync.js` (Vercel function) calls `app/server/sync.mjs`, `riot.mjs` and `analysis.mjs`. `analysis.mjs` is a port of `riot_jungle_report.py`; `scripts/check-analysis.mjs` must keep reporting that it matches. Schema and row-level security are in `app/supabase/schema.sql`.
 - Never commit keys. `RIOT_API_KEY` and `SUPABASE_SERVICE_ROLE_KEY` are server-only Vercel env vars; only `VITE_*` values reach the browser.

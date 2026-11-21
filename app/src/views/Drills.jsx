@@ -9,6 +9,7 @@ import { cn } from '../wm/utils';
 import { Callout, Eyebrow, Lead, Num, Rise, Screen } from '../ui';
 import { useApp } from '../store';
 import { KEYS } from '../lib/legacy';
+import { burst } from '../fx/fx';
 
 let BANK = [];
 const rand = (a) => a[Math.floor(Math.random() * a.length)];
@@ -51,10 +52,11 @@ export default function Drills() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quiz]);
 
-  function answer(oi) {
+  function answer(oi, e) {
     if (!cur || answered !== null) return;
     setAnswered(oi);
     const ok = oi === (cur.a ?? 0);
+    if (ok) burst(e || document.querySelector('[data-right-anchor]'), 'lime', 22);
     if (run && ok) setRun((r) => ({ ...r, right: r.right + 1 }));
     setSt((s) => {
       const n = s.n + 1, q = { ...s.q };
@@ -136,7 +138,7 @@ export default function Drills() {
                     <Eyebrow>{run ? `${run.label} · ${run.i + 1} of ${run.questions.length}` : cur.tags.map((t) => TAGNAME[t] || t).join(' · ')}</Eyebrow>
                     {again && <span className="text-[11px] font-bold tracking-wide text-gold uppercase">Back for another try</span>}
                   </div>
-                  <h2 className="m-0 text-[19px] leading-snug font-semibold tracking-tight text-pretty">{cur.q}</h2>
+                  <h2 data-right-anchor className="m-0 text-[19px] leading-snug font-semibold tracking-tight text-pretty">{cur.q}</h2>
                   <div className="flex flex-col gap-2">
                     {order.map((oi, i) => {
                       const isRight = answered !== null && oi === correct, isWrong = answered !== null && oi === answered && oi !== correct;
@@ -145,7 +147,7 @@ export default function Drills() {
                           key={oi}
                           type="button"
                           disabled={answered !== null}
-                          onClick={() => answer(oi)}
+                          onClick={(e) => answer(oi, e)}
                           initial={{ opacity: 0, y: 10 }}
                           animate={isWrong ? { opacity: 1, y: 0, x: [0, -8, 8, -5, 5, 0] } : isRight ? { opacity: 1, y: 0, scale: [1, 1.03, 1] } : { opacity: answered !== null ? 0.5 : 1, y: 0 }}
                           transition={{ delay: answered === null ? 0.06 + i * 0.05 : 0, duration: 0.35 }}

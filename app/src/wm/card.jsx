@@ -1,10 +1,16 @@
 import { cn } from './utils';
 
-export function Card({ className, ...props }) {
+/* Watermelon UI card, as smoked glass. `glow` adds a light travelling round the edge, for the one hero card on a screen. */
+export function Card({ className, glow = false, ...props }) {
   return (
     <div
       data-slot="card"
-      className={cn('ring-foreground/10 bg-card text-card-foreground gap-4 rounded-2xl py-4 text-sm ring-1 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_-12px_rgba(0,0,0,0.08)] dark:shadow-none flex flex-col min-w-0', className)}
+      className={cn(
+        'bg-card text-card-foreground relative flex min-w-0 flex-col gap-4 rounded-3xl py-4 text-sm ring-1 ring-white/10',
+        'shadow-[inset_0_1px_0_rgb(255_255_255/0.07),0_20px_50px_-28px_rgb(0_0_0/0.9)]',
+        glow && 'glow-border',
+        className,
+      )}
       {...props}
     />
   );
@@ -20,7 +26,4 @@ export function CardDescription({ className, ...props }) {
 }
 export function CardContent({ className, ...props }) {
   return <div data-slot="card-content" className={cn('px-4', className)} {...props} />;
-}
-export function CardFooter({ className, ...props }) {
-  return <div data-slot="card-footer" className={cn('bg-muted/50 -mb-4 rounded-b-2xl border-t p-4 flex items-center', className)} {...props} />;
 }

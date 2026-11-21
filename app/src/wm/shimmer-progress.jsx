@@ -4,12 +4,12 @@ import { cn } from './utils';
 /* The bar from Watermelon UI's "Labeled Progress Indicator": fills on mount, with a slow sheen passing over it. */
 export function ShimmerProgress({ value, className, tone = 'primary', label }) {
   const pct = Math.max(0, Math.min(100, value));
-  const fill = tone === 'good' ? 'bg-good' : tone === 'bad' ? 'bg-bad' : tone === 'gold' ? 'bg-gold' : 'bg-primary';
+  const fill = tone === 'good' ? 'bg-good' : tone === 'bad' ? 'bg-bad' : tone === 'gold' ? 'bg-gold' : 'bg-neon shadow-[0_0_14px_var(--primary)]';
   return (
     <div
       role="img"
       aria-label={label}
-      className={cn('h-3 w-full overflow-hidden rounded-full border border-black/5 bg-[#F0F0F0] shadow-inner dark:border-white/5 dark:bg-zinc-900', className)}
+      className={cn('h-3 w-full overflow-hidden rounded-full border border-white/8 bg-black/40 shadow-inner', className)}
     >
       <motion.div
         initial={{ width: '0%' }}

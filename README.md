@@ -24,7 +24,11 @@ The API key is never in code. Set `RIOT_API_KEY`, or run somewhere the
 A React 19 + Tailwind 4 + Motion site for Vercel, with Supabase logins and each player's own stats pulled from
 the Riot API. Components are adapted from [Watermelon UI](https://ui.watermelon.sh) (MIT, see `app/src/wm/NOTICE.md`).
 
-Screens: Learn and Drills (a jungle course and a support course), Games, Map (checkpoints, leaks worked out from
+Animation is split in two: Motion drives layout and presence inside the components, and anime.js drives the
+showpiece effects in `app/src/fx/` (the rippling dot-grid backdrop, particle bursts, letter reveals, self-drawing
+gauges and map lanes). The look is dark only.
+
+Screens: Home (record, form, checkpoints, rules, game list), Learn and Drills (a jungle course and a support course), Map (checkpoints, leaks worked out from
 your games, death map and charts), Live (teams, in-game tracker, build and plan for any jungle or support champion)
 and Me (profile, refresh, sign out). A switch in the header flips between your jungle and support games.
 
