@@ -166,6 +166,45 @@ function notesFor(role, champ, F, items, facts) {
   return out;
 }
 
+/* ---------- Rell (support): hand-tuned on top of the general rules ---------- */
+const UNDO = ['Janna', 'Lulu', 'Milio', 'Poppy', 'Alistar', 'Morgana', 'Braum', 'Gragas'];   // supports and tanks that can cancel or shrug off an engage
+function rellBuild(bst, F, A, rec) {
+  const adc = champOf(bst.allies[3] ? bst.allies[3].c : ''), carry = adc ? short(adc) : A.carries[0] || 'your carry';
+  const burst = F.adbN.concat(F.apbN).slice(0, 3);
+  const why = {
+    "Zeke's Convergence": `Pays off the moment you ult next to ${carry}: their hits land harder on whoever you pulled in.`,
+    'Locket of the Iron Solari': `A shield for the whole team right as you pile in.${burst.length ? ` It matters most against ${andList(burst)}.` : ''}`,
+    "Knight's Vow": `Link it to ${A.fed.length ? andList(A.fed) : carry}. You soak part of the damage aimed at them.`,
+  };
+  let out = rec.map((r) => (why[r.item] ? { ...r, why: why[r.item] } : r));
+  const move = (item, to) => { const i = out.findIndex((o) => o.item === item); if (i > to) { const [x] = out.splice(i, 1); out.splice(to, 0, x); } };
+  if (F.adb + F.apb >= 2) move('Locket of the Iron Solari', 0);          // burst teams: the shield comes first
+  if (A.fed.length && A.carries.some((c) => A.fed.includes(c))) move("Knight's Vow", 2);
+  const b = out.findIndex((o) => BOOTS.includes(o.item));
+  if (b >= 0 && F.n && F.ms >= 0.55 && F.c < 3 && gold("Mercury's Treads")) out[b] = { item: "Mercury's Treads", why: 'More of their damage is magic, and these shorten the stuns that stop your engage.' };
+  return out;
+}
+function rellPlan(bst, F, A, plan) {
+  const adc = champOf(bst.allies[3] ? bst.allies[3].c : ''), carry = adc ? short(adc) : 'your ADC';
+  const tgts = targetsOf(F), tgt = tgts.length ? andList(tgts) : 'whoever steps up';
+  const foes = [3, 4].map((i) => champOf(bst.rows[i] ? bst.rows[i].c : '')).filter(Boolean);
+  const undo = F.rec.filter((r) => UNDO.includes(r.name)).map((r) => r.name), shields = real(F, 's').slice(0, 3);
+  const stuck = foes.filter((n) => STUCK.includes(n)).map(short), hooks = foes.filter((n) => tagsOf(n).includes('p')).map(short);
+  const job = `You start the fight. Crash down on ${tgt} with W, stun with Q, then ult to hold them in the middle of your team. Only go when ${carry} is close enough to follow: an engage with nobody behind you is a free death.${undo.length ? ` ${andList(undo)} can undo an engage, so wait for their key spell or go on someone standing away from them.` : ''}`;
+  let lane = 'Add both bot lanes above and this reads the matchup for you.';
+  if (foes.length) {
+    if (stuck.length === foes.length) lane = `${andList(stuck)} have no dash, which is the lane Rell wants. Look for the all-in at level 2 and again every time W is back up.`;
+    else if (hooks.length) lane = `Stand behind your minions until you engage: ${andList(hooks)} ${hooks.length > 1 ? 'want' : 'wants'} to catch you first. You have no way to trade from range, so either go all the way in or stay back.`;
+    else lane = `You can't trade from range, so don't walk up to take free hits. Hold the wave near your side, and go all the way in when one of them steps past their minions.`;
+  }
+  const out = plan.map(([h, t]) => (h === 'Your job in fights' ? [h, job] : h === 'Your lane' ? [h, lane] : [h, t]));
+  const tips = [];
+  if (shields.length) tips.push(`Your Q breaks shields. Hit ${andList(shields)} with it before your team's damage lands.`);
+  tips.push('After the engage you are on foot and slow. Mount back up with W to get to your carry or to get out.');
+  out.splice(Math.min(2, out.length), 0, ['Rell this game', tips.join(' ')]);
+  return out;
+}
+
 export function computeLive(bst, role, facts) {
   const champ = champOf(bst.me) || null, legacyMe = role === 'jungle' && champ ? LEGACY[champ] : null;
   setBst({ ...bst, me: legacyMe || 'Other' });
@@ -182,8 +221,10 @@ export function computeLive(bst, role, facts) {
     const notes = buildNotes(F, A, tank, items).filter((n) => !n.startsWith('One control ward')).concat(notesFor(role, champ, F, items, facts).filter((n) => n.startsWith('One control ward')));
     return { ...base, items, plan, notes, starter, roleWhy: legacyMe === 'Nunu' ? r.why : null, title: (legacyMe === 'Nunu' ? (tank ? 'Tank Nunu' : 'AP Nunu') : "Kha'Zix") + (F.n ? ' against ' + F.list.join(', ') : ' · standard build') };
   }
-  const rec = genericBuild(role, champ, F, A, bst.state) || [];
+  const rell = role === 'support' && champ === 'Rell';
+  let rec = genericBuild(role, champ, F, A, bst.state) || [], plan = genericPlan(role, champ, bst, F, A);
+  if (rell) { rec = rellBuild(bst, F, A, rec); plan = rellPlan(bst, F, A, plan); }
   const items = withBought(rec, bst.bought);
-  return { ...base, items, starter, plan: genericPlan(role, champ, bst, F, A), notes: notesFor(role, champ, F, items, facts), missing: !b,
+  return { ...base, items, starter, plan, notes: notesFor(role, champ, F, items, facts), missing: !b,
     title: short(champ) + (F.n ? ' against ' + F.list.join(', ') : ' · standard build') };
 }

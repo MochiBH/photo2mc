@@ -13,6 +13,8 @@ import { DEMO, useSession } from '../session';
 import { champOf, norm } from '../lib/legacy';
 import { REGION_LIST, champsFor } from '../lib/champs';
 
+/* Players set up ahead of time: typing the Riot ID fills in the rest. */
+const PRESETS = { 'evlijah#3958': { region: 'na', role: 'support', mains: ['Rell'] }, 'the gonzoogler#weeee': { region: 'na', role: 'jungle', mains: ['Nunu & Willump', "Kha'Zix"] } };
 const label = 'flex flex-col gap-1.5 text-[11px] font-bold tracking-[0.1em] text-muted-foreground uppercase';
 
 function Shell({ children }) {
@@ -100,7 +102,7 @@ export function ProfileForm({ first, onSaved }) {
   }
   return (
     <form onSubmit={submit} className="flex flex-col gap-3.5">
-      <label className={label}>Riot ID<Input id="pf-riot" required value={riot} onChange={(e) => setRiot(e.target.value)} placeholder="Name#TAG" autoCapitalize="off" autoCorrect="off" spellCheck={false} /></label>
+      <label className={label}>Riot ID<Input id="pf-riot" required value={riot} onChange={(e) => { const v = e.target.value; setRiot(v); const p = PRESETS[v.trim().replace(/\s*#\s*/, '#').toLowerCase()]; if (p && first) { setRegion(p.region); setRole(p.role); setMains(p.mains); } }} placeholder="Name#TAG" autoCapitalize="off" autoCorrect="off" spellCheck={false} /></label>
       <div className="grid grid-cols-2 gap-2.5">
         <label className={label}>Region
           <select id="pf-region" value={region} onChange={(e) => setRegion(e.target.value)} className="h-11 w-full min-w-0 rounded-xl border border-input bg-card px-3 text-base font-normal tracking-normal text-foreground normal-case dark:bg-input/30">

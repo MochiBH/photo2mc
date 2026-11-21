@@ -57,6 +57,8 @@ export default function Live() {
   const quick = (mains.length ? mains : pool.slice(0, 4)).slice(0, 5);
 
   const patch = (p) => setB((b) => ({ ...b, ...p }));
+  useEffect(() => { if (!bst.me && mains[0]) setB((b) => (b.me ? b : { ...b, me: mains[0] })); }, [bst.me, mains[0]]);   // start on the player's main
+
   const setRow = (kind, i, p) => setB((b) => ({ ...b, [kind]: b[kind].map((r, n) => (n === i ? { ...r, ...p } : r)) }));
   const goSec = (sec) => { patch({ sec }); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   const toggleBought = (n) => setB((b) => ({ ...b, bought: b.bought.includes(n) ? b.bought.filter((x) => x !== n) : [...b.bought, n] }));

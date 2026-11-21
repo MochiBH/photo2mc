@@ -1,0 +1,27 @@
+/* Rell drills for the support course. opts[0] is correct; the app shuffles them. */
+window.RELL_BANK = [
+{id:"rl1",tags:["rell","engage"],q:"You're on Rell. The enemy ADC steps up alone, but your own ADC is back under tower. Do you engage?",
+ opts:["No. Wait until your ADC is close enough to follow up","Yes, a knock-up on their carry is always worth it","Yes, then ult straight away","Recall instead"],
+ why:"Rell brings the crowd control, not the damage. If nobody is behind you to hit the target, you've spent your engage and you're on foot next to two enemies."},
+{id:"rl2",tags:["rell","fights"],q:"Their Lulu just shielded the carry you're about to engage on. What do you open with?",
+ opts:["Your Q, because it breaks the shield","Your ult, to pull them in first","A basic attack","Nothing, the shield makes it a bad fight"],
+ why:"Rell's Q destroys shields on the enemies it hits. Break it first and your team's damage lands on health instead of a shield."},
+{id:"rl3",tags:["rell","fights"],q:"You crashed down, your team got one kill, and three enemies are now walking at your ADC. You're on foot. What do you do?",
+ opts:["Mount back up with W and get next to your ADC","Keep hitting the nearest enemy","Walk toward the enemy base to split them","Stand still and wait for your cooldowns"],
+ why:"On foot Rell is slow. Mounting up gets you back to your carry in time to stop the next person who jumps on them."},
+{id:"rl4",tags:["rell","engage"],q:"A 5v5 is starting. Their tank is in front and their two carries are standing together behind him. Where do you land your engage?",
+ opts:["Past the tank, on the two carries standing together","On the tank, he's the closest target","On whoever has the lowest health","You wait for them to engage first"],
+ why:"Your ult holds everyone near you in place. Two carries locked down wins a fight; the tank locked down just means he does his job."},
+{id:"rl5",tags:["rell","lane"],q:"You're laning against Morgana. Her spell shield is up. Who do you engage on?",
+ opts:["Morgana herself, or wait until the shield has been used","Their ADC, as always","Nobody, you can never fight this lane","The minion wave"],
+ why:"The spell shield blocks your knock-up and stun on whoever has it. She can't easily save herself and her ADC at once, so pick the one without it."},
+{id:"rl6",tags:["rell","lane"],q:"Both lanes just reached level 2 at the same time and the enemy bot laners are standing level with their minions. They have no dashes. What now?",
+ opts:["Engage: this is the all-in Rell's lane is built around","Back off and wait for level 6","Walk up and basic attack them for poke","Leave to ward the river"],
+ why:"Rell has no way to trade from range, so her lane is won by committing at the right moment. Two immobile targets stepping up is that moment."},
+{id:"rl7",tags:["rell","build"],q:"The enemy team has Zed and Syndra, and both are doing well. Which of your core items do you want first?",
+ opts:["The one that shields your whole team when you engage","The one that buffs your ADC's damage after your ult","More movement speed","A damage item for yourself"],
+ why:"Against burst, the fight is decided in the first two seconds. A team shield right as you pile in keeps your carries alive through it."},
+{id:"rl8",tags:["rell","roam"],q:"Your wave is pushed into their tower and your jungler pings mid. Their mid laner has no dash. Do you go?",
+ opts:["Yes. Mount up and go; you are fast on your horse and bring two forms of lockdown","No, a support never leaves the ADC","Only if your ADC comes too","Yes, but walk through their jungle alone first to ward"],
+ why:"A pushed wave means your ADC is safe for a moment, and an immobile mid laner can't escape a mounted Rell arriving from the side."}
+];
