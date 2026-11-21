@@ -46,19 +46,22 @@ and Me (profile, refresh, sign out). A switch in the header flips between your j
    | `SUPABASE_SERVICE_ROLE_KEY` | Supabase `service_role` key | server only |
    | `RIOT_API_KEY` | your Riot API key | server only |
 
-3. **Accounts.** Open the site, choose Create account for each player, and fill in their Riot ID, region and role.
-   If Supabase asks for email confirmation, click the link in the email first (or turn confirmation off under
-   Authentication > Sign In / Providers > Email). Once both accounts exist, turn off
-   "Allow new users to sign up" in the same place so nobody else can use your Riot key.
-4. In Supabase > Authentication > URL Configuration, set Site URL to your Vercel address so confirmation links
-   point at the site.
+3. **Accounts.** The site is private: only the usernames in `app/server/players.mjs` (`mochi` and `evlijah`,
+   or the `ALLOWED_USERNAMES` environment variable) can have an account. Open the site and sign in with your
+   username and the password you want. The first sign-in for a username creates the account with that password
+   and fills in its Riot ID, region, role and mains; after that the same password signs you in. Change it on the
+   Me tab. There are no emails: each username maps to a made-up address on a reserved domain inside Supabase.
+4. **Lock it.** In Supabase > Authentication > Sign In / Providers, turn off "Allow new users to sign up". The
+   site's own account creation still works; this only stops strangers creating accounts with the public key.
+   If someone else claims a username before you do, delete that user under Authentication > Users and sign in again.
 
 Vercel builds from the repository's production branch (normally `main`); either merge this work into `main` or
 change the production branch in the Vercel project's settings.
 
 ### How stats work
 
-`POST /api/sync` (in `app/api/sync.js`) checks the signed-in user, pulls up to three new ranked games per call
+`POST /api/join` checks the username against the player list and creates the account on a first sign-in.
+`POST /api/sync` (in `app/api/sync.js`) checks the signed-in user is on that list, pulls up to three new ranked games per call
 from Riot, analyses each one (`app/server/analysis.mjs`) and stores the result in Supabase. The browser repeats
 the call until it reports done, then reads the rolled-up stats. It runs automatically when stats are more than
 30 minutes old, and from the Update button.
@@ -70,6 +73,8 @@ cd app && npm install
 npm run dev                                   # needs app/.env.local (see app/.env.example); /api needs `vercel dev`
 node scripts/check-analysis.mjs               # JS analysis vs the Python report on the same raw games
 node scripts/check-sync.mjs "Name#TAG" na     # real sync loop against Riot with an in-memory database
+node scripts/check-join.mjs                   # username sign-in rules against a stand-in for Supabase
+node scripts/check-insights.mjs "Name#TAG" na support   # the checkpoints, leaks and strengths a player would see
 node scripts/make-demo.mjs && VITE_DEMO=1 npx vite build && node scripts/shot.mjs live dark scripts/steps-live.mjs support
 ```
 

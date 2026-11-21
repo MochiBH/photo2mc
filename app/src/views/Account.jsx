@@ -11,6 +11,7 @@ import { cn } from '../wm/utils';
 import { Eyebrow, Lead, Rise, Screen } from '../ui';
 import { DEMO, useSession } from '../session';
 import { SplitTitle } from '../fx/text';
+import { shake } from '../fx/fx';
 import { Logo } from '../App';
 import { champOf, norm } from '../lib/legacy';
 import { REGION_LIST, champsFor } from '../lib/champs';
@@ -48,31 +49,29 @@ export function ConfigMissing() {
 }
 
 export function SignIn() {
-  const { signIn, signUp } = useSession();
-  const [mode, setMode] = useState('in');
-  const [email, setEmail] = useState('');
+  const { signIn } = useSession();
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState(null);
+  const [msg, setMsg] = useState('');
   async function submit(e) {
     e.preventDefault();
-    setBusy(true); setMsg(null);
-    const { data, error } = await (mode === 'in' ? signIn(email.trim(), password) : signUp(email.trim(), password));
+    setBusy(true); setMsg('');
+    const { error } = await signIn(username.trim().toLowerCase(), password);
     setBusy(false);
-    if (error) setMsg({ bad: true, text: error.message });
-    else if (mode === 'up' && !data.session) setMsg({ text: 'Account created. Check your email for a confirmation link, then sign in here.' });
+    if (error) { setMsg(error.message); shake(document.getElementById('signin-card')); }
   }
   return (
     <Shell>
-      <Lead>Your own stats, a live game tracker and builds for jungle and support. Sign in to see yours.</Lead>
-      <Card glow>
+      <Lead>Your own stats, a live game tracker and builds for jungle and support.</Lead>
+      <Card glow id="signin-card">
         <CardContent>
           <form onSubmit={submit} className="flex flex-col gap-3.5">
-            <ContinuousTabs tabs={[{ id: 'in', label: 'Sign in' }, { id: 'up', label: 'Create account' }]} value={mode} onChange={(m) => { setMode(m); setMsg(null); }} label="Sign in or create an account" />
-            <label className={label}>Email<Input id="auth-email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" /></label>
-            <label className={label}>Password<Input id="auth-password" type="password" autoComplete={mode === 'in' ? 'current-password' : 'new-password'} required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} placeholder={mode === 'in' ? 'Your password' : 'At least 8 characters'} /></label>
-            {msg && <p className={cn('m-0 text-sm', msg.bad ? 'text-bad' : 'text-good')} role="status">{msg.text}</p>}
-            <ShimmerButton type="submit" disabled={busy}>{busy ? 'One moment…' : mode === 'in' ? 'Sign in' : 'Create account'}</ShimmerButton>
+            <label className={label}>Username<Input id="auth-username" autoComplete="username" autoCapitalize="none" autoCorrect="off" spellCheck={false} required value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Your username" /></label>
+            <label className={label}>Password<Input id="auth-password" type="password" autoComplete="current-password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Your password" /></label>
+            {msg && <p className="m-0 text-sm text-bad" role="alert">{msg}</p>}
+            <ShimmerButton type="submit" disabled={busy}>{busy ? 'One moment…' : 'Sign in'}</ShimmerButton>
+            <p className="m-0 text-xs text-muted-foreground">First time here? The password you sign in with becomes your password.</p>
           </form>
         </CardContent>
       </Card>
@@ -138,12 +137,12 @@ export function ProfileForm({ first, onSaved }) {
 }
 
 export function Setup() {
-  const { signOut, user } = useSession();
+  const { signOut } = useSession();
   return (
     <Shell>
       <Lead>One-time setup. Your Riot ID lets the site pull your ranked games and work out your stats.</Lead>
       <Card><CardContent><ProfileForm first /></CardContent></Card>
-      {!DEMO && <Button variant="ghost" onClick={signOut} className="text-muted-foreground"><LogOut /> Sign out of {user && user.email}</Button>}
+      {!DEMO && <Button variant="ghost" onClick={signOut} className="text-muted-foreground"><LogOut /> Sign out</Button>}
     </Shell>
   );
 }
@@ -166,7 +165,7 @@ export function SyncBanner() {
 }
 
 export default function Me() {
-  const { user, profile, statsAt, sync, runSync, signOut, stats, role } = useSession();
+  const { username, profile, statsAt, sync, runSync, signOut, stats, role } = useSession();
   const [saved, setSaved] = useState(false);
   let when = 'never';
   try { if (statsAt) when = new Date(statsAt).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }); } catch (e) {}
@@ -174,7 +173,7 @@ export default function Me() {
     <Screen>
       <Rise className="flex flex-col gap-1.5">
         <Eyebrow>Your account</Eyebrow>
-        <Lead>{profile.riot_name}#{profile.riot_tag}{user && user.email ? ` · ${user.email}` : ''}</Lead>
+        <Lead>{username ? `Signed in as ${username} · ` : ''}{profile.riot_name}#{profile.riot_tag}</Lead>
       </Rise>
       <Rise>
         <Card><CardContent className="flex flex-col gap-3">
@@ -190,7 +189,32 @@ export default function Me() {
           {saved && <p className="m-0 text-sm text-good" role="status">Saved.</p>}
         </CardContent></Card>
       </Rise>
+      {!DEMO && <Rise><Password /></Rise>}
       {!DEMO && <Rise><Button variant="ghost" size="lg" onClick={signOut} className="w-full text-muted-foreground"><LogOut /> Sign out</Button></Rise>}
     </Screen>
+  );
+}
+
+function Password() {
+  const { changePassword } = useSession();
+  const [pw, setPw] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+  async function submit(e) {
+    e.preventDefault();
+    setBusy(true); setMsg(null);
+    const { error } = await changePassword(pw);
+    setBusy(false);
+    if (error) setMsg({ bad: true, text: error.message }); else { setMsg({ text: 'Password changed.' }); setPw(''); }
+  }
+  return (
+    <Card><CardContent>
+      <form onSubmit={submit} className="flex flex-col gap-3">
+        <h3 className="m-0 text-lg font-bold tracking-tight">Change password</h3>
+        <label className={label}>New password<Input id="new-password" type="password" autoComplete="new-password" required minLength={8} value={pw} onChange={(e) => setPw(e.target.value)} placeholder="At least 8 characters" /></label>
+        {msg && <p className={cn('m-0 text-sm', msg.bad ? 'text-bad' : 'text-good')} role="status">{msg.text}</p>}
+        <Button type="submit" variant="outline" size="lg" disabled={busy || pw.length < 8}>{busy ? 'Saving…' : 'Change password'}</Button>
+      </form>
+    </CardContent></Card>
   );
 }

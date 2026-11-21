@@ -103,8 +103,17 @@ export function SessionProvider({ children }) {
   const role = cloud.viewRole || (profile && profile.role) || 'jungle';
   const value = useMemo(() => ({
     phase, user, profile, role, setRole: (r) => setKey('viewRole', r), stats: statsAll ? statsAll[role] : null, statsAt, sync, runSync, saveProfile, cloud, setKey,
-    signIn: (email, password) => supa.auth.signInWithPassword({ email, password }),
-    signUp: (email, password) => supa.auth.signUp({ email, password }),
+    signIn: async (username, password) => {   // the server checks the username and creates the account on a first sign-in
+      let res, body = {};
+      try { res = await fetch('/api/join', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) }); body = await res.json().catch(() => ({})); }
+      catch (e) { return { error: { message: 'Could not reach the server. Check your connection and try again.' } }; }
+      if (!res.ok) return { error: { message: body.error || 'Could not sign in (error ' + res.status + ').' } };
+      const out = await supa.auth.signInWithPassword({ email: body.email, password });
+      if (out.error && /invalid login/i.test(out.error.message || '')) return { error: { message: 'Wrong password for that username.' } };
+      return out;
+    },
+    changePassword: (password) => supa.auth.updateUser({ password }),
+    username: user && user.email ? user.email.split('@')[0] : '',
     signOut: () => (DEMO ? null : supa.auth.signOut()),
   }), [phase, user, profile, role, statsAll, statsAt, sync, runSync, saveProfile, cloud, setKey]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

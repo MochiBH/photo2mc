@@ -2,6 +2,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { RiotError } from '../server/riot.mjs';
 import { runSync } from '../server/sync.mjs';
+import { isPlayer } from '../server/players.mjs';
 
 export const config = { maxDuration: 30 };
 
@@ -14,6 +15,7 @@ export default async function handler(req, res) {
   const admin = createClient(url, service, { auth: { persistSession: false, autoRefreshToken: false } });
   const { data: who, error: authError } = await admin.auth.getUser(token);
   if (authError || !who || !who.user) return res.status(401).json({ error: 'Your sign-in has expired. Sign in again.' });
+  if (!isPlayer(who.user.email)) return res.status(403).json({ error: 'This account is not on the player list.' });
   const userId = who.user.id;
 
   const { data: profile, error: pErr } = await admin.from('profiles').select('*').eq('id', userId).maybeSingle();
