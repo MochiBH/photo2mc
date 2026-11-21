@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { ArrowLeft, Check, ChevronRight, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Check, ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '../wm/card';
 import { Button } from '../wm/button';
 import { ShimmerButton } from '../wm/shimmer-button';
@@ -8,14 +8,11 @@ import { TickProgress } from '../wm/tick-progress';
 import { cn } from '../wm/utils';
 import { Callout, Eyebrow, Lead, Rise, Screen } from '../ui';
 import { useApp } from '../store';
-import { RULES } from '../lib/legacy';
-
-const LESSONS = window.LESSONS || [];
-const BANK = (window.LEAKS || []).concat(window.BANK || []);
-const QBY = Object.fromEntries(BANK.map((q) => [q.id, q]));
+import { RULES } from '../lib/roles';
 
 export default function Learn() {
-  const { st, setSt, askCoach, startQuiz } = useApp();
+  const { st, setSt, startQuiz, role, course } = useApp();
+  const LESSONS = course.lessons, rules = RULES[role];
   const [open, setOpen] = useState(null);
   const done = LESSONS.filter((l) => st.lessons[l.id]).length;
   const next = LESSONS.findIndex((l) => !st.lessons[l.id]);
@@ -33,7 +30,7 @@ export default function Learn() {
                     <TickProgress value={done} total={LESSONS.length} label={`${done} of ${LESSONS.length} lessons done`} />
                   </div>
                   <ol className="m-0 flex list-none flex-col gap-2.5 p-0">
-                    {RULES.map((r, i) => (
+                    {rules.map((r, i) => (
                       <li key={r.name} className="grid grid-cols-[28px_1fr] items-start gap-3 text-[15px] leading-snug">
                         <span className="grid size-7 place-items-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">{i + 1}</span>
                         <span><strong className="font-semibold">{r.name}.</strong> <span className="text-muted-foreground">{r.how}</span></span>
@@ -81,11 +78,12 @@ export default function Learn() {
           <Lesson
             index={open}
             lesson={LESSONS[open]}
+            count={LESSONS.length}
+            bank={course.bank}
             done={!!st.lessons[LESSONS[open].id]}
             onBack={() => { setOpen(null); window.scrollTo(0, 0); }}
             onDone={() => { setSt((s) => ({ ...s, lessons: { ...s.lessons, [LESSONS[open].id]: true } })); setOpen(null); window.scrollTo(0, 0); }}
             onQuiz={(qs) => startQuiz({ type: 'lesson', idx: open, lessonId: LESSONS[open].id, title: LESSONS[open].title, rule: LESSONS[open].rule, questions: qs, label: `Lesson ${open + 1} check` })}
-            onAsk={() => askCoach(`I just read the lesson '${LESSONS[open].title}'. Can you explain the main idea another way and give me an example from a real game?`)}
           />
         </motion.div>
       )}
@@ -98,7 +96,7 @@ function Reset() {
   const [armed, setArmed] = useState(false);
   return (
     <p className="m-0 mt-2 text-xs text-muted-foreground">
-      Timers and item names checked against Season 2026, patch 26.23. Builds shift every patch; the ideas hold. Progress is saved in this browser only.{' '}
+      Timers and item names checked against Season 2026, patch 26.23. Builds shift every patch; the ideas hold. Progress is saved to your account.{' '}
       <button type="button" className="underline underline-offset-2" onClick={() => { if (!armed) { setArmed(true); setTimeout(() => setArmed(false), 4000); } else { resetProgress(); setArmed(false); } }}>
         {armed ? 'Tap again to erase progress' : 'Reset progress'}
       </button>
@@ -106,15 +104,15 @@ function Reset() {
   );
 }
 
-function Lesson({ index, lesson, done, onBack, onDone, onQuiz, onAsk }) {
-  const qs = lesson.quiz.map((id) => QBY[id]).filter(Boolean);
+function Lesson({ index, lesson, count, bank, done, onBack, onDone, onQuiz }) {
+  const qs = lesson.quiz.map((id) => bank.find((q) => q.id === id)).filter(Boolean);
   return (
     <Screen>
       <Rise>
         <Button variant="ghost" size="sm" onClick={onBack} className="-ml-2 text-muted-foreground"><ArrowLeft /> All lessons</Button>
       </Rise>
       <Rise className="flex flex-col gap-2">
-        <Eyebrow>Lesson {index + 1} of {LESSONS.length} · {lesson.part}</Eyebrow>
+        <Eyebrow>Lesson {index + 1} of {count} · {lesson.part}</Eyebrow>
         <h2 className="m-0 text-[26px] leading-[1.1] font-extrabold tracking-tight">{lesson.title}</h2>
         <Lead className="text-base">{lesson.hook}</Lead>
       </Rise>
@@ -129,7 +127,6 @@ function Lesson({ index, lesson, done, onBack, onDone, onQuiz, onAsk }) {
         ) : (
           <ShimmerButton onClick={onDone}>{done ? <><Check size={18} /> Done</> : 'Got it, mark as done'}</ShimmerButton>
         )}
-        <Button variant="outline" size="lg" onClick={onAsk} className="w-full"><MessageCircle /> Ask your coach about this</Button>
       </Rise>
     </Screen>
   );

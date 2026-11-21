@@ -3,11 +3,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vite build && node scripts/assemble.mjs",
-    "dev": "vite"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@number-flow/react": "^0.6.2",
+    "@supabase/supabase-js": "^2.119.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.76.0",
@@ -22,5 +24,8 @@
     "acorn": "^8.19.0",
     "tailwindcss": "^4.3.5",
     "vite": "^8.3.8"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

@@ -6,7 +6,7 @@ export function Input({ className, type, ...props }) {
       type={type}
       data-slot="input"
       className={cn(
-        'dark:bg-input/30 border-input aria-invalid:border-destructive h-11 rounded-xl border bg-card px-3 py-1 text-base transition-colors placeholder:text-muted-foreground w-full min-w-0 disabled:opacity-50',
+        'dark:bg-input/30 border-input font-normal tracking-normal normal-case text-foreground aria-invalid:border-destructive h-11 rounded-xl border bg-card px-3 py-1 text-base transition-colors placeholder:text-muted-foreground w-full min-w-0 disabled:opacity-50',
         className,
       )}
       {...props}

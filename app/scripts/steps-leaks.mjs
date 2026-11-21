@@ -1,0 +1,1 @@
+export default async (p) => { await p.click('nav[aria-label="Map sections"] button:has-text("Leaks")'); await p.waitForTimeout(1200); console.log((await p.textContent('main')).replace(/\s+/g, ' ').slice(0, 1500)); };

@@ -4,22 +4,14 @@ import { Card, CardContent } from '../wm/card';
 import { ContinuousTabs } from '../wm/continuous-tabs';
 import { ShimmerProgress } from '../wm/shimmer-progress';
 import { Callout, Eyebrow, Lead, Mark, Num, Rise, Screen } from '../ui';
-import { CHECKS, OBJS, WHEN, WHO, ZONE, clock, rec, sgn } from '../lib/legacy';
-import { GameRow } from './Games';
+import { OBJS, WHEN, ZONE, clock, sgn } from '../lib/legacy';
+import { CHECKS, TABS_FOR_STATS, rec } from '../lib/roles';
+import { insights } from '../lib/insights';
+import { champName } from '../lib/champs';
+import { useSession } from '../session';
+import { GameRow, NoGames, shortDate } from './Games';
 import { RiftBase } from './Rift';
 
-const POS = window.POS || null;
-const LEAKS = [
-  { title: 'You die right before the enemy takes something', big: '34', unit: 'of 120 deaths were followed by an enemy objective within 90 seconds',
-    detail: 'The enemy took 30 dragons. You were dead for 11 and close enough to contest only 7.',
-    fix: 'From one minute before a dragon spawns, no river fights unless two teammates are already standing with you.' },
-  { title: 'Your farm falls behind between minute 6 and 10', big: '55 vs 67', unit: 'jungle CS at 10:00 in losses',
-    detail: "Level at 5:00. About three camps behind by 10:00, and 1,000 gold behind by 15:00. On Kha'Zix you keep up.",
-    fix: 'Between 5:00 and 15:00, clear every camp that is up before you walk to a lane. Only go mid when the enemy is pushed up to your tower.' },
-  { title: 'You give away the top-side early objectives', big: '32', unit: 'of 51 Voidgrubs went to the enemy',
-    detail: 'You were in your own jungle for 17 of them. The enemy also took 11 of 15 Heralds.',
-    fix: 'Be on the top side by 7:30, gank top (your best lane), then take the grubs with your top laner.' },
-];
 const SECTIONS = [{ id: 'checks', label: 'Checkpoints' }, { id: 'leaks', label: 'Leaks' }, { id: 'charts', label: 'Charts' }];
 const toTabs = (list) => list.map(([id, label]) => ({ id, label }));
 const OBJ_SEG = [['s1', 'Your team took it'], ['s2', 'Enemy took it, you were dead'], ['s3', 'Enemy, you were alive but far away'], ['s4', 'Enemy, you were nearby']];
@@ -28,9 +20,12 @@ export default function MapView() {
   const [who, setWho] = useState('all');
   const [when, setWhen] = useState('all');
   const [sec, setSec] = useState('checks');
-  if (!POS) return <Lead>Position data didn't load. Reload the page.</Lead>;
-  const grp = POS.groups[who];
-  const G = POS.list.map((g) => ({ g, w: g[2] === 'W' ? 1 : 0 }));
+  const { stats: POS, role, statsAt } = useSession();
+  if (!POS || !POS.games) return <NoGames role={role} />;
+  const WHO = TABS_FOR_STATS(POS).map(([id, label]) => [id, champName(label)]);
+  const view = POS.groups[who] ? who : 'all';
+  const grp = POS.groups[view];
+  const G = POS.list, checks = CHECKS[role], LEAKS = insights(POS);
 
   return (
     <div className="flex flex-col gap-4">
@@ -40,10 +35,10 @@ export default function MapView() {
     {sec === 'checks' && <Screen>
       <Rise className="flex flex-col gap-1.5">
         <Eyebrow>Three checkpoints that decide your games</Eyebrow>
-        <Lead>From the Riot API, your last {POS.games} ranked jungle games. These three things split your wins from your losses more cleanly than anything else. It is a small sample, so treat them as targets, not laws.</Lead>
+        <Lead>From the Riot API, your last {POS.games} ranked {role} games. These three things split your wins from your losses more cleanly than anything else. It is a small sample, so treat them as targets, not laws.</Lead>
       </Rise>
-      {CHECKS.map((c, i) => {
-        const hit = G.filter((x) => c.ok(x.g)), miss = G.filter((x) => !c.ok(x.g));
+      {checks.map((c, i) => {
+        const hit = G.filter((g) => c.ok(g)), miss = G.filter((g) => !c.ok(g));
         return (
           <Rise key={c.name}>
             <Card>
@@ -68,16 +63,12 @@ export default function MapView() {
           <CardContent className="flex flex-col gap-3">
             <Eyebrow>Game by game</Eyebrow>
             <ul className="m-0 flex list-none flex-col gap-2 p-0">
-              {G.map((x, i) => {
-                const g = x.g; let d = g[0];
-                try { d = new Date(g[0] + 'T12:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); } catch (e) {}
-                return (
-                  <GameRow key={i} win={!!x.w} champ={g[1]} sub={`${g[3]} deaths`} date={d}>
-                    {CHECKS.map((c) => <Mark key={c.name} ok={c.ok(g)}>{c.chip(g)}</Mark>)}
-                    {g[7] !== null && <span className="tnum inline-flex h-6 items-center rounded-full bg-card px-2.5 text-xs font-semibold text-muted-foreground ring-1 ring-foreground/10">Farm at 10:00 {sgn(g[7])}</span>}
-                  </GameRow>
-                );
-              })}
+              {G.map((g) => (
+                <GameRow key={g.id} win={!!g.w} champ={champName(g.c)} sub={`${g.d} deaths`} date={shortDate(g.t)}>
+                  {checks.map((c) => <Mark key={c.name} ok={c.ok(g)}>{c.chip(g)}</Mark>)}
+                  {role === 'jungle' && g.gap10 !== null && <span className="tnum inline-flex h-6 items-center rounded-full bg-card px-2.5 text-xs font-semibold text-muted-foreground ring-1 ring-foreground/10">Farm at 10:00 {sgn(g.gap10)}</span>}
+                </GameRow>
+              ))}
             </ul>
           </CardContent>
         </Card>
@@ -87,7 +78,7 @@ export default function MapView() {
     {sec === 'leaks' && <Screen>
       <Rise className="flex flex-col gap-1.5">
         <Eyebrow>Why you miss the checkpoints</Eyebrow>
-        <Lead>Your three biggest positional leaks, each with the numbers behind it and one thing to do about it next game.</Lead>
+        <Lead>{LEAKS.length ? 'Your biggest leaks right now, worked out from your own games. Each has the numbers behind it and one thing to do about it next game.' : 'Nothing stands out yet. This fills in once you have a few more ranked games on record.'}</Lead>
       </Rise>
       {LEAKS.map((l, i) => (
         <Rise key={l.title}>
@@ -107,15 +98,15 @@ export default function MapView() {
     {sec === 'charts' && <Screen>
       <Rise className="flex flex-col gap-1.5">
         <Eyebrow>The charts behind it</Eyebrow>
-        <ContinuousTabs tabs={toTabs(WHO)} value={who} onChange={setWho} label="Which games" size="sm" />
+        <ContinuousTabs tabs={toTabs(WHO)} value={view} onChange={setWho} label="Which games" size="sm" />
       </Rise>
-      <Rise><Rift who={who} when={when} setWhen={setWhen} /></Rise>
-      <Rise><Farm who={who} /></Rise>
+      <Rise><Rift POS={POS} who={view} when={when} setWhen={setWhen} /></Rise>
+      {role === 'jungle' ? <Rise><Farm POS={POS} who={view} WHO={WHO} /></Rise> : <Rise><Vision grp={grp} /></Rise>}
       <Rise><Objectives grp={grp} /></Rise>
       <Rise>
         <Card>
           <CardContent className="flex flex-col gap-3">
-            <h3 className="m-0 text-lg font-bold tracking-tight">Lane visits before 15:00</h3>
+            <h3 className="m-0 text-lg font-bold tracking-tight">{role === 'jungle' ? 'Lane visits before 15:00' : 'Where your early kills and deaths happen'}</h3>
             <div className="overflow-x-auto">
               <table className="tnum w-full border-collapse text-sm">
                 <thead><tr className="text-[11px] tracking-wider text-muted-foreground uppercase">{['Lane', 'Kills', 'Assists', 'Deaths', 'Empty min'].map((h, i) => <th key={h} className={`px-1.5 py-1 font-bold ${i ? 'text-right' : 'text-left'}`}>{h}</th>)}</tr></thead>
@@ -130,7 +121,7 @@ export default function MapView() {
           </CardContent>
         </Card>
       </Rise>
-      <Rise><p className="m-0 text-xs text-muted-foreground">Riot API match timelines, pulled {POS.pulled}. Showing {grp.games} games ({grp.record}). Positions are recorded once a minute, so who was near you is approximate. </p></Rise>
+      <Rise><p className="m-0 text-xs text-muted-foreground">Riot API match timelines, updated {shortDate(statsAt)}. Showing {grp.games} games ({grp.record}). Positions are recorded once a minute, so who was near you is approximate. </p></Rise>
     </Screen>}
         </motion.div>
       </AnimatePresence>
@@ -138,12 +129,12 @@ export default function MapView() {
   );
 }
 
-function Rift({ who, when, setWhen }) {
+function Rift({ POS, who, when, setWhen }) {
   const [sel, setSel] = useState(null);
   const [zone, setZone] = useState(null);
   const ds = useMemo(() => POS.deaths.map((d, i) => ({ d, i })).filter(({ d }) =>
     (who === 'all' || (who === 'wins' && d[4] === 'W') || (who === 'losses' && d[4] === 'L') || d[5] === who) &&
-    (when === 'all' || (when === 'early' ? d[2] < 15 : when === 'late' ? d[2] >= 15 : when === 'free' ? d[9] === 1 : d[10] === 1))), [who, when]);
+    (when === 'all' || (when === 'early' ? d[2] < 15 : when === 'late' ? d[2] >= 15 : when === 'free' ? d[9] === 1 : d[10] === 1))), [POS, who, when]);
   const zones = useMemo(() => { const z = {}; ds.forEach(({ d }) => { z[d[3]] = (z[d[3]] || 0) + 1; }); return Object.entries(z).sort((a, b) => b[1] - a[1]); }, [ds]);
   const max = zones.length ? zones[0][1] : 1;
   const alone = ds.filter(({ d }) => d[6] === 0).length, outn = ds.filter(({ d }) => d[6] > 0 && d[7] > d[6] + 1).length, took = ds.filter(({ d }) => d[8]).length;
@@ -192,7 +183,7 @@ function Rift({ who, when, setWhen }) {
           <AnimatePresence mode="wait" initial={false}>
             <motion.p key={cur ? sel : 'none'} initial={{ opacity: 0, y: 6, filter: 'blur(4px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.16 }} className={`m-0 ${cur ? '' : 'text-muted-foreground'}`}>
               {cur ? <>
-                <b>{cur[5]}, {cur[4] === 'W' ? 'win' : 'loss'}, {clock(cur[2])}</b> · {ZONE[cur[3]] || cur[3]} · {cur[6] === 0 ? 'no teammate near' : `${cur[6]} ${cur[6] === 1 ? 'teammate' : 'teammates'} near`}, {cur[7]} {cur[7] === 1 ? 'enemy' : 'enemies'}
+                <b>{champName(cur[5])}, {cur[4] === 'W' ? 'win' : 'loss'}, {clock(cur[2])}</b> · {ZONE[cur[3]] || cur[3]} · {cur[6] === 0 ? 'no teammate near' : `${cur[6]} ${cur[6] === 1 ? 'teammate' : 'teammates'} near`}, {cur[7]} {cur[7] === 1 ? 'enemy' : 'enemies'}
                 {cur[8] ? ` · the enemy took ${cur[8] === 'voidgrub' ? 'Voidgrubs' : cur[8] === 'baron' ? 'Baron' : cur[8] === 'herald' ? 'the Herald' : 'a dragon'} right after` : ''}
                 {cur[9] ? ' · free death' : ' · an enemy died too'}{cur[10] ? ' · within 90 seconds of respawning' : ''}
               </> : ds.length ? 'Tap a dot to see that death, or a zone below to light up just that area. A free death is one where no enemy died in the same fight.' : 'No deaths in this selection.'}
@@ -218,11 +209,11 @@ function Rift({ who, when, setWhen }) {
 }
 
 const FX = (m) => 30 + (m / 20) * 270, FY = (v) => 14 + ((5 - v) / 30) * 136;
-function Farm({ who }) {
+function Farm({ POS, who, WHO }) {
   const [min, setMin] = useState(10);
   const g = POS.groups;
   const series = [['Wins', 'var(--good)', g.wins.gap], ['Losses', 'var(--bad)', g.losses.gap]];
-  if (who === 'Nunu' || who === "Kha'Zix") series.push([who, 'var(--gold)', g[who].gap]);
+  if (!['all', 'wins', 'losses'].includes(who)) series.push([champName(who), 'var(--gold)', g[who].gap]);
   const grp = g[who], name = WHO.find((w) => w[0] === who)[1];
   const move = (e) => { const r = e.currentTarget.getBoundingClientRect(); setMin(Math.max(0, Math.min(20, Math.round((((e.clientX - r.left) / r.width) * 320 - 30) / 270 * 20)))); };
   return (
@@ -242,11 +233,11 @@ function Farm({ who }) {
             <g key={s[0]}>
               <motion.path fill="none" stroke={s[1]} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" d={'M' + s[2].map((v, m) => FX(m) + ' ' + FY(v).toFixed(1)).join(' L')}
                 initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ duration: 1.1, delay: 0.15 + i * 0.15, ease: [0.22, 1, 0.36, 1] }} />
-              <motion.circle r="4" fill={s[1]} stroke="var(--card)" strokeWidth="2" initial={false} animate={{ cx: FX(min), cy: FY(s[2][min]) }} transition={{ type: 'spring', stiffness: 500, damping: 40 }} />
+              <motion.circle r="4" fill={s[1]} stroke="var(--card)" strokeWidth="2" initial={false} animate={{ cx: FX(min), cy: FY((s[2][min] ?? 0)) }} transition={{ type: 'spring', stiffness: 500, damping: 40 }} />
             </g>
           ))}
         </svg>
-        <p className="m-0 min-h-[42px] text-sm" aria-live="polite">Minute {min}: {series.map((s) => `${s[0].toLowerCase()} ${sgn(s[2][min])}`).join(', ')} jungle CS against the enemy jungler.</p>
+        <p className="m-0 min-h-[42px] text-sm" aria-live="polite">Minute {min}: {series.map((s) => `${s[0].toLowerCase()} ${sgn((s[2][min] ?? 0))}`).join(', ')} jungle CS against the enemy jungler.</p>
         <div className="overflow-x-auto">
           <table className="tnum w-full border-collapse text-sm">
             <caption className="pb-1 text-left text-muted-foreground">{name}: you / enemy jungler</caption>
@@ -284,6 +275,27 @@ function Objectives({ grp }) {
             </div>
           );
         })}
+      </CardContent>
+    </Card>
+  );
+}
+
+function Vision({ grp }) {
+  const v = grp.vision, n = grp.games;
+  const tiles = [['Vision score', v.score, v.rival_score ? `enemy support ${v.rival_score}` : 'a game'], ['Per minute', v.per_min, 'aim for 1.5 or more'], ['Control wards', (v.control / n).toFixed(1), 'bought a game'], ['Wards placed', v.placed, 'a game'], ['Wards cleared', v.killed, 'a game'], ['In kills', grp.kp + '%', "of your team's kills"]];
+  return (
+    <Card>
+      <CardContent className="flex flex-col gap-3">
+        <h3 className="m-0 text-lg font-bold tracking-tight">Vision and presence</h3>
+        <div className="grid grid-cols-2 gap-2">
+          {tiles.map(([label, val, sub]) => (
+            <div key={label} className="rounded-xl bg-muted/60 px-3 py-2.5">
+              <div className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">{label}</div>
+              <div className="tnum text-2xl font-extrabold tracking-tight">{val}</div>
+              <div className="text-[13px] text-muted-foreground">{sub}</div>
+            </div>
+          ))}
+        </div>
       </CardContent>
     </Card>
   );

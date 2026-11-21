@@ -8,9 +8,9 @@ import { ContinuousTabs } from '../wm/continuous-tabs';
 import { cn } from '../wm/utils';
 import { Callout, Eyebrow, Lead, Num, Rise, Screen } from '../ui';
 import { useApp } from '../store';
-import { DECKS, FOES, KEYS, TAGNAME, labPrompt, parseLab } from '../lib/legacy';
+import { KEYS } from '../lib/legacy';
 
-const BANK = (window.LEAKS || []).concat(window.BANK || []);
+let BANK = [];
 const rand = (a) => a[Math.floor(Math.random() * a.length)];
 const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const locked = (st, q) => { const r = st.q[q.id]; return !!(r && r.ok > 0 && r.miss === 0); };
@@ -34,8 +34,10 @@ function pick(st, deck, lastId) {
 }
 
 export default function Drills() {
-  const { st, setSt, quiz, setQuiz, go, sample } = useApp();
-  const [deck, setDeck] = useState('leak');
+  const { st, setSt, quiz, setQuiz, go, course } = useApp();
+  BANK = course.bank;
+  const DECKS = course.decks, TAGNAME = course.tagName;
+  const [deck, setDeck] = useState(course.first);
   const [run, setRun] = useState(null);      // a fixed set: lesson check or matchup lab {label, questions, i, right, ...}
   const [cur, setCur] = useState(null);
   const [order, setOrder] = useState([]);
@@ -86,7 +88,7 @@ export default function Drills() {
   });
 
   const total = st.right + st.wrong;
-  const decks = useMemo(() => DECKS.map(([id, name]) => { const p = pool(st, id); return { id, label: name, count: id === 'missed' ? p.length : p.filter((q) => locked(st, q)).length + '/' + p.length }; }), [st]);
+  const decks = useMemo(() => DECKS.map(([id, name]) => { const p = pool(st, id); return { id, label: name, count: id === 'missed' ? p.length : p.filter((q) => locked(st, q)).length + '/' + p.length }; }), [st, DECKS]);
   const rec = cur ? st.q[cur.id] : null;
   const again = !run && rec && rec.miss > 0 && answered === null;
   const correct = cur ? cur.a ?? 0 : 0;
@@ -180,45 +182,6 @@ export default function Drills() {
           </CardContent>
         </Card>
       </Rise>
-      {sample && <Rise><Lab sample={sample} onSet={(set) => { setFinished(null); setRun({ ...set, i: 0, right: 0 }); show(set.questions[0]); window.scrollTo({ top: 0, behavior: 'smooth' }); }} /></Rise>}
     </Screen>
-  );
-}
-
-function Lab({ sample, onSet }) {
-  const [me, setMe] = useState('Nunu & Willump');
-  const [foe, setFoe] = useState(FOES[0]);
-  const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState('');
-  async function gen() {
-    setBusy(true); setMsg('');
-    try {
-      const prompt = labPrompt(me, foe);
-      let out;
-      if (typeof sample.json === 'function') out = await sample.json(prompt, { cache: false });
-      else { const r = await sample(prompt, { cache: false }); out = r && r.text; }
-      const qs = parseLab(out).map((q, i) => ({ ...q, id: 'lab' + Date.now() + i }));
-      if (!qs.length) throw new Error('empty');
-      onSet({ type: 'lab', questions: qs, label: me.replace(' & Willump', '') + ' vs ' + foe.replace(' & Willump', '') });
-    } catch (e) {
-      setMsg(e && e.code === 'rate_limited' ? 'Too many requests right now. Try again in a minute.' : e && e.code === 'not_granted' ? 'This needs permission to ask Claude. Tap the button again and allow it.' : "Couldn't write questions this time. Tap to try again.");
-    } finally { setBusy(false); }
-  }
-  const sel = 'h-11 w-full min-w-0 rounded-xl border border-input bg-card px-3 text-base dark:bg-input/30';
-  return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-dashed p-4">
-      <h2 className="m-0 text-base font-bold tracking-tight">Matchup lab</h2>
-      <Lead className="text-sm">Pick tonight's matchup and get five new questions written for it.</Lead>
-      <div className="grid grid-cols-2 gap-2">
-        <label className="flex flex-col gap-1 text-[11px] font-bold tracking-[0.1em] text-muted-foreground uppercase">You
-          <select id="lab-me" value={me} onChange={(e) => setMe(e.target.value)} className={sel}>{['Nunu & Willump', "Kha'Zix", 'Rengar', 'Warwick', 'Briar'].map((x) => <option key={x}>{x}</option>)}</select>
-        </label>
-        <label className="flex flex-col gap-1 text-[11px] font-bold tracking-[0.1em] text-muted-foreground uppercase">Enemy jungler
-          <select id="lab-foe" value={foe} onChange={(e) => setFoe(e.target.value)} className={sel}>{FOES.map((x) => <option key={x}>{x}</option>)}</select>
-        </label>
-      </div>
-      <Button variant="outline" size="lg" disabled={busy} onClick={gen}>{busy ? 'Writing questions…' : 'Write 5 questions'}</Button>
-      {msg && <p className="m-0 text-sm text-bad">{msg}</p>}
-    </div>
   );
 }

@@ -41,23 +41,24 @@ export function objectives(events, t) {
 const live = (o) => o.status !== 'done' && o.status !== 'gone' && o.spawn != null;
 export const nextUp = (list) => list.filter(live).sort((a, b) => a.spawn - b.spawn)[0] || null;
 
-function cue(o) {
+function cue(o, role) {
+  const sup = role === 'support';
   if (!o) return null;
   const pit = o.pit === 'dragon' ? 'the dragon pit' : 'the Baron pit';
   if (o.status === 'up') return { tone: 'up', head: `${o.name} is up`, text: `Only fight here, and only with teammates. If they aren't coming, give it up and take camps on the other side.` };
-  if (o.status === 'soon' && o.wait > 45) return { tone: 'soon', head: `${o.name} in ${fmt(o.wait)}`, text: 'Recall now if you have gold. Buy a control ward. No river fights until teammates are with you.' };
-  if (o.status === 'soon') return { tone: 'soon', head: `${o.name} in ${fmt(o.wait)}`, text: `Be at ${pit} now, with a teammate, control ward down. Arriving first is most of the fight.` };
+  if (o.status === 'soon' && o.wait > 45) return { tone: 'soon', head: `${o.name} in ${fmt(o.wait)}`, text: sup ? 'Recall now if you can. Come back with a control ward, and walk to the pit with your jungler or ADC, not alone.' : 'Recall now if you have gold. Buy a control ward. No river fights until teammates are with you.' };
+  if (o.status === 'soon') return { tone: 'soon', head: `${o.name} in ${fmt(o.wait)}`, text: sup ? `Control ward down at ${pit}, sweep the brush around it, then stand behind your front line.` : `Be at ${pit} now, with a teammate, control ward down. Arriving first is most of the fight.` };
   if (o.status === 'idle') return { tone: 'wait', head: `${o.name} first, at ${fmt(o.spawn)}`, text: 'Start the clock when the game starts and this counts down for you.' };
-  return { tone: 'wait', head: `${o.name} in ${fmt(o.wait)}`, text: o.wait > 150 ? 'Time to clear your camps. Finish on the side this spawns on.' : 'Finish the camp you are on and start moving toward it.' };
+  return { tone: 'wait', head: `${o.name} in ${fmt(o.wait)}`, text: sup ? (o.wait > 150 ? 'Plenty of time. Help your lane, and keep a ward on the river entrance nearest you.' : 'Push the wave with your ADC so you can both leave lane for this.') : o.wait > 150 ? 'Time to clear your camps. Finish on the side this spawns on.' : 'Finish the camp you are on and start moving toward it.' };
 }
-function dragonRead(o) {
+function dragonRead(o, facts) {
   if (o.soul === 'us') return 'You have the Soul. Group, take Elder and Baron, and end it.';
   if (o.soul === 'them') return 'They have the Soul. Do not fight them head on: catch someone alone first.';
   if (o.them === 3) return 'They are one dragon from Soul. Everything goes into stopping the next one.';
   if (o.us === 3) return 'You are one dragon from Soul. Be at the pit a minute early and fight nowhere else.';
   if (o.them === 2 && o.us < 2) return 'They have two. A third puts them one from Soul, so this next dragon is the one to contest.';
-  if (o.us > o.them) return 'You are ahead on dragons. In your recent games you were 8–0 when you finished ahead.';
-  if (o.them > o.us) return 'You are behind on dragons (1–4 when you finish behind). The next one matters more than any kill.';
+  if (o.us > o.them) return `You are ahead on dragons.${facts ? ` In your recent games you are ${facts.drakeAhead} when you finish ahead.` : ''}`;
+  if (o.them > o.us) return `You are behind on dragons${facts ? ` (${facts.drakeBehind} when you finish behind)` : ''}. The next one matters more than any kill.`;
   return null;
 }
 
@@ -67,11 +68,11 @@ function useNow(running) {
   return now;
 }
 
-export default function Track({ bst, patch }) {
+export default function Track({ bst, patch, role = 'jungle', facts = null }) {
   const clock = bst.clock, running = !!clock && clock.paused == null;
   const now = useNow(running);
   const t = gameSeconds(clock, now);
-  const list = objectives(bst.events, t), next = nextUp(list), c = cue(next);
+  const list = objectives(bst.events, t), next = nextUp(list), c = cue(next, role);
   const dragon = list[0], grubs = list[1];
   const deaths = bst.deaths, free = deaths.filter((d) => d.free).length;
   const lastDeath = deaths.at(-1), justDied = lastDeath && t != null && lastDeath.t != null && t - lastDeath.t < 75;
@@ -170,7 +171,7 @@ export default function Track({ bst, patch }) {
                     <TapButton tone="bad" onClick={() => take(o.k, 'them')}>They took {o.k === 'grubs' ? 'them' : 'it'}</TapButton>
                   </div>
                 )}
-                {o.k === 'dragon' && dragonRead(o) && <p className="m-0 text-sm leading-snug">{dragonRead(o)}</p>}
+                {o.k === 'dragon' && dragonRead(o, facts) && <p className="m-0 text-sm leading-snug">{dragonRead(o, facts)}</p>}
               </motion.div>
             );
           })}
@@ -196,8 +197,8 @@ export default function Track({ bst, patch }) {
             {(justDied || deaths.length >= 4 || free >= 3) && (
               <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
                 <div className="flex flex-col gap-1.5 rounded-xl bg-bad-soft px-3.5 py-3 text-[15px] leading-snug">
-                  {justDied && <p className="m-0"><b>Just respawned:</b> clear one camp before you rejoin. A third of your deaths come within 90 seconds of respawning.</p>}
-                  {free >= 3 && <p className="m-0"><b>That is your free-death limit.</b> You are 8–0 with three or fewer and 2–7 with more. Count heads before every fight from here.</p>}
+                  {justDied && <p className="m-0"><b>Just respawned:</b> {role === 'support' ? 'walk back with a teammate, not alone.' : 'clear one camp before you rejoin.'}{facts && facts.quickShare >= 15 ? ` ${facts.quickShare}% of your deaths come within 90 seconds of respawning.` : ''}</p>}
+                  {free >= 3 && <p className="m-0"><b>That is your free-death limit.</b>{facts ? ` You are ${facts.freeOk} with three or fewer and ${facts.freeBad} with more.` : ''} Count heads before every fight from here.</p>}
                   {deaths.length >= 4 && <p className="m-0"><b>{deaths.length >= 5 ? 'Budget spent.' : 'Fourth death.'}</b> From now on you only fight at an objective.</p>}
                 </div>
               </motion.div>
@@ -212,7 +213,8 @@ export default function Track({ bst, patch }) {
           <h3 className="m-0 text-lg font-bold tracking-tight">This game's checkpoints</h3>
           <div className="flex flex-col gap-2">
             <Check3 label="Take the first dragon" state={!firstDragon ? null : firstDragon.by === 'us'} />
-            <Check3 label="Take at least one Voidgrub" state={!grubs.last ? (grubs.status === 'gone' ? false : null) : grubs.last.by !== 'them'} />
+            {role === 'jungle' && <Check3 label="Take at least one Voidgrub" state={!grubs.last ? null : grubs.last.by !== 'them'} />}
+            <Check3 label="Five deaths or fewer" state={deaths.length > 5 ? false : true} note={deaths.length > 5 ? null : `${deaths.length} so far`} />
             <Check3 label="Three free deaths or fewer" state={free > 3 ? false : true} note={free > 3 ? null : `${free} so far`} />
           </div>
           <div className="flex items-center justify-between gap-3 pt-1">

@@ -19,16 +19,54 @@ Raw match and timeline JSON is cached in `data/`.
 The API key is never in code. Set `RIOT_API_KEY`, or run somewhere the
 `X-Riot-Token` header is added for you. Python 3 standard library only.
 
-## The app (`app/`)
+## The website (`app/`)
 
-The Jungle Coach artifact: a React 19 + Tailwind 4 + Motion app whose components are
-adapted from [Watermelon UI](https://ui.watermelon.sh) (MIT, see `app/src/wm/NOTICE.md`).
-Six screens: Learn, Coach, Drills, Games, Map (Riot positional data) and Live (in-game build and plan helper).
+A React 19 + Tailwind 4 + Motion site for Vercel, with Supabase logins and each player's own stats pulled from
+the Riot API. Components are adapted from [Watermelon UI](https://ui.watermelon.sh) (MIT, see `app/src/wm/NOTICE.md`).
+
+Screens: Learn and Drills (a jungle course and a support course), Games, Map (checkpoints, leaks worked out from
+your games, death map and charts), Live (teams, in-game tracker, build and plan for any jungle or support champion)
+and Me (profile, refresh, sign out). A switch in the header flips between your jungle and support games.
+
+### Deploy
+
+1. **Supabase.** In your project open SQL editor, paste `app/supabase/schema.sql`, run it. Then copy from
+   Project Settings > API: the project URL, the `anon` key and the `service_role` key.
+2. **Vercel.** New Project > import this repository > set **Root Directory** to `app` (framework: Vite).
+   Add these environment variables, then deploy:
+
+   | Name | Value | Where it is used |
+   |---|---|---|
+   | `VITE_SUPABASE_URL` | Supabase project URL | browser and server |
+   | `VITE_SUPABASE_ANON_KEY` | Supabase `anon` key | browser |
+   | `SUPABASE_SERVICE_ROLE_KEY` | Supabase `service_role` key | server only |
+   | `RIOT_API_KEY` | your Riot API key | server only |
+
+3. **Accounts.** Open the site, choose Create account for each player, and fill in their Riot ID, region and role.
+   If Supabase asks for email confirmation, click the link in the email first (or turn confirmation off under
+   Authentication > Sign In / Providers > Email). Once both accounts exist, turn off
+   "Allow new users to sign up" in the same place so nobody else can use your Riot key.
+4. In Supabase > Authentication > URL Configuration, set Site URL to your Vercel address so confirmation links
+   point at the site.
+
+Vercel builds from the repository's production branch (normally `main`); either merge this work into `main` or
+change the production branch in the Vercel project's settings.
+
+### How stats work
+
+`POST /api/sync` (in `app/api/sync.js`) checks the signed-in user, pulls up to three new ranked games per call
+from Riot, analyses each one (`app/server/analysis.mjs`) and stores the result in Supabase. The browser repeats
+the call until it reports done, then reads the rolled-up stats. It runs automatically when stats are more than
+30 minutes old, and from the Update button.
+
+### Develop and check
 
 ```
 cd app && npm install
-npm run build                 # dist/index.html (page), dist/app.js, dist/data/*.js
-node scripts/shot.mjs live dark scripts/steps-live.mjs   # local screenshot + checks
+npm run dev                                   # needs app/.env.local (see app/.env.example); /api needs `vercel dev`
+node scripts/check-analysis.mjs               # JS analysis vs the Python report on the same raw games
+node scripts/check-sync.mjs "Name#TAG" na     # real sync loop against Riot with an in-memory database
+node scripts/make-demo.mjs && VITE_DEMO=1 npx vite build && node scripts/shot.mjs live dark scripts/steps-live.mjs support
 ```
 
-Publish `dist/index.html` as the artifact page with `app.js` (and any changed `data/*.js`) as supporting files.
+`VITE_DEMO=1` builds a no-login version that reads `public/demo-stats.json` (git-ignored) for local checks only.
