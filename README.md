@@ -36,10 +36,15 @@ start below the screen skip their entrance. Fonts are bundled with the site, fil
 year, and a returning player sees their last known stats at once while the account is checked in the background.
 
 Screens: Home (record, form, checkpoints, rules, game list), Learn and Drills (a jungle course and a support course), Map (checkpoints, leaks worked out from
-your games, death map and charts), Live (teams, in-game tracker, build and plan for any jungle or support champion)
+your games, death map and charts), Review (every game, one at a time), Live (teams, in-game tracker, build and plan for any jungle or support champion)
 and Me (profile, refresh, sign out). A switch in the header flips between your jungle and support games, and one under
 it on Home and Map picks which games count: ranked solo, normal draft, or both. Swiftplay is not read, because it runs
 on different timers.
+
+Review is the record of every game: all roles, ranked and normal, kept for good rather than the latest 20. Each game
+opens its own screen with what stood out, every death in order on the map, the gold race against the opposing player,
+the objectives, and a box for your own notes; a game can be marked as reviewed. Older games can be pulled from there,
+up to the last 100 of each kind.
 
 The tracker needs no taps for objectives: it counts down from the game clock to the first dragon, Voidgrubs, Rift
 Herald and Baron. In Drills, once you answer, every wrong option shows why it is wrong.

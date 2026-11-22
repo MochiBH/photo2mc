@@ -18,7 +18,7 @@ export function FluidTabs({ tabs, active, onChange, label }) {
             onClick={(e) => { rippleFrom(e); onChange(tab.id); }}
             aria-pressed={isActive}
             aria-label={tab.label}
-            className="group relative rounded-full px-3 py-2.5 outline-none"
+            className="group relative rounded-full px-2 py-2.5 outline-none min-[380px]:px-2.5 min-[440px]:px-3"
           >
             {isActive && (
               <motion.div

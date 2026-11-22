@@ -1,4 +1,4 @@
-import { RefreshCw } from 'lucide-react';
+import { ChevronRight, RefreshCw } from 'lucide-react';
 import { Card, CardContent } from '../wm/card';
 import { Button } from '../wm/button';
 import { cn } from '../wm/utils';
@@ -6,15 +6,18 @@ import { Lead } from '../ui';
 import { useSession } from '../session';
 import { queueWords } from '../lib/queues';
 
-export function GameRow({ win, champ, sub, date, children }) {
+/* One game in a list. With `onOpen` the whole row is a button that opens that game's review. */
+export function GameRow({ win, champ, sub, date, onOpen, children }) {
   return (
-    <li className="relative flex flex-col gap-2 overflow-hidden rounded-2xl bg-white/[0.045] py-2.5 pr-3 pl-4 ring-1 ring-white/6">
+    <li className={cn('relative flex flex-col gap-2 overflow-hidden rounded-2xl bg-white/[0.045] py-2.5 pr-3 pl-4 ring-1 ring-white/6', onOpen && 'transition-transform active:scale-[0.985]')}>
+      {onOpen && <button type="button" onClick={onOpen} aria-label={`Review ${champ}, ${win ? 'win' : 'loss'}, ${date}`} className="absolute inset-0 z-10 rounded-2xl" />}
       <span className={cn('absolute inset-y-0 left-0 w-1', win ? 'bg-good shadow-[0_0_12px_var(--good)]' : 'bg-bad shadow-[0_0_12px_var(--bad)]')} />
       <div className="flex items-baseline gap-2.5 text-[15px]">
         <span className={cn('w-9 font-bold', win ? 'text-good' : 'text-bad')}>{win ? 'Win' : 'Loss'}</span>
         <span className="font-semibold">{champ}</span>
         <span className="tnum text-muted-foreground">{sub}</span>
         <span className="ml-auto text-xs text-muted-foreground">{date}</span>
+        {onOpen && <ChevronRight size={16} className="-ml-1 shrink-0 self-center text-muted-foreground" />}
       </div>
       <div className="flex flex-wrap gap-1.5">{children}</div>
     </li>

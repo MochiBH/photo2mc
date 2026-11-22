@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { BookOpen, House, Map as MapIcon, Swords, UserRound, Zap } from 'lucide-react';
+import { BookOpen, House, ListChecks, Map as MapIcon, Swords, UserRound, Zap } from 'lucide-react';
 import Backdrop from './fx/backdrop';
 import { Scramble, SplitTitle } from './fx/text';
 import { ripple } from './fx/fx';
@@ -16,6 +16,7 @@ import Drills from './views/Drills';
 import Home from './views/Home';
 import MapView from './views/Map';
 import Live from './views/Live';
+import Review from './views/Review';
 import Me, { ConfigMissing, Setup, SignIn, SyncBanner } from './views/Account';
 
 const TABS = [
@@ -23,10 +24,12 @@ const TABS = [
   { id: 'learn', label: 'Learn', icon: <BookOpen size={20} /> },
   { id: 'drills', label: 'Drills', icon: <Zap size={20} /> },
   { id: 'map', label: 'Map', icon: <MapIcon size={20} /> },
+  { id: 'review', label: 'Review', icon: <ListChecks size={20} /> },
   { id: 'live', label: 'Live', icon: <Swords size={20} /> },
   { id: 'me', label: 'Me', icon: <UserRound size={20} /> },
 ];
-const VIEWS = { home: Home, learn: Learn, drills: Drills, map: MapView, live: Live, me: Me };
+const VIEWS = { home: Home, learn: Learn, drills: Drills, map: MapView, review: Review, live: Live, me: Me };
+const BY_GAMES = ['home', 'map', 'review'];   // the screens built from the player's games, which show the Both / Ranked / Normals switch
 const EMPTY = { n: 0, streak: 0, right: 0, wrong: 0, q: {}, lessons: {} };
 
 export default function App() {
@@ -59,6 +62,7 @@ function Main() {
   const [tab, setTab] = useLocal('jungle-coach.tab.v3', 'home', (v) => TABS.some((t) => t.id === v));
   const [st, setSt] = useSynced('drills.' + role, EMPTY, (v) => v && typeof v === 'object' && v.q);
   const [quiz, setQuiz] = useState(null);
+  const [reviewId, setReviewId] = useState(null);   // the game open on the Review tab, if any
   const riotId = `${profile.riot_name}#${profile.riot_tag}`.toLowerCase();
   const course = useMemo(() => content(role, riotId), [role, riotId]);
 
@@ -67,7 +71,9 @@ function Main() {
     st, setSt, go, quiz, setQuiz, role, course,
     startQuiz: (q) => { setQuiz(q); go('drills'); },
     resetProgress: () => setSt(EMPTY),
-  }), [st, setSt, go, quiz, role, course]);
+    reviewId, setReviewId,
+    openReview: (id) => { setReviewId(id); go('review'); },
+  }), [st, setSt, go, quiz, role, course, reviewId]);
 
   const View = VIEWS[tab] || Home;
   return (
@@ -88,18 +94,18 @@ function Main() {
           </div>
           <ContinuousTabs tabs={[{ id: 'jungle', label: 'JG', aria: 'Jungle' }, { id: 'support', label: 'SUP', aria: 'Support' }]} value={role} onChange={(r) => { ripple(innerWidth - 70, 40, 'lime'); setRole(r); }} label="Role" size="sm" className="shrink-0" />
         </header>
-        {/* Which games the numbers come from. Only the two screens made of those numbers show it. */}
+        {/* Which games count: ranked, normal or both. Only the screens built from the games show it. */}
         <AnimatePresence initial={false}>
-          {(tab === 'home' || tab === 'map') && (
+          {BY_GAMES.includes(tab) && !(tab === 'review' && reviewId) && (
             <motion.div key="queue" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }} className="-my-1 overflow-hidden">
-              <ContinuousTabs tabs={QUEUE_TABS.map((t) => ({ ...t, count: queueCounts[t.id] }))} value={queue} onChange={(q) => { ripple(innerWidth / 2, 110, 'lime'); setQueue(q); }} label="Which games" size="sm" />
+              <ContinuousTabs tabs={QUEUE_TABS.map((t) => ({ ...t, count: tab === 'review' ? undefined : queueCounts[t.id] }))} value={queue} onChange={(q) => { ripple(innerWidth / 2, 110, 'lime'); setQueue(q); }} label="Which games" size="sm" />
             </motion.div>
           )}
         </AnimatePresence>
         <SyncBanner />
         <AnimatePresence mode="wait" initial={false}>
           <motion.main
-            key={tab + role + (tab === 'home' || tab === 'map' ? queue : '')}
+            key={tab + role + (tab === 'home' || tab === 'map' ? queue : '')}   // Review filters its own list, so it does not remount
             initial={{ opacity: 0, y: 12, filter: 'blur(8px)' }}
             animate={{ opacity: 1, y: 0, ...SHARP }}
             exit={{ opacity: 0, y: -8, filter: 'blur(8px)' }}
@@ -111,7 +117,7 @@ function Main() {
         </AnimatePresence>
       </div>
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-20 flex justify-center px-3" style={{ paddingBottom: 'calc(12px + env(safe-area-inset-bottom, 0px))' }}>
-        <div className="pointer-events-auto"><FluidTabs tabs={TABS} active={tab} onChange={go} label="Sections" /></div>
+        <div className="pointer-events-auto"><FluidTabs tabs={TABS} active={tab} onChange={(id) => { if (id === 'review') setReviewId(null); go(id); }} label="Sections" /></div>
       </div>
     </AppCtx.Provider>
   );

@@ -14,14 +14,24 @@ create table if not exists public.profiles (
   updated_at timestamptz not null default now()
 );
 
+-- One row per game, kept for good: the review list reads these. role is the position played ('jungle', 'support', 'top',
+-- 'mid', 'adc') or 'skip' for a game with nothing to review (a remake). v is the version of the saved analysis; the sync
+-- redoes rows with an older one. note and reviewed_at are the player's own review of that game.
 create table if not exists public.player_games (
   user_id uuid not null references auth.users (id) on delete cascade,
   match_id text not null,
   role text not null,
   created timestamptz not null,
   analysis jsonb,
-  primary key (user_id, match_id)
+  v smallint not null default 1,
+  note text,
+  reviewed_at timestamptz,
+  primary key (user_id, match_id),
+  constraint player_games_note_length check (note is null or char_length(note) <= 4000)
 );
+alter table public.player_games add column if not exists v smallint not null default 1;
+alter table public.player_games add column if not exists note text;
+alter table public.player_games add column if not exists reviewed_at timestamptz;
 create index if not exists player_games_recent on public.player_games (user_id, created desc);
 
 create table if not exists public.player_stats (

@@ -103,14 +103,17 @@ export function SessionProvider({ children }) {
     local.set(ME, { id: user.id, email: user.email, profile, stats: statsAll, statsAt });
   }, [user, profile, statsAll, statsAt, phase]);
 
-  const runSync = useCallback(async () => {
+  /* Pull new games and rebuild the stats. `depth` is how many of the latest games of each kind to look at; the Review tab
+     raises it to reach further back, and the choice is remembered so later updates keep covering that span. */
+  const runSync = useCallback(async (depth) => {
     if (syncing.current || DEMO) return;
+    const reach = Number(typeof depth === 'number' ? depth : cloudRef.current.reviewDepth) || 0;
     syncing.current = true; setSync({ busy: true, done: 0, total: 0, error: '' });
     try {
       if (!token.current) { const { data } = await supa.auth.getSession(); token.current = data.session ? data.session.access_token : null; }
       if (!token.current) return;   // signed out in the meantime; the sign-in screen takes over
       for (let guard = 0; guard < 40; guard++) {
-        const res = await fetch('/api/sync', { method: 'POST', headers: { Authorization: 'Bearer ' + token.current } });
+        const res = await fetch('/api/sync' + (reach > 20 ? '?depth=' + reach : ''), { method: 'POST', headers: { Authorization: 'Bearer ' + token.current } });
         const body = await res.json().catch(() => ({}));
         if (res.status === 429) { await new Promise((r) => setTimeout(r, ((body.retryAfter || 10) + 1) * 1000)); continue; }
         if (!res.ok) throw new Error(body.error || 'Could not update your stats (error ' + res.status + ').');

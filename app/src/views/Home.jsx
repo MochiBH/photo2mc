@@ -36,7 +36,7 @@ function Form({ games }) {
 
 export default function Home() {
   const { stats, role, sync, runSync, statsAt } = useSession();
-  const { go } = useApp();
+  const { go, openReview } = useApp();
   if (!stats || !stats.games) return <NoGames role={role} />;
   const G = stats.list, n = G.length, all = stats.groups.all, wins = G.filter((g) => g.w).length, mixed = stats.queue === 'both';
   let streak = 1; while (streak < n && G[streak].w === G[0].w) streak++;
@@ -129,10 +129,13 @@ export default function Home() {
 
       <Rise>
         <Card><CardContent className="flex flex-col gap-3">
-          <Eyebrow>Game by game</Eyebrow>
+          <div className="flex items-center justify-between gap-3">
+            <Eyebrow>Game by game</Eyebrow>
+            <Button variant="ghost" size="sm" onClick={() => go('review')} className="-mr-2 text-muted-foreground">Every game <ArrowRight /></Button>
+          </div>
           <ul className="m-0 flex list-none flex-col gap-2 p-0">
             {G.map((g) => (
-              <GameRow key={g.id} win={!!g.w} champ={champName(g.c)} sub={`${g.k}/${g.d}/${g.a}`} date={shortDate(g.t)}>
+              <GameRow key={g.id} win={!!g.w} champ={champName(g.c)} sub={`${g.k}/${g.d}/${g.a}`} date={shortDate(g.t)} onOpen={() => openReview(g.id)}>
                 {mixed && g.q === 'n' && <NormalTag />}
                 {rules.map((r) => <Mark key={r.name} ok={r.ok(g)}>{r.chip(g)}</Mark>)}
                 <span className="tnum inline-flex h-6 items-center rounded-full bg-white/[0.06] px-2.5 text-xs font-semibold text-muted-foreground ring-1 ring-white/10">Dragons {g.od}–{g.ed}</span>

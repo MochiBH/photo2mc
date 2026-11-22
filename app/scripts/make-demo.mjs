@@ -1,4 +1,5 @@
-// Local testing only: writes public/demo-stats.json (git-ignored) from real Riot data so the site can run without accounts.
+// Local testing only: writes public/demo-stats.json and public/demo-games.json (git-ignored) from real Riot data so the
+// site can run without accounts.
 // Usage: NODE_USE_ENV_PROXY=1 node scripts/make-demo.mjs "Jungler#TAG" "Support#TAG" na
 import { writeFileSync } from 'node:fs';
 import { runSync } from '../server/sync.mjs';
@@ -12,7 +13,7 @@ async function pull(riotId) {
     try { const r = await runSync(db, profile); if (r.done) break; }
     catch (e) { if (e.status !== 429) throw e; await new Promise((r) => setTimeout(r, ((e.retryAfter || 10) + 1) * 1000)); }   // Riot's rate limit: wait and carry on
   }
-  return { stats, puuid: profile.puuid };
+  return { stats, puuid: profile.puuid, rows: [...games.values()].sort((a, b) => b.created.localeCompare(a.created)) };
 }
 const a = await pull(jg);
 let supId = sup;
@@ -26,4 +27,6 @@ const b = await pull(supId);
 const mix = (of) => ({ jungle: of(a.stats).jungle, support: of(b.stats).support });
 const out = { ...mix((s) => s), normal: mix((s) => s.normal), both: mix((s) => s.both) };
 writeFileSync(new URL('../public/demo-stats.json', import.meta.url), JSON.stringify(out));
+// every game of the jungler's, in any role, for the Review tab
+writeFileSync(new URL('../public/demo-games.json', import.meta.url), JSON.stringify(a.rows.map(({ match_id, role, created, analysis }) => ({ match_id, role, created, analysis }))));
 for (const [kind, set] of [['ranked', out], ['normal', out.normal], ['both', out.both]]) console.log(kind.padEnd(7), 'jungle', set.jungle.games, set.jungle.groups.all.record, '| support', set.support.games, set.support.groups.all.record, set.support.champs.join(','));

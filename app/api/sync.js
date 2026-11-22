@@ -3,7 +3,7 @@
 // only the Riot key.
 import { createClient } from '@supabase/supabase-js';
 import { RiotError } from '../server/riot.mjs';
-import { runSync } from '../server/sync.mjs';
+import { ROLES, runSync } from '../server/sync.mjs';
 import { isPlayer } from '../server/players.mjs';
 
 export default async function handler(req, res) {
@@ -17,7 +17,8 @@ export default async function handler(req, res) {
   if (authError || !who || !who.user) return res.status(401).json({ error: 'Your sign-in has expired. Sign in again.' });
   if (!isPlayer(who.user.email)) return res.status(403).json({ error: 'This account is not on the player list.' });
   try {
-    return res.status(200).json(await runSync(dbFor(supa), await profileOf(supa, who.user.id)));
+    // ?depth=40 looks further back than the latest 20 games of each kind (the review list's "older games")
+    return res.status(200).json(await runSync(dbFor(supa), await profileOf(supa, who.user.id), { depth: (req.query && req.query.depth) || undefined }));
   } catch (e) {
     if (e instanceof RiotError) return res.status(e.status === 429 ? 429 : 502).json({ error: e.message, retryAfter: e.retryAfter || null });
     return res.status(e.status || 500).json({ error: e.message || 'Sync failed' });
@@ -35,7 +36,10 @@ export function dbFor(supa) {
   return {
     knownIds: async (id, ids) => (await must(supa.from('player_games').select('match_id').eq('user_id', id).in('match_id', ids))).map((r) => r.match_id),
     putGame: (row) => must(supa.from('player_games').upsert(row)),
-    listGames: (id, limit) => must(supa.from('player_games').select('analysis').eq('user_id', id).neq('role', 'other').order('created', { ascending: false }).limit(limit)),
+    // the stats only use the two roles the site coaches; every other game is kept for the review list
+    listGames: (id, limit) => must(supa.from('player_games').select('analysis').eq('user_id', id).in('role', ROLES).order('created', { ascending: false }).limit(limit)),
+    staleIds: async (id, version, limit) => (await must(supa.from('player_games').select('match_id').eq('user_id', id).lt('v', version).neq('role', 'skip').order('created', { ascending: false }).limit(limit))).map((r) => r.match_id),
+    keepGame: (id, matchId, patch) => must(supa.from('player_games').update(patch).eq('user_id', id).eq('match_id', matchId)),
     saveStats: (id, stats) => must(supa.from('player_stats').upsert({ user_id: id, stats, updated_at: new Date().toISOString() })),
     savePuuid: (id, puuid) => must(supa.from('profiles').update({ puuid }).eq('id', id)),
   };

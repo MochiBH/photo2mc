@@ -1,12 +1,23 @@
 // Positional analysis of one ranked game from Riot match + timeline JSON, and the roll-up the app shows.
 // Ported from riot_jungle_report.py; scripts/check-analysis.mjs compares the two on the same raw games.
+import { rowOf } from './row.mjs';
 
 const MAP = 14800, BASE_R = 4700, LANE_EDGE = 2300, MID_HALF = 1200, RIVER_HALF = 1400;
 const LANES = ['top_lane', 'mid_lane', 'bot_lane'];
 export const NEAR = 3000, OBJ_NEAR = 3500, GAP = 8;
 const MARKS = [5, 10, 15, 20];
 const OBJ_NAMES = { DRAGON: 'dragon', HORDE: 'voidgrub', RIFTHERALD: 'herald', BARON_NASHOR: 'baron', ATAKHAN: 'atakhan' };
-export const ROLE_POSITION = { jungle: 'JUNGLE', support: 'UTILITY' };
+/* Every position is analysed, so the review list holds every game. Only jungle and support have rules, stats and a course. */
+export const ROLE_POSITION = { jungle: 'JUNGLE', support: 'UTILITY', top: 'TOP', mid: 'MIDDLE', adc: 'BOTTOM' };
+const POSITION_ORDER = ['TOP', 'JUNGLE', 'MIDDLE', 'BOTTOM', 'UTILITY'];
+/** Which role the player had in a match, or null (no position recorded: a remake or an odd game mode). */
+export function roleIn(match, puuid) {
+  const me = match.info.participants.find((p) => p.puuid === puuid);
+  return (me && Object.keys(ROLE_POSITION).find((r) => ROLE_POSITION[r] === me.teamPosition)) || null;
+}
+/* Bump this when a game's saved analysis gains something; the sync then redoes older saved games a few at a time.
+   2: both teams' champions, and who killed you in each death. */
+export const ANALYSIS_VERSION = 2;
 /* The two kinds of game the site reads: ranked solo (queue 420) and normal draft (queue 400). Swiftplay is left out on
    purpose: it runs on faster timers, so its farm and objective numbers would not compare. */
 export const QUEUES = { ranked: 420, normal: 400 };
@@ -54,7 +65,11 @@ export function analyseGame(match, timeline, puuid, role = 'jungle') {
   const mine = (info.teams || []).find((t) => t.teamId === team), theirs = (info.teams || []).find((t) => t.teamId !== team);
   const drakes = (t) => (t && t.objectives && t.objectives.dragon && t.objectives.dragon.kills) || 0;
 
+  const champOf = Object.fromEntries(parts.map((p) => [p.participantId, p.championName]));
+  const lineup = (teamId) => parts.filter((p) => p.teamId === teamId).sort((a, b) => POSITION_ORDER.indexOf(a.teamPosition) - POSITION_ORDER.indexOf(b.teamPosition)).map((p) => p.championName);
+
   const g = {
+    v: ANALYSIS_VERSION, teams: { mine: lineup(team), theirs: lineup(team === 100 ? 200 : 100) },
     id: match.metadata.matchId, role, queue: info.queueId === QUEUES.normal ? 'normal' : 'ranked', champ: me.championName, win: !!me.win, minutes: r1(info.gameDuration / 60), seconds: info.gameDuration,
     side: team === 100 ? 'blue' : 'red', k: me.kills, d: me.deaths, a: me.assists, rival: foe ? foe.championName : null,
     created: info.gameCreation || 0, date: new Date(info.gameCreation || 0).toISOString().slice(0, 10),
@@ -81,7 +96,7 @@ export function analyseGame(match, timeline, puuid, role = 'jungle') {
     const na = nearA.size, ne = nearE.size;
     const lost = monsters.filter((m) => m.timestamp / 1000 - t > 0 && m.timestamp / 1000 - t <= 90 && m.killerTeamId !== team).map((m) => OBJ_NAMES[m.monsterType] || String(m.monsterType || '?').toLowerCase());
     const level = frameAtOrBefore(frames, e.timestamp).participantFrames[String(pid)].level;
-    deaths.push({ t, minute: r1(t / 60), x: p[0], y: p[1], zone: zoneFor(team, p[0], p[1]), allies: na, enemies: ne,
+    deaths.push({ t, minute: r1(t / 60), x: p[0], y: p[1], zone: zoneFor(team, p[0], p[1]), allies: na, enemies: ne, by: champOf[e.killerId] || null,
       situation: na === 0 ? 'alone' : ne > na + 1 ? 'outnumbered' : 'with_team', dragon_up: dragWindows.some(([s, k]) => s - 60 <= t && t <= k), took: lost, respawn: t + deathTimer(level, t) });
   }
   let prev = null;
@@ -188,8 +203,6 @@ export function buildStats(all, role, limit = 20, queue = 'both') {
   return {
     role, queue, games: games.length, champs, updated: new Date().toISOString(), groups,
     deaths: games.flatMap((g) => g.deaths.map((d) => [d.x, d.y, d.minute, d.zone, g.win ? 'W' : 'L', g.champ, d.allies, d.enemies, d.took[0] || '', d.free ? 1 : 0, d.quick ? 1 : 0])),
-    list: games.map((g) => ({ id: g.id, t: g.created, date: g.date, q: kindOf(g) === 'normal' ? 'n' : 'r', c: g.champ, w: g.win ? 1 : 0, s: g.seconds, k: g.k, d: g.d, a: g.a, j: g.jcs, kp: g.kp, cw: g.vision.control_bought,
-      vs: g.vision.per_min, od: g.dragons[0], ed: g.dragons[1], free: g.free_deaths, grubs: g.grubs_mine, fd: g.first_dragon, gap10: g.diff.length > 10 ? g.diff[10] : null, rival: g.rival,
-      e15: g.deaths.filter((d) => d.minute < 15).length, vsc: g.vision.score, rvs: g.vision.rival_score })),
+    list: games.map(rowOf),
   };
 }

@@ -10,6 +10,7 @@ import { insights, strengths } from '../lib/insights';
 import { champName } from '../lib/champs';
 import { queueWords } from '../lib/queues';
 import { useSession } from '../session';
+import { useApp } from '../store';
 import { GameRow, NoGames, NormalTag, shortDate } from './Games';
 import { RiftBase } from './Rift';
 
@@ -22,6 +23,7 @@ export default function MapView() {
   const [when, setWhen] = useState('all');
   const [sec, setSec] = useState('checks');
   const { stats: POS, role, statsAt } = useSession();
+  const { openReview } = useApp();
   if (!POS || !POS.games) return <NoGames role={role} />;
   const WHO = TABS_FOR_STATS(POS).map(([id, label]) => [id, champName(label)]);
   const view = POS.groups[who] ? who : 'all';
@@ -65,7 +67,7 @@ export default function MapView() {
             <Eyebrow>Game by game</Eyebrow>
             <ul className="m-0 flex list-none flex-col gap-2 p-0">
               {G.map((g) => (
-                <GameRow key={g.id} win={!!g.w} champ={champName(g.c)} sub={`${g.d} deaths`} date={shortDate(g.t)}>
+                <GameRow key={g.id} win={!!g.w} champ={champName(g.c)} sub={`${g.d} deaths`} date={shortDate(g.t)} onOpen={() => openReview(g.id)}>
                   {POS.queue === 'both' && g.q === 'n' && <NormalTag />}
                   {checks.map((c) => <Mark key={c.name} ok={c.ok(g)}>{c.chip(g)}</Mark>)}
                   {role === 'jungle' && g.gap10 !== null && <span className="tnum inline-flex h-6 items-center rounded-full bg-card px-2.5 text-xs font-semibold text-muted-foreground ring-1 ring-foreground/10">Farm at 10:00 {sgn(g.gap10)}</span>}
