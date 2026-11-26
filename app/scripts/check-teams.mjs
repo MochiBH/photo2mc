@@ -12,5 +12,5 @@ const t0 = Date.now(), res = await fetch(SITE + '/api/teams', { method: 'POST', 
 const body = await res.json().catch(() => ({}));
 console.log(username, res.status, Date.now() - t0, 'ms,', Math.round(image.length / 1024), 'kB sent');
 if (!res.ok) { console.log('  error:', body.error); process.exit(1); }
-console.log('  read by:', body.model, '| screen:', body.screen, body.fallback ? '(answered by the fallback model)' : '', body.note ? '| note: ' + body.note : '');
+console.log('  read by:', body.reader, '(' + body.model + ') | screen:', body.screen, body.fallback ? '(answered by the fallback model)' : '', body.note ? '| note: ' + body.note : '');
 for (const [side, list] of [['allies', body.allies], ['enemies', body.enemies]]) console.log('  ' + side.padEnd(8), list.map((p) => `${p.champion} (${p.lane}${p.is_player ? ', you' : ''})`).join(', ') || 'none');

@@ -1,11 +1,15 @@
-// Reads the champions off a picture of champion select, the loading screen or the scoreboard, using Claude.
-// The call goes through Vercel AI Gateway (so the site needs no Anthropic key of its own) with the official Anthropic SDK.
+// Reads the champions off a picture of champion select, the loading screen or the scoreboard.
+// The call goes through Vercel AI Gateway (so the site needs no model key of its own) with the official Anthropic SDK.
 import Anthropic from '@anthropic-ai/sdk';
 
-// Claude models as Vercel AI Gateway names them, best first. The gateway only serves some models to a team that has not
-// bought credit, so a model it will not serve (403) is skipped; the one that answered is remembered while the function is warm.
-export const MODELS = ['anthropic/claude-opus-5.5', 'anthropic/claude-sonnet-5.5', 'anthropic/claude-haiku-5.5'];
-let first = 0;
+// Models as Vercel AI Gateway names them, in the order they are tried. Claude reads the picture when the gateway will
+// serve it, which needs bought AI Gateway credit: a team on the gateway's free tier is refused every Claude model (403).
+// The models after it are ones the free tier does serve (scripts/check-teams.mjs prints which one answered).
+export const CLAUDE = 'anthropic/claude-opus-5.5';
+export const FREE = ['openai/gpt-5.2', 'google/gemini-2.5-flash'];
+export const MODELS = [CLAUDE, ...FREE];
+export const MODEL_NAME = { [CLAUDE]: 'Claude Opus 5.5', 'openai/gpt-5.2': 'GPT-5.2', 'google/gemini-2.5-flash': 'Gemini 2.5 Flash' };
+
 export const LANES = ['top', 'jungle', 'mid', 'bot', 'support'];
 const MEDIA = ['image/jpeg', 'image/png', 'image/webp'];
 
@@ -36,24 +40,36 @@ For each champion give:
 Only list champions that are actually shown. Leave out empty slots, bans, and slots that are still picking. Never fill in a champion you cannot see. A team can have fewer than five.
 
 note: one short plain sentence for the player if something was unreadable or guessed. Otherwise an empty string.
-If the picture is not one of these screens, answer with screen "other" and empty lists.`;
+If the picture is not one of these screens, answer with screen "other" and empty lists.
 
-/** A client for Vercel AI Gateway. `token` is the deployment's OIDC token or an AI Gateway key. */
-export const gateway = (token) => new Anthropic({ apiKey: token, baseURL: 'https://ai-gateway.vercel.sh', timeout: 25_000, maxRetries: 1 });
+Answer with one JSON object and nothing else, in this shape:
+{"screen": "champion_select" | "loading_screen" | "scoreboard" | "other", "allies": [{"champion": "...", "lane": "top" | "jungle" | "mid" | "bot" | "support" | "unknown", "is_player": true | false}], "enemies": [{"champion": "...", "lane": "..."}], "note": "..."}`;
+
+/** A client for Vercel AI Gateway. `token` is the deployment's OIDC token or an AI Gateway key.
+    One try per call and a short limit: the function behind it has 30 seconds in all. */
+export const gateway = (token) => new Anthropic({ apiKey: token, baseURL: 'https://ai-gateway.vercel.sh', timeout: 20_000, maxRetries: 0 });
 
 const fail = (status, message) => Object.assign(new Error(message), { status });
 
-/** The picture-reading models the gateway will serve to this team right now, from its own catalogue: [{ id, tags }]. */
-export async function servable(token) {
-  const res = await fetch('https://ai-gateway.vercel.sh/v1/models?include_availability', { headers: { Authorization: 'Bearer ' + token }, signal: AbortSignal.timeout(8000) });
-  if (!res.ok) throw fail(502, 'The model list could not be read (' + res.status + ').');
-  const { data = [] } = await res.json();
-  const sees = (m) => (m.tags || []).includes('vision') || ((m.modalities || {}).input || []).includes('image');
-  return data.filter((m) => m.type === 'language' && m.model_eligibility && m.model_eligibility.status === 'eligible' && sees(m)).map((m) => ({ id: m.id, tags: m.tags || [] }));
+/* The same request in several forms, fullest first. A 400 means the gateway or the model does not take that form. */
+const forms = (client, model) => [
+  // Claude only: if the model declines, let the API hand the request to another Claude model instead of stopping
+  ...(model === CLAUDE ? [(p) => client.beta.messages.create({ ...p, betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default' })] : []),
+  (p) => client.messages.create(p),
+  (p) => client.messages.create({ ...p, output_config: { format: p.output_config.format } }),
+  (p) => { const { output_config, ...rest } = p; return client.messages.create(rest); },   // the instructions alone ask for JSON
+];
+
+/* The JSON object in a reply, with or without a code fence or a sentence around it. */
+function parse(text) {
+  const s = String(text || ''), a = s.indexOf('{'), b = s.lastIndexOf('}');
+  if (a < 0 || b <= a) return null;
+  try { return JSON.parse(s.slice(a, b + 1)); } catch (e) { return null; }
 }
 
-/** image: base64 without the data: prefix. Returns { screen, allies: [{ champion, lane, is_player }], enemies: [{ champion, lane }], note }. */
-export async function readTeams(client, { image, mediaType = 'image/jpeg', riotName = 'the player', role = 'jungle' }) {
+/** image: base64 without the data: prefix. `log` is told about each model or form that was passed over.
+    Returns { screen, allies: [{ champion, lane, is_player }], enemies: [{ champion, lane }], note, model, reader }. */
+export async function readTeams(client, { image, mediaType = 'image/jpeg', riotName = 'the player', role = 'jungle', log = () => {} }) {
   if (typeof image !== 'string' || image.length < 200) throw fail(400, 'No picture was sent.');
   if (image.length > 4_200_000) throw fail(413, 'That picture is too large. Try a smaller one.');
   if (!MEDIA.includes(mediaType)) throw fail(400, 'That kind of picture is not supported. Use a JPEG or PNG.');
@@ -67,31 +83,32 @@ export async function readTeams(client, { image, mediaType = 'image/jpeg', riotN
       { type: 'text', text: 'List the champions in this picture.' },
     ] }],
   };
-  // The same request three ways, fullest first; a 400 means the gateway or the model does not take that form.
-  const forms = [
-    // if the model declines, let the API hand the request to another Claude model instead of stopping
-    (p) => client.beta.messages.create({ ...p, betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default' }),
-    (p) => client.messages.create(p),
-    (p) => client.messages.create({ ...p, output_config: { format: p.output_config.format } }),
-  ];
-  let res, last;
-  for (let m = first; m < MODELS.length && !res; m++) {
-    for (const form of forms) {
-      try { res = await form({ ...params, model: MODELS[m] }); first = m; break; } catch (e) {
+  let res, out, last, asked;
+  for (const model of MODELS) {
+    const list = forms(client, model);
+    for (let f = 0; f < list.length && !out; f++) {
+      try { res = await list[f]({ ...params, model }); } catch (e) {
         last = e;
-        if (e instanceof Anthropic.PermissionDeniedError) { console.warn('teams:', MODELS[m], 'is not served to this team:', String(e.message || '').slice(0, 1500)); break; }   // try the next model
-        if (!(e instanceof Anthropic.BadRequestError)) throw e;
+        log(`${model} form ${f + 1}: ${e.status || ''} ${String(e.message || '').slice(0, 220)}`);
+        // 403: not served to this team. 404: the gateway no longer has that model. Either way, the next model.
+        if (e instanceof Anthropic.PermissionDeniedError || e instanceof Anthropic.NotFoundError) break;
+        if (e instanceof Anthropic.BadRequestError) continue;
+        throw e;
       }
+      if (res.stop_reason === 'refusal') throw fail(422, 'That picture could not be read. Try another one.');
+      out = parse((res.content.find((b) => b.type === 'text') || {}).text);
+      if (!out) { last = fail(502, 'The picture could not be read. Try again.'); log(`${model} form ${f + 1}: the answer was not JSON (${res.stop_reason})`); break; }   // asking the same model again will not help
     }
-    if (!res && !(last instanceof Anthropic.PermissionDeniedError)) break;
+    if (out) { asked = model; break; }
   }
-  if (!res) throw last;
-  if (res.stop_reason === 'refusal') throw fail(422, 'Claude would not read that picture. Try another one.');
-  const text = (res.content.find((b) => b.type === 'text') || {}).text;
-  let out;
-  try { out = JSON.parse(text); } catch (e) { throw fail(502, 'The picture could not be read. Try again.'); }
+  if (!out) throw last;
   const tidy = (list, withPlayer) => (Array.isArray(list) ? list : []).slice(0, 5)
-    .map((p) => ({ champion: String(p.champion || '').trim().slice(0, 40), lane: LANES.includes(p.lane) ? p.lane : 'unknown', ...(withPlayer ? { is_player: !!p.is_player } : {}) }))
+    .map((p) => ({ champion: String((p && p.champion) || '').trim().slice(0, 40), lane: LANES.includes(p && p.lane) ? p.lane : 'unknown', ...(withPlayer ? { is_player: !!(p && p.is_player) } : {}) }))
     .filter((p) => p.champion);
-  return { screen: out.screen || 'other', allies: tidy(out.allies, true), enemies: tidy(out.enemies, false), note: String(out.note || '').slice(0, 240), model: String(res.model || '').replace(/^anthropic\//, ''), fallback: !!(res.usage && (res.usage.iterations || []).some((i) => i.type === 'fallback_message')) };
+  return {
+    screen: ['champion_select', 'loading_screen', 'scoreboard'].includes(out.screen) ? out.screen : 'other',
+    allies: tidy(out.allies, true), enemies: tidy(out.enemies, false), note: String(out.note || '').slice(0, 240),
+    model: asked, reader: MODEL_NAME[asked] || asked,
+    fallback: !!(res.usage && (res.usage.iterations || []).some((i) => i.type === 'fallback_message')),
+  };
 }

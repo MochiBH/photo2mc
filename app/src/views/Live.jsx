@@ -53,18 +53,18 @@ function MiniBar({ bst, onOpen }) {
    monitor. The picture is shrunk here, read by Claude on the server (api/teams.js), and each champion lands in its row. */
 function Snap({ role, bst, patch }) {
   const { api } = useSession();
-  const [state, setState] = useState({ busy: false, text: '', bad: false });
+  const [state, setState] = useState({ busy: false, text: '', bad: false, reader: '' });
   const input = useRef(null), spot = useRef(null);
   const read = async (file) => {
     if (!file || state.busy) return;
-    setState({ busy: true, text: '', bad: false });
+    setState({ busy: true, text: '', bad: false, reader: '' });
     try {
       const res = await api('/api/teams', { ...(await shrink(file)), role });
       if (!res.ok) throw new Error(res.body.error || 'The picture could not be read. Try again.');
       const out = placeTeams(bst, role, res.body);
       if (out.patch) { patch(out.patch); burst(spot.current, 'lime', 22); }
-      setState({ busy: false, text: out.message, bad: !out.patch });
-    } catch (e) { setState({ busy: false, text: e.message || 'The picture could not be read. Try again.', bad: true }); }
+      setState({ busy: false, text: out.message, bad: !out.patch, reader: res.body.reader || '' });
+    } catch (e) { setState({ busy: false, text: e.message || 'The picture could not be read. Try again.', bad: true, reader: '' }); }
   };
   useEffect(() => {   // on a computer, a screenshot on the clipboard can be pasted straight in
     const onPaste = (e) => { const f = [...((e.clipboardData && e.clipboardData.files) || [])].find((x) => x.type.startsWith('image/')); if (f) { e.preventDefault(); read(f); } };
@@ -74,11 +74,11 @@ function Snap({ role, bst, patch }) {
   return (
     <Card><CardContent className="flex flex-col gap-3">
       <h3 className="m-0 text-lg font-bold tracking-tight">Fill the teams from a picture</h3>
-      <Lead className="text-sm">Screenshot champion select or the loading screen, or point your phone at the monitor. Claude reads the champions and puts each one in its row.</Lead>
+      <Lead className="text-sm">Screenshot champion select or the loading screen, or point your phone at the monitor. The champions are read off it and each one is put in its row.</Lead>
       <input ref={input} id="teams-photo" type="file" accept="image/*" className="sr-only" tabIndex={-1} aria-label="Picture of the teams" onChange={(e) => { const f = e.target.files[0]; e.target.value = ''; read(f); }} />
       <div ref={spot}><ShimmerButton disabled={state.busy} onClick={() => input.current.click()}><Camera size={18} /> {state.busy ? 'Reading the picture…' : 'Take or choose a picture'}</ShimmerButton></div>
       {state.text && <p role="status" className={cn('m-0 text-sm leading-snug', state.bad ? 'text-bad' : 'text-foreground')}>{state.text}</p>}
-      <p className="m-0 text-xs text-muted-foreground">On a computer you can paste a screenshot instead. The picture is read once and not kept.</p>
+      <p className="m-0 text-xs text-muted-foreground">{state.reader ? `Read by ${state.reader}. ` : ''}On a computer you can paste a screenshot instead. The picture is read once and not kept.</p>
     </CardContent></Card>
   );
 }
