@@ -26,7 +26,7 @@ export default async function handler(req, res) {
   try {
     return res.status(200).json(await readTeams(gateway(pass), { image: body.image, mediaType: body.mediaType, role: body.role, riotName: (profile && profile.riot_name) || 'the player' }));
   } catch (e) {
-    console.error('teams:', e.status || '', e.name, String(e.message || '').slice(0, 300));
+    console.error('teams:', e.status || '', e.name, String(e.message || '').slice(0, 1500));
     if (e instanceof Anthropic.RateLimitError) return res.status(429).json({ error: 'Too many pictures at once. Try again in a moment.' });
     if (e instanceof Anthropic.AuthenticationError || e instanceof Anthropic.PermissionDeniedError) return res.status(502).json({ error: 'The picture reader was refused by Vercel AI Gateway. It may need credit or switching on.' });
     if (e instanceof Anthropic.APIError) return res.status(502).json({ error: e.status === 402 ? 'The picture reader has run out of credit.' : 'The picture could not be read right now. Try again.' });

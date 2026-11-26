@@ -2,7 +2,10 @@
 // The call goes through Vercel AI Gateway (so the site needs no Anthropic key of its own) with the official Anthropic SDK.
 import Anthropic from '@anthropic-ai/sdk';
 
-export const MODEL = 'anthropic/claude-opus-5.5';   // Claude Opus 5.5, as Vercel AI Gateway names it
+// Claude models as Vercel AI Gateway names them, best first. The gateway only serves some models to a team that has not
+// bought credit, so a model it will not serve (403) is skipped; the one that answered is remembered while the function is warm.
+export const MODELS = ['anthropic/claude-opus-5.5', 'anthropic/claude-sonnet-5.5', 'anthropic/claude-haiku-5.5'];
+let first = 0;
 export const LANES = ['top', 'jungle', 'mid', 'bot', 'support'];
 const MEDIA = ['image/jpeg', 'image/png', 'image/webp'];
 
@@ -46,7 +49,6 @@ export async function readTeams(client, { image, mediaType = 'image/jpeg', riotN
   if (image.length > 4_200_000) throw fail(413, 'That picture is too large. Try a smaller one.');
   if (!MEDIA.includes(mediaType)) throw fail(400, 'That kind of picture is not supported. Use a JPEG or PNG.');
   const params = {
-    model: MODEL,
     max_tokens: 4000,
     system: instructions(String(riotName).slice(0, 40), role === 'support' ? 'support' : 'jungler'),
     // low effort: this is reading names off a picture, and champion select does not wait
@@ -56,14 +58,25 @@ export async function readTeams(client, { image, mediaType = 'image/jpeg', riotN
       { type: 'text', text: 'List the champions in this picture.' },
     ] }],
   };
-  let res;
-  try {
-    // If the model declines, let the API hand the request to another Claude model instead of stopping.
-    res = await client.beta.messages.create({ ...params, betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default' });
-  } catch (e) {
-    if (!(e instanceof Anthropic.BadRequestError)) throw e;
-    res = await client.messages.create(params);   // the gateway may not pass that option through; the plain request is the same otherwise
+  // The same request three ways, fullest first; a 400 means the gateway or the model does not take that form.
+  const forms = [
+    // if the model declines, let the API hand the request to another Claude model instead of stopping
+    (p) => client.beta.messages.create({ ...p, betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default' }),
+    (p) => client.messages.create(p),
+    (p) => client.messages.create({ ...p, output_config: { format: p.output_config.format } }),
+  ];
+  let res, last;
+  for (let m = first; m < MODELS.length && !res; m++) {
+    for (const form of forms) {
+      try { res = await form({ ...params, model: MODELS[m] }); first = m; break; } catch (e) {
+        last = e;
+        if (e instanceof Anthropic.PermissionDeniedError) { console.warn('teams:', MODELS[m], 'is not served to this team:', String(e.message || '').slice(0, 1500)); break; }   // try the next model
+        if (!(e instanceof Anthropic.BadRequestError)) throw e;
+      }
+    }
+    if (!res && !(last instanceof Anthropic.PermissionDeniedError)) break;
   }
+  if (!res) throw last;
   if (res.stop_reason === 'refusal') throw fail(422, 'Claude would not read that picture. Try another one.');
   const text = (res.content.find((b) => b.type === 'text') || {}).text;
   let out;
@@ -71,5 +84,5 @@ export async function readTeams(client, { image, mediaType = 'image/jpeg', riotN
   const tidy = (list, withPlayer) => (Array.isArray(list) ? list : []).slice(0, 5)
     .map((p) => ({ champion: String(p.champion || '').trim().slice(0, 40), lane: LANES.includes(p.lane) ? p.lane : 'unknown', ...(withPlayer ? { is_player: !!p.is_player } : {}) }))
     .filter((p) => p.champion);
-  return { screen: out.screen || 'other', allies: tidy(out.allies, true), enemies: tidy(out.enemies, false), note: String(out.note || '').slice(0, 240), fallback: !!(res.usage && (res.usage.iterations || []).some((i) => i.type === 'fallback_message')) };
+  return { screen: out.screen || 'other', allies: tidy(out.allies, true), enemies: tidy(out.enemies, false), note: String(out.note || '').slice(0, 240), model: String(res.model || '').replace(/^anthropic\//, ''), fallback: !!(res.usage && (res.usage.iterations || []).some((i) => i.type === 'fallback_message')) };
 }
