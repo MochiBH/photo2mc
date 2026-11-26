@@ -49,6 +49,13 @@ up to the last 100 of each kind.
 The tracker needs no taps for objectives: it counts down from the game clock to the first dragon, Voidgrubs, Rift
 Herald and Baron. In Drills, once you answer, every wrong option shows why it is wrong.
 
+Live can fill the teams from a picture: a screenshot of champion select, the loading screen or the scoreboard, or a
+phone photo of the monitor (on a computer, pasting a screenshot works too). The picture is shrunk in the browser, sent
+to `/api/teams`, and read by Claude (Opus 5.5) through Vercel AI Gateway; the ten champions come back by team and lane
+and are put in their rows. The picture is not stored. It needs no key of its own: on Vercel the function signs in to
+the gateway with the deployment's own short-lived token, and the cost (about a cent a picture) goes to the Vercel
+team's AI Gateway credit. An `AI_GATEWAY_API_KEY` environment variable is used instead if one is set.
+
 ### Deploy
 
 1. **Supabase.** In the project's SQL editor run `app/supabase/schema.sql`. Copy the project URL and the

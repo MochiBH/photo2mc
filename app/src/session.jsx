@@ -130,6 +130,17 @@ export function SessionProvider({ children }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
+  /* POST to one of the site's own functions as the signed-in player. Resolves to { ok, status, body }. */
+  const api = useCallback(async (path, body) => {
+    if (DEMO) {   // no server in the demo build: a stand-in answer, so the screens that call it can still be tried
+      await new Promise((r) => setTimeout(r, 500));
+      return { ok: true, status: 200, body: path === '/api/teams' ? { screen: 'champion_select', note: '', allies: [{ champion: 'Garen', lane: 'top', is_player: false }, { champion: 'Nunu & Willump', lane: 'jungle', is_player: true }, { champion: 'Ahri', lane: 'mid', is_player: false }, { champion: 'Jinx', lane: 'bot', is_player: false }, { champion: 'Rell', lane: 'support', is_player: false }], enemies: [{ champion: 'Darius', lane: 'top' }, { champion: 'Master Yi', lane: 'jungle' }, { champion: 'Syndra', lane: 'mid' }, { champion: 'Lulu', lane: 'support' }] } : {} };
+    }
+    if (!token.current) { const { data } = await supa.auth.getSession(); token.current = data.session ? data.session.access_token : null; }
+    const res = await fetch(path, { method: 'POST', headers: { Authorization: 'Bearer ' + token.current, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    return { ok: res.ok, status: res.status, body: await res.json().catch(() => ({})) };
+  }, []);
+
   const saveProfile = useCallback(async (patch) => {
     const next = { ...(profile || {}), ...patch, id: user.id };
     if (DEMO) { local.set('jc.demo.profile', next); setProfile(next); setPhase('ready'); return null; }
@@ -145,7 +156,7 @@ export function SessionProvider({ children }) {
   const role = cloud.viewRole || (profile && profile.role) || 'jungle';
   const queue = isQueue(cloud.viewQueue) ? cloud.viewQueue : 'both';   // which games: ranked, normal or both
   const value = useMemo(() => ({
-    phase, user, profile, role, setRole: (r) => setKey('viewRole', r), statsAt, sync, runSync, saveProfile, cloud, setKey,
+    phase, user, profile, role, setRole: (r) => setKey('viewRole', r), statsAt, sync, runSync, saveProfile, cloud, setKey, api,
     queue, setQueue: (q) => setKey('viewQueue', q),
     stats: statsAll ? statsFor(statsAll, queue)[role] || null : null,
     // how many games each choice holds for this role, for the switch; empty until the saved numbers include normals
@@ -159,7 +170,7 @@ export function SessionProvider({ children }) {
     changePassword: (password) => supa.auth.updateUser({ password }),
     username: user && user.email ? user.email.split('@')[0] : '',
     signOut: () => (DEMO ? null : supa.auth.signOut()),
-  }), [phase, user, profile, role, queue, statsAll, statsAt, sync, runSync, saveProfile, cloud, setKey]);
+  }), [phase, user, profile, role, queue, statsAll, statsAt, sync, runSync, saveProfile, cloud, setKey, api]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
