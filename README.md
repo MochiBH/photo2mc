@@ -51,10 +51,16 @@ Herald and Baron. In Drills, once you answer, every wrong option shows why it is
 
 Live can fill the teams from a picture: a screenshot of champion select, the loading screen or the scoreboard, or a
 phone photo of the monitor (on a computer, pasting a screenshot works too). The picture is shrunk in the browser, sent
-to `/api/teams`, and read by Claude (Opus 5.5) through Vercel AI Gateway; the ten champions come back by team and lane
-and are put in their rows. The picture is not stored. It needs no key of its own: on Vercel the function signs in to
-the gateway with the deployment's own short-lived token, and the cost (about a cent a picture) goes to the Vercel
-team's AI Gateway credit. An `AI_GATEWAY_API_KEY` environment variable is used instead if one is set.
+to `/api/teams`, and read by a vision model through Vercel AI Gateway; the ten champions come back by team and lane
+and are put in their rows, and the card says which model read them. The picture is not stored. It needs no key of its
+own: on Vercel the function signs in to the gateway with the deployment's own short-lived token.
+
+Which model reads the picture depends on the Vercel team's AI Gateway credit. The function always asks for Claude
+(Opus 5.5) first. The gateway's free tier serves no Claude model, so on a team that has not bought credit that request
+is refused and the picture is read by a model the free tier does serve (GPT-5.2, then Gemini 2.5 Flash), paid from the
+free allowance: about 0.7 cents a picture in Vercel's usage records. Once the team has bought credit, Claude answers
+and nothing in the code needs to change. `scripts/check-teams.mjs <username> <picture>` sends a picture to the
+deployed function and prints what was read and by which model.
 
 ### Deploy
 
