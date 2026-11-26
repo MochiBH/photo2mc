@@ -4,7 +4,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
 import { isPlayer } from '../server/players.mjs';
-import { gateway, readTeams } from '../server/teams.mjs';
+import { gateway, readTeams, servable } from '../server/teams.mjs';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Use POST' });
@@ -27,6 +27,10 @@ export default async function handler(req, res) {
     return res.status(200).json(await readTeams(gateway(pass), { image: body.image, mediaType: body.mediaType, role: body.role, riotName: (profile && profile.riot_name) || 'the player' }));
   } catch (e) {
     console.error('teams:', e.status || '', e.name, String(e.message || '').slice(0, 1500));
+    if (e instanceof Anthropic.PermissionDeniedError) {
+      // say in the log what this team could use instead
+      try { const ids = (await servable(pass)).map((m) => m.id + (m.tags.includes('structured-output') ? '*' : '')); for (let i = 0; i < ids.length; i += 25) console.warn('teams: served to this team:', ids.slice(i, i + 25).join(' ')); if (!ids.length) console.warn('teams: nothing that reads pictures is served to this team'); } catch (x) { console.warn('teams: model list:', x.message); }
+    }
     if (e instanceof Anthropic.RateLimitError) return res.status(429).json({ error: 'Too many pictures at once. Try again in a moment.' });
     if (e instanceof Anthropic.AuthenticationError || e instanceof Anthropic.PermissionDeniedError) return res.status(502).json({ error: 'The picture reader was refused by Vercel AI Gateway. It may need credit or switching on.' });
     if (e instanceof Anthropic.APIError) return res.status(502).json({ error: e.status === 402 ? 'The picture reader has run out of credit.' : 'The picture could not be read right now. Try again.' });

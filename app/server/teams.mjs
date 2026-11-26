@@ -43,6 +43,15 @@ export const gateway = (token) => new Anthropic({ apiKey: token, baseURL: 'https
 
 const fail = (status, message) => Object.assign(new Error(message), { status });
 
+/** The picture-reading models the gateway will serve to this team right now, from its own catalogue: [{ id, tags }]. */
+export async function servable(token) {
+  const res = await fetch('https://ai-gateway.vercel.sh/v1/models?include_availability', { headers: { Authorization: 'Bearer ' + token }, signal: AbortSignal.timeout(8000) });
+  if (!res.ok) throw fail(502, 'The model list could not be read (' + res.status + ').');
+  const { data = [] } = await res.json();
+  const sees = (m) => (m.tags || []).includes('vision') || ((m.modalities || {}).input || []).includes('image');
+  return data.filter((m) => m.type === 'language' && m.model_eligibility && m.model_eligibility.status === 'eligible' && sees(m)).map((m) => ({ id: m.id, tags: m.tags || [] }));
+}
+
 /** image: base64 without the data: prefix. Returns { screen, allies: [{ champion, lane, is_player }], enemies: [{ champion, lane }], note }. */
 export async function readTeams(client, { image, mediaType = 'image/jpeg', riotName = 'the player', role = 'jungle' }) {
   if (typeof image !== 'string' || image.length < 200) throw fail(400, 'No picture was sent.');
