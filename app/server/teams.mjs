@@ -75,7 +75,7 @@ export async function readTeams(client, { image, mediaType = 'image/jpeg', riotN
   if (!MEDIA.includes(mediaType)) throw fail(400, 'That kind of picture is not supported. Use a JPEG or PNG.');
   const params = {
     max_tokens: 4000,
-    system: instructions(String(riotName).slice(0, 40), role === 'support' ? 'support' : 'jungler'),
+    system: instructions(String(riotName).slice(0, 40), role === 'support' ? 'support' : role === 'top' ? 'top laner' : 'jungler'),
     // low effort: this is reading names off a picture, and champion select does not wait
     output_config: { effort: 'low', format: { type: 'json_schema', schema: SCHEMA } },
     messages: [{ role: 'user', content: [

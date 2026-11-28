@@ -10,7 +10,7 @@ for (let i = 0; i < 40; i++) {
   console.log(username, 'step', i + 1, res.status, Date.now() - t0, 'ms', JSON.stringify({ done: body.done, remaining: body.remaining, error: body.error }));
   if (res.status === 429) { await new Promise((r) => setTimeout(r, ((body.retryAfter || 10) + 1) * 1000)); continue; }   // Riot's rate limit: wait as the site does
   if (!res.ok || body.done) {
-    if (body.stats) for (const [kind, set] of [['ranked', body.stats], ['normal', body.stats.normal], ['both', body.stats.both]]) for (const r of ['jungle', 'support']) if (set && set[r].games) console.log('  ', kind.padEnd(6), r.padEnd(7), set[r].games, 'games', set[r].groups.all.record);
+    if (body.stats) for (const [kind, set] of [['ranked', body.stats], ['normal', body.stats.normal], ['both', body.stats.both]]) for (const r of ['jungle', 'support', 'top']) if (set && set[r] && set[r].games) console.log('  ', kind.padEnd(6), r.padEnd(7), set[r].games, 'games', set[r].groups.all.record);
     break;
   }
 }

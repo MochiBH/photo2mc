@@ -13,6 +13,7 @@ import { CN, RUNES, champOf, norm } from '../lib/legacy';
 import { BUILDS, champsFor, gold } from '../lib/champs';
 import { ALLY_ROWS, ENEMY_ROWS, computeLive } from '../lib/live';
 import { facts as factsOf } from '../lib/insights';
+import { ROLE } from '../lib/roles';
 import { placeTeams, shrink } from '../lib/snap';
 import { burst } from '../fx/fx';
 import Track, { fmt, gameSeconds, nextUp, objectives } from './Track';
@@ -122,7 +123,7 @@ export default function Live() {
               <Rise><Snap role={role} bst={bst} patch={patch} /></Rise>
               <Rise>
                 <Card><CardContent className="flex flex-col gap-3">
-                  <h3 className="m-0 text-lg font-bold tracking-tight">You, as {role}</h3>
+                  <h3 className="m-0 text-lg font-bold tracking-tight">You, as {ROLE[role].name.toLowerCase()}</h3>
                   <ChampInput id="me-champ" list="my-champ-list" value={bst.me} onChange={(me) => patch({ me, bought: [] })} placeholder={`Your ${role} champion`} label="Your champion" />
                   <div className="flex flex-wrap gap-1.5">
                     {quick.map((c) => {
@@ -263,7 +264,7 @@ export default function Live() {
       </AnimatePresence>
       <div className="flex flex-col gap-2.5">
         <Button variant={armed ? 'destructive' : 'ghost'} size="lg" onClick={clear}><RotateCcw /> {armed ? 'Tap again to clear everything' : 'New game: clear teams, clock and tracker'}</Button>
-        <p className="m-0 text-xs text-muted-foreground">Standard builds and item prices are from OP.GG ({BUILDS.pulled}, ranked). The rules that adjust the build and the plan, and each champion's tags, were written by Claude, so treat this as a strong starting point. Objective timers use Season 2026 times: dragon 5:00 then every 5:00, Voidgrubs 8:00, Herald 15:00, Baron 20:00 then every 6:00.</p>
+        <p className="m-0 text-xs text-muted-foreground">Standard builds and item prices are from OP.GG ({BUILDS['pulled_' + role] || BUILDS.pulled}, ranked). The rules that adjust the build and the plan, and each champion's tags, were written by Claude, so treat this as a strong starting point. Objective timers use Season 2026 times: dragon 5:00 then every 5:00, Voidgrubs 8:00, Herald 15:00, Baron 20:00 then every 6:00.</p>
       </div>
     </div>
   );

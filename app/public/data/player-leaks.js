@@ -1,7 +1,8 @@
 /* Drill questions written from one player's own games, shown only to that Riot ID. opts[0] is correct.
    Evlijah#3958: 12 ranked support games pulled Nov 21, 2026 (7-5; Poppy 4-2, Nautilus 3-2). `no` has one line per wrong option, in order (no[0] is for opts[1]), saying why it is wrong. */
 window.PLAYER_LEAKS = {
-"evlijah#3958": [
+"evlijah#3958": {
+support: [
 {id:"ev1",tags:["leak","engage"],q:"You're on Nautilus. Their ADC steps forward, in hook range. Your own ADC is at half health, farming behind you. Do you hook?",
  opts:["No. Wait until your ADC is healthy and close enough to follow","Yes, a landed hook is always worth it","Yes, then walk in and ult","Flash forward first to make sure it lands"],
  no:["A hook with nobody to follow up pulls you into two enemies.","You spend everything, and your ADC is too low and too far back to use it.","Now you have no Flash and still nobody behind you."],
@@ -34,5 +35,8 @@ window.PLAYER_LEAKS = {
  opts:["Aim it at the next objective a minute before it spawns","Ward deeper in the enemy jungle on your own","Buy even more control wards","Stop warding and fight more"],
  no:["Deep and alone is how free deaths happen, which is the thing to cut.","You already buy plenty. What matters is where and when they go down.","Your warding is a strength in your wins. Dropping it fixes nothing."],
  why:"Your warding is a real strength: you out-ward the enemy support in most wins. The gap is being at the dragon when it matters, with those wards already down."}
+],
+top: [
 ]
+}
 };

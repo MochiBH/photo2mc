@@ -11,4 +11,4 @@ const db = {
 const t0 = Date.now(); let step = 0;
 for (;;) { const s0 = Date.now(); const r = await runSync(db, profile); console.log(`step ${++step}: ${Date.now() - s0} ms`, JSON.stringify({ done: r.done, remaining: r.remaining })); if (r.done) break; }
 console.log('total', ((Date.now() - t0) / 1000).toFixed(1) + 's', 'roles:', [...games.values()].reduce((c, r) => ((c[r.role] = (c[r.role] || 0) + 1), c), {}));
-for (const role of ['jungle', 'support']) console.log(role, stats[role].games, 'games', stats[role].groups.all.record, 'deaths', stats[role].groups.all.deaths, 'champs', stats[role].champs.join(','));
+for (const role of ['jungle', 'support', 'top']) console.log(role, stats[role].games, 'games', stats[role].groups.all.record, 'deaths', stats[role].groups.all.deaths, 'champs', stats[role].champs.join(','));

@@ -14,7 +14,7 @@ import { rowOf } from '../../server/row.mjs';
 import { RULES, checksFor } from '../lib/roles';
 import { champName } from '../lib/champs';
 import { sgn } from '../lib/legacy';
-import { ROLE_NAME, ROLE_PLAYER, deathLine, duration, objectiveLine, takeaways } from '../lib/review';
+import { ROLE_NAME, ROLE_PLAYER, deathLine, duration, objectiveLine, takeaways, laneLine } from '../lib/review';
 import { burst } from '../fx/fx';
 import { RiftBase, toMap } from './Rift';
 import { shortDate } from './Games';
@@ -279,7 +279,8 @@ function Race({ g, rival }) {
   if (gd.length < 4 || !rival) return null;
   const n = gd.length, top = Math.max(500, ...gd.map((v) => Math.abs(v))), X = (m) => 34 + (m / (n - 1)) * 276, Y = (v) => 12 + ((top - v) / (2 * top)) * 120;
   const k = (v) => (Math.abs(v) >= 1000 ? (Math.abs(v) / 1000).toFixed(1) + 'k' : String(Math.abs(Math.round(v))));
-  const marks = Object.keys(g.farm || {}).map(Number).sort((a, b) => a - b), jg = g.role === 'jungle';
+  const marks = Object.keys(g.farm || {}).map(Number).sort((a, b) => a - b), jg = g.role === 'jungle', cs = !jg && marks.some((m) => g.farm[m].cs);
+  const L = laneLine(g);
   const end = gd.at(-1);
   return (
     <Card>
@@ -301,13 +302,14 @@ function Race({ g, rival }) {
           <div className="overflow-x-auto">
             <table className="tnum w-full border-collapse text-[13px] whitespace-nowrap">
               <caption className="pb-1 text-left text-sm text-muted-foreground">You / {rival}</caption>
-              <thead><tr className="text-[11px] tracking-wider text-muted-foreground uppercase">{['At', 'Gold', 'Level', ...(jg ? ['Jungle CS'] : [])].map((h, i) => <th key={h} className={`px-1.5 py-1 font-bold ${i ? 'text-right' : 'text-left'}`}>{h}</th>)}</tr></thead>
+              <thead><tr className="text-[11px] tracking-wider text-muted-foreground uppercase">{['At', 'Gold', 'Level', ...(jg ? ['Jungle CS'] : cs ? ['CS'] : [])].map((h, i) => <th key={h} className={`px-1.5 py-1 font-bold ${i ? 'text-right' : 'text-left'}`}>{h}</th>)}</tr></thead>
               <tbody>{marks.map((m) => { const f = g.farm[m]; return (
-                <tr key={m} className="border-t"><td className="px-1.5 py-2 font-semibold">{m}:00</td><td className="px-1.5 text-right">{k(f.gold[0])} / {k(f.gold[1])}</td><td className="px-1.5 text-right">{f.level[0]} / {f.level[1]}</td>{jg && <td className="px-1.5 text-right">{Math.round(f.jcs[0])} / {Math.round(f.jcs[1])} <span className="text-muted-foreground">({sgn(Math.round(f.jcs[0] - f.jcs[1]))})</span></td>}</tr>
+                <tr key={m} className="border-t"><td className="px-1.5 py-2 font-semibold">{m}:00</td><td className="px-1.5 text-right">{k(f.gold[0])} / {k(f.gold[1])}</td><td className="px-1.5 text-right">{f.level[0]} / {f.level[1]}</td>{jg && <td className="px-1.5 text-right">{Math.round(f.jcs[0])} / {Math.round(f.jcs[1])} <span className="text-muted-foreground">({sgn(Math.round(f.jcs[0] - f.jcs[1]))})</span></td>}{cs && <td className="px-1.5 text-right">{f.cs ? <>{f.cs[0]} / {f.cs[1]} <span className="text-muted-foreground">({sgn(f.cs[0] - f.cs[1])})</span></> : '–'}</td>}</tr>
               ); })}</tbody>
             </table>
           </div>
         )}
+        {L && <Lead className="text-sm">{L}</Lead>}
       </CardContent>
     </Card>
   );

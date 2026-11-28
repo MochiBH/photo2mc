@@ -10,6 +10,7 @@ import { ContinuousTabs } from '../wm/continuous-tabs';
 import { cn } from '../wm/utils';
 import { Eyebrow, Lead, Rise, Screen, SHARP } from '../ui';
 import { queueWords } from '../lib/queues';
+import { ROLE, ROLES } from '../lib/roles';
 import { DEMO, useSession } from '../session';
 import { SplitTitle } from '../fx/text';
 import { shake } from '../fx/fx';
@@ -18,7 +19,7 @@ import { champOf, norm } from '../lib/legacy';
 import { REGION_LIST, champsFor } from '../lib/champs';
 
 /* Players set up ahead of time: typing the Riot ID fills in the rest. */
-const PRESETS = { 'evlijah#3958': { region: 'na', role: 'support', mains: ['Rell'] }, 'the gonzoogler#weeee': { region: 'na', role: 'jungle', mains: ['Nunu & Willump', "Kha'Zix"] } };
+const PRESETS = { 'evlijah#3958': { region: 'na', role: 'top', mains: ['Kled', 'Renekton'] }, 'the gonzoogler#weeee': { region: 'na', role: 'jungle', mains: ['Nunu & Willump', "Kha'Zix"] } };
 const label = 'flex flex-col gap-1.5 text-[11px] font-bold tracking-[0.1em] text-muted-foreground uppercase';
 
 function Shell({ children }) {
@@ -64,7 +65,7 @@ export function SignIn() {
   }
   return (
     <Shell>
-      <Lead>Your own stats, a live game tracker and builds for jungle and support.</Lead>
+      <Lead>Your own stats, a live game tracker and builds for jungle, support and top.</Lead>
       <Card glow id="signin-card">
         <CardContent>
           <form onSubmit={submit} className="flex flex-col gap-3.5">
@@ -90,10 +91,10 @@ export function ProfileForm({ first, onSaved }) {
   const [pick, setPick] = useState('');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
-  const pool = champsFor(role);
+  const pool = [...new Set(ROLES.flatMap(champsFor))];   // the list covers every role the player might switch to
   function addMain(text) {
     const c = champOf(text);
-    if (c && !mains.includes(c) && mains.length < 5) { setMains([...mains, c]); setPick(''); } else setPick(text);
+    if (c && !mains.includes(c) && mains.length < 8) { setMains([...mains, c]); setPick(''); } else setPick(text);
   }
   async function submit(e) {
     e.preventDefault();
@@ -116,9 +117,9 @@ export function ProfileForm({ first, onSaved }) {
         <label className={label}>Name to show<Input id="pf-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Optional" /></label>
       </div>
       <div className={label}>Main role
-        <ContinuousTabs tabs={[{ id: 'jungle', label: 'Jungle' }, { id: 'support', label: 'Support' }]} value={role} onChange={(r) => { setRole(r); setMains([]); }} label="Main role" />
+        <ContinuousTabs tabs={ROLES.map((r) => ({ id: r, label: ROLE[r].name }))} value={role} onChange={setRole} label="Main role" />
       </div>
-      <div className={label}>Champions you play most (up to 5)
+      <div className={label}>Champions you play most (up to 8, any role)
         <datalist id="pf-champs">{pool.map((n) => <option key={n} value={n} />)}</datalist>
         <Input id="pf-main" list="pf-champs" value={pick} onChange={(e) => addMain(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addMain(pick); } }} placeholder="Type a champion" aria-invalid={!!norm(pick) && !champOf(pick)} autoComplete="off" />
         {mains.length > 0 && (

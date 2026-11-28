@@ -2,6 +2,7 @@
 // (server/analysis.mjs), so a game can be reviewed long after it has dropped out of the "last 20" the other screens use.
 import { ZONE, clock } from './legacy';
 import { champName } from './champs';
+import { firstTower } from '../../server/row.mjs';
 
 export const ROLE_NAME = { jungle: 'Jungle', support: 'Support', top: 'Top', mid: 'Mid', adc: 'ADC' };
 export const ROLE_PLAYER = { jungle: 'jungler', support: 'support', top: 'top laner', mid: 'mid laner', adc: 'ADC' };
@@ -19,17 +20,23 @@ export function takeaways(g) {
   const D = g.deaths || [], n = D.length, free = D.filter((d) => d.free).length, quick = D.filter((d) => d.quick).length, alone = D.filter((d) => d.allies === 0).length;
   const paid = D.filter((d) => d.took && d.took.length), early = D.filter((d) => d.minute < 15).length;
   const lost = (g.objectives || []).filter((o) => o.taker === 'enemy'), away = lost.filter((o) => o.alive && !o.near);
-  const rival = g.rival ? champName(g.rival) : 'your opponent', sup = g.role === 'support', jg = g.role === 'jungle';
+  const rival = g.rival ? champName(g.rival) : 'your opponent', sup = g.role === 'support', jg = g.role === 'jungle', laner = !sup && !jg;
+  const E = D.filter((d) => d.minute < 15), lost1v1 = E.filter((d) => d.n === 1 && !d.jg).length, ganked = E.filter((d) => d.jg).length;
+  const cs10 = g.cs_diff && g.cs_diff.length > 10 ? g.cs_diff[10] : null, csMin = g.cs / (g.seconds / 60), ln = g.lane, tower = firstTower(g);
   const add = (w, title, text, next) => fix.push({ w, title, text, next });
   // what to do after respawning, and after an early death, depends on the job
   const rejoin = sup ? 'After you respawn, walk back with a teammate, not alone.' : jg ? 'After you respawn, clear one camp before you rejoin.' : 'After you respawn, catch the wave in front of you before you rejoin.';
   const earlyFix = sup ? 'After your first death in lane, no more all-ins unless your jungler is there.' : jg ? 'Full clear before your first gank, and skip any gank where the enemy is under their own tower.' : 'After your first death in lane, farm near your tower and fight only when your jungler is there.';
 
-  if (free >= 3) add(4 + free / 2, `${free} of your ${plural(n, 'death', 'deaths')} bought nothing`, 'No enemy died in those fights. You went in, or got caught, and they lost nobody for it.', sup ? 'Before you start a fight, look at your ADC. If they are not close and healthy enough to follow, wait.' : 'Before you walk into a fight, count heads. If they have more people there, leave.');
+  if (free >= 3) add(4 + free / 2, `${free} of your ${plural(n, 'death', 'deaths')} bought nothing`, 'No enemy died in those fights. You went in, or got caught, and they lost nobody for it.', sup ? 'Before you start a fight, look at your ADC. If they are not close and healthy enough to follow, wait.' : laner ? 'Before you fight in lane, check your wave is at least as big as theirs and you know where their jungler is. If either is missing, farm instead.' : 'Before you walk into a fight, count heads. If they have more people there, leave.');
   else if (n >= 6) add(3 + n / 4, `${n} deaths`, 'That is past the point where a lead survives. Each one after the fourth gives the enemy more than it could win you.', 'After your fourth death, only fight at an objective, and only with teammates.');
   if (paid.length >= 2) add(3 + paid.length / 2, `${paid.length} deaths handed the enemy an objective`, `Within 90 seconds of you dying they took ${names(paid.flatMap((d) => d.took))}.`, 'In the minute before an objective, stay with your team and do not walk anywhere dark alone.');
   if (quick >= 2) add(3 + quick / 2, `${quick} deaths right after respawning`, 'You walked straight back into the fight that had just killed you.', rejoin);
   if (alone >= 3 && free < 3) add(2.5 + alone / 3, `Caught alone ${alone} times`, 'No teammate was anywhere near when you died.', 'Check the map before you cross the river. If you cannot see their jungler, stay on your side.');
+  if (laner && lost1v1 >= 2) add(3.2 + lost1v1 / 2, `${rival} killed you alone ${lost1v1} times before 15:00`, 'The same 1v1, lost more than once. Nothing about the fight had changed in between.', 'After the first one, farm what reaches your tower until you have an item or a level on them, or your jungler is there.');
+  if (laner && ganked >= 2) add(2.8 + ganked / 2, `${plural(ganked, 'death', 'deaths')} with their jungler in it before 15:00`, 'A gank that kills you also costs the wave under your tower.', 'Ward the river brush on your way back to lane. If your wave is past the middle and you cannot see their jungler, back up.');
+  if (laner && cs10 !== null && cs10 <= -15 && !(g.gold_diff && g.gold_diff.length > 15 && g.gold_diff[15] <= -1200)) add(2.2 + -cs10 / 15, `${-cs10} CS behind ${rival} at 10:00`, `That is about ${Math.round((-cs10 * 20) / 50) * 50} gold in minions alone.`, 'When the lane is going badly, let the wave come to your tower and last hit there.');
+  if (laner && tower === 'enemy' && ln.tower[1] < 14) add(2.3, `Your tower fell at ${clock(ln.tower[1])}`, ln.tower[0] === null ? 'Theirs was still standing at the end.' : `Theirs fell at ${clock(ln.tower[0])}.`, 'Push the wave into their tower before every recall, so yours is safe while you are gone.');
   if (early >= 3 && n < 6) add(2.5, `${early} deaths before 15:00`, 'Early deaths cost the most: they put you behind for every fight that follows.', earlyFix);
   if (away.length >= 2) add(2.5 + away.length / 3, `${away.length} objectives lost while you were alive but far away`, `The enemy took ${names(away.map((o) => o.type))} and you were not close enough to contest.`, 'A minute before each objective, finish what you are doing and walk to the pit.');
   if (jg && g.diff && g.diff.length > 10 && g.diff[10] <= -8) add(3 + -g.diff[10] / 8, `${-g.diff[10]} jungle CS behind ${rival} at 10:00`, `That is about ${Math.round(-g.diff[10] / 4)} camps of gold and experience they had and you did not.`, 'Clear every camp on your side before you cross the map.');
@@ -45,6 +52,10 @@ export function takeaways(g) {
   if (jg && g.diff && g.diff.length > 10 && g.diff[10] >= 8) well.push({ title: `${g.diff[10]} jungle CS ahead of ${rival} at 10:00`, text: 'You out-cleared them through the early game.' });
   else if (g.gold_diff && g.gold_diff.length > 15 && g.gold_diff[15] >= 1000) well.push({ title: `${gold(g.gold_diff[15])} gold ahead of ${rival} at 15:00`, text: 'You won your side of the early game.' });
   if (g.vision && g.vision.rival_score != null && sup && g.vision.score > g.vision.rival_score) well.push({ title: `Out-warded their support, ${g.vision.score} to ${g.vision.rival_score}`, text: 'Your team saw more of the map than theirs did.' });
+  if (laner && ln && ln.solo_kills >= 2) well.push({ title: `${ln.solo_kills} solo kills before 15:00`, text: 'You won the 1v1 when you chose the moment.' });
+  if (laner && tower === 'mine') well.push({ title: `Their tower fell first, at ${clock(ln.tower[0])}`, text: 'A tower is a lead the whole team can use.' });
+  if (laner && csMin >= 6.5) well.push({ title: `${csMin.toFixed(1)} CS a minute`, text: 'Steady income, whatever else happened.' });
+  else if (laner && cs10 !== null && cs10 >= 10) well.push({ title: `${cs10} CS ahead of ${rival} at 10:00`, text: 'You won the farm in lane.' });
   if ((jg || sup) && g.kp >= 65) well.push({ title: `In ${g.kp}% of your team's kills`, text: 'You were where the fights were.' });
   if (g.dragons && g.dragons[0] >= 3 && g.dragons[0] > g.dragons[1]) well.push({ title: `Dragons ${g.dragons[0]}–${g.dragons[1]}`, text: 'Your team controlled the bot-side objective all game.' });
 
@@ -57,6 +68,7 @@ export function deathLine(d) {
   const tags = [];
   if (d.free) tags.push({ t: 'Free death', bad: true }); else tags.push({ t: 'An enemy died too', bad: false });
   if (d.quick) tags.push({ t: 'Right after respawning', bad: true });
+  if (d.jg) tags.push({ t: 'Their jungler was in it', bad: true });
   if (d.took && d.took.length) tags.push({ t: 'Then they took ' + names(d.took), bad: true });
   return { when: clock(d.minute), where: zoneName(d.zone), by: d.by ? 'Killed by ' + champName(d.by) : null, around: `${around}, ${plural(d.enemies, 'enemy', 'enemies')}`, tags };
 }
@@ -67,6 +79,15 @@ export function objectiveLine(o) {
   // an enemy kill the player "took part" in is one they were hitting too: they contested it and lost it
   const where = !o.alive ? 'you were dead' : o.took_part ? (mine ? 'you were part of it' : 'you were there, fighting for it') : o.near ? 'you were there' : `you were alive, in ${zoneName(o.my_zone).toLowerCase()}`;
   return { when: clock(o.minute), name: OBJ_NAME[o.type] || o.type, mine, where, miss: !mine && o.alive && !o.near };
+}
+
+/** A laner's own lane in a sentence: plates on the outer towers, and when each one fell. Null for a jungler or an older saved game. */
+export function laneLine(g) {
+  const ln = g.lane;
+  if (!ln) return null;
+  const [took, lost] = ln.tower;
+  const towers = took === null && lost === null ? 'Neither outer tower fell.' : took !== null && lost !== null ? `Their tower fell at ${clock(took)}, yours at ${clock(lost)}.` : took !== null ? `Their tower fell at ${clock(took)}. Yours stood all game.` : `Your tower fell at ${clock(lost)}. Theirs stood all game.`;
+  return `In your lane: ${plural(ln.plates[0], 'plate', 'plates')} taken, ${ln.plates[1]} lost on the outer towers. ${towers}`;
 }
 
 /* The list row for a game, from the few fields the list asks the database for. */

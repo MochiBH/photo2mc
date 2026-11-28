@@ -37,10 +37,14 @@ export function objectives(t) {
 export const nextUp = (list) => list.find((o) => o.status !== 'past') || null;
 
 function cue(o, role) {
-  const sup = role === 'support';
+  const sup = role === 'support', top = role === 'top', mine = o && o.pit === 'baron';   // the Baron pit is on the top side
   if (!o) return null;
   const pit = o.pit === 'dragon' ? 'the dragon pit' : 'the Baron pit';
   if (o.status === 'up') return { tone: 'up', head: `${o.name} is up`, text: `Only fight here, and only with teammates. If they aren't coming, give it up and take camps on the other side.` };
+  if (top && o.status === 'soon') return { tone: 'soon', head: `${o.name} in ${fmt(o.wait)}`, text: mine
+    ? (o.wait > 45 ? 'This one is on your side of the map. Push your wave into their tower now, then walk over.' : `Be at ${pit} now, with your jungler. Arriving first is most of the fight.`)
+    : (o.wait > 45 ? 'Push your wave so their top laner cannot leave. Go down only if your team is going to fight for it.' : 'Stay top and keep pushing, or Teleport in if your team starts the fight. Do not walk down late.') };
+  if (top && o.status === 'wait') return { tone: 'wait', head: `${o.name} in ${fmt(o.wait)}`, text: o.wait > 150 ? 'Farm your lane. Keep the wave on your half unless you know where their jungler is.' : mine ? 'Start pushing your wave now, so you can leave lane for this.' : 'Keep farming, and look at the map after every wave.' };
   if (o.status === 'soon' && o.wait > 45) return { tone: 'soon', head: `${o.name} in ${fmt(o.wait)}`, text: sup ? 'Recall now if you can. Come back with a control ward, and walk to the pit with your jungler or ADC, not alone.' : 'Recall now if you have gold. Buy a control ward. No river fights until teammates are with you.' };
   if (o.status === 'soon') return { tone: 'soon', head: `${o.name} in ${fmt(o.wait)}`, text: sup ? `Control ward down at ${pit}, sweep the brush around it, then stand behind your front line.` : `Be at ${pit} now, with a teammate, control ward down. Arriving first is most of the fight.` };
   if (o.status === 'idle') return { tone: 'wait', head: `${o.name} first, at ${fmt(o.spawn)}`, text: 'Start the clock when the game starts and this counts down for you.' };
@@ -161,7 +165,7 @@ export default function Track({ bst, patch, role = 'jungle', facts = null }) {
             {(justDied || deaths.length >= 4 || free >= 3) && (
               <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
                 <div className="flex flex-col gap-1.5 rounded-xl bg-bad-soft px-3.5 py-3 text-[15px] leading-snug">
-                  {justDied && <p className="m-0"><b>Just respawned:</b> {role === 'support' ? 'walk back with a teammate, not alone.' : 'clear one camp before you rejoin.'}{facts && facts.quickShare >= 15 ? ` ${facts.quickShare}% of your deaths come within 90 seconds of respawning.` : ''}</p>}
+                  {justDied && <p className="m-0"><b>Just respawned:</b> {role === 'support' ? 'walk back with a teammate, not alone.' : role === 'top' ? 'take the wave at your tower before anything else.' : 'clear one camp before you rejoin.'}{facts && facts.quickShare >= 15 ? ` ${facts.quickShare}% of your deaths come within 90 seconds of respawning.` : ''}</p>}
                   {free >= 3 && <p className="m-0"><b>That is your free-death limit.</b>{facts ? ` You are ${facts.freeOk} with three or fewer and ${facts.freeBad} with more.` : ''} Count heads before every fight from here.</p>}
                   {deaths.length >= 4 && <p className="m-0"><b>{deaths.length >= 5 ? 'Budget spent.' : 'Fourth death.'}</b> From now on you only fight at an objective.</p>}
                 </div>

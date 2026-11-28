@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { createClient } from '@supabase/supabase-js';
 import { ALLOWED, loginEmail, validUsername } from '../server/players.mjs';
 import { QUEUE_TABS, hasQueues, isQueue, statsFor } from './lib/queues';
+import { ROLES, isRole } from './lib/roles';
 
 const URL_ = import.meta.env.VITE_SUPABASE_URL, KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 export const DEMO = import.meta.env.VITE_DEMO === '1';   // local checks only: no accounts, stats from /demo-stats.json
@@ -126,7 +127,8 @@ export function SessionProvider({ children }) {
 
   useEffect(() => {     // first visit, or numbers older than half an hour: refresh quietly
     // ...or numbers saved before normal games were added, which have only the ranked set
-    if (phase === 'ready' && !DEMO && (!statsAt || Date.now() - new Date(statsAt).getTime() > STALE_MS || (statsAll && !hasQueues(statsAll)))) runSync();
+    // ...or before a role was added, which have no numbers for it
+    if (phase === 'ready' && !DEMO && (!statsAt || Date.now() - new Date(statsAt).getTime() > STALE_MS || (statsAll && !(hasQueues(statsAll) && ROLES.every((r) => statsAll[r]))))) runSync();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
@@ -153,10 +155,14 @@ export function SessionProvider({ children }) {
     return null;
   }, [profile, user, runSync]);
 
-  const role = cloud.viewRole || (profile && profile.role) || 'jungle';
+  const main = profile && isRole(profile.role) ? profile.role : 'jungle';
+  const role = isRole(cloud.viewRole) ? cloud.viewRole : main;
+  // The roles in the switch at the top: the player's main one, any other they have games in, and the one on screen.
+  const played = (r) => !!statsAll && (((statsAll.both || statsAll)[r] || {}).games || 0) > 0;
+  const roles = ROLES.filter((r) => r === main || r === role || played(r));
   const queue = isQueue(cloud.viewQueue) ? cloud.viewQueue : 'both';   // which games: ranked, normal or both
   const value = useMemo(() => ({
-    phase, user, profile, role, setRole: (r) => setKey('viewRole', r), statsAt, sync, runSync, saveProfile, cloud, setKey, api,
+    phase, user, profile, role, roles, setRole: (r) => setKey('viewRole', r), statsAt, sync, runSync, saveProfile, cloud, setKey, api,
     queue, setQueue: (q) => setKey('viewQueue', q),
     stats: statsAll ? statsFor(statsAll, queue)[role] || null : null,
     // how many games each choice holds for this role, for the switch; empty until the saved numbers include normals
@@ -170,7 +176,8 @@ export function SessionProvider({ children }) {
     changePassword: (password) => supa.auth.updateUser({ password }),
     username: user && user.email ? user.email.split('@')[0] : '',
     signOut: () => (DEMO ? null : supa.auth.signOut()),
-  }), [phase, user, profile, role, queue, statsAll, statsAt, sync, runSync, saveProfile, cloud, setKey, api]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }), [phase, user, profile, role, roles.join(), queue, statsAll, statsAt, sync, runSync, saveProfile, cloud, setKey, api]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

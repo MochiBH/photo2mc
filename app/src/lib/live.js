@@ -1,4 +1,4 @@
-// The live-game engine: what to build and how to play this game, for any jungle or support champion.
+// The live-game engine: what to build and how to play this game, for any jungle, support or top champion.
 // Nunu and Kha'Zix in the jungle keep their hand-tuned rules (lib/legacy.js); everyone else starts from the
 // champion's most-bought build on OP.GG and swaps in counter items for what the enemy team actually has.
 import { BOOTS, STUCK, allyFeatures, andList, buildKha, buildNotes, buildNunu, champOf, gamePlan, gankOrder, nunuRole, setBst, teamFeatures } from './legacy';
@@ -6,7 +6,8 @@ import { buildFor, dmgOf, gold, tagsOf } from './champs';
 
 const short = (n) => n.replace(' & Willump', '');
 const LEGACY = { 'Nunu & Willump': 'Nunu', "Kha'Zix": "Kha'Zix" };
-export const ALLY_ROWS = { jungle: ['Top', 'Mid', 'Bot', 'Support'], support: ['Top', 'Jungle', 'Mid', 'Bot'] };
+export const ALLY_ROWS = { jungle: ['Top', 'Mid', 'Bot', 'Support'], support: ['Top', 'Jungle', 'Mid', 'Bot'], top: ['Jungle', 'Mid', 'Bot', 'Support'] };
+export const MY_LANE = { jungle: 'jungle', support: 'support', top: 'top' };   // the row a role leaves out of its team list
 export const ENEMY_ROWS = ['Top', 'Jungle', 'Mid', 'Bot', 'Support'];
 
 export function styleOf(role, champ) {
@@ -18,9 +19,10 @@ export function styleOf(role, champ) {
   }
   if (has('t')) return 'tank';
   if (has('b')) return dmg === 'ap' ? 'apburst' : 'assassin';
+  if (role === 'top' && dmg !== 'ap') return 'bruiser';   // a top-lane fighter builds damage and health, not an assassin's items
   return dmg === 'ap' ? 'ap' : 'ad';
 }
-const FAMILY = { tank: 'tank', tanksup: 'tank', enchanter: 'ench', magesup: 'ap', ap: 'ap', apburst: 'ap', assassin: 'ad', ad: 'ad', adsup: 'ad' };
+const FAMILY = { tank: 'tank', tanksup: 'tank', enchanter: 'ench', magesup: 'ap', ap: 'ap', apburst: 'ap', assassin: 'ad', ad: 'ad', adsup: 'ad', bruiser: 'bruiser' };
 
 /* Counter items by item family: [score, item, reason]. A score of 0 means the enemy team gives no reason to buy it. */
 function counters(family, F, A) {
@@ -39,6 +41,15 @@ function counters(family, F, A) {
       [F.t >= 2 ? 2.6 + F.t * 0.3 : 0, "Serylda's Grudge", `Armor penetration for ${andList(N.t)}.`],
       [F.apb >= 2 && F.ms >= 0.5 ? 2.8 : 0, 'Maw of Malmortius', `${aps} can delete you with magic damage. The shield buys you the second you need.`],
       [F.ps >= 0.75 && F.adb >= 1 ? 2.3 : 0, "Death's Dance", 'Almost all their damage is physical. This spreads it out so you live through the burst.'],
+    ],
+    bruiser: [
+      [F.h >= 2 ? 3.1 + F.h * 0.2 : 0, 'Chempunk Chainsword', `${heal} heal through your damage. This cuts their healing.`],
+      [F.adb + F.apb >= 3 ? 3 : 0, "Sterak's Gage", `A shield when the burst from ${andList(F.adbN.concat(F.apbN).slice(0, 3))} lands, so you live long enough to fight.`],
+      [F.apb >= 2 && F.ms >= 0.5 ? 2.8 + F.apb * 0.2 : 0, 'Maw of Malmortius', `${aps} can delete you with magic damage. The shield buys you the second you need.`],
+      [F.ms >= 0.7 ? 2.7 : 0, 'Spirit Visage', 'Nearly all their damage is magic. Magic resist, and your own healing gets stronger.'],
+      [F.ps >= 0.75 && F.adb >= 1 ? 2.5 : 0, "Death's Dance", 'Almost all their damage is physical. This spreads it out so you live through the burst.'],
+      [F.t >= 2 ? 2.6 + F.t * 0.2 : 0, 'Black Cleaver', `${andList(N.t)} will stack armor. This strips it for your whole team.`],
+      [F.s >= 2 ? 2.4 + F.s * 0.2 : 0, "Serpent's Fang", `Cuts the shields from ${andList(N.s)}.`],
     ],
     tank: [
       [F.h >= 1.5 && F.a >= 1 ? 3.1 + F.h * 0.3 : 0, 'Thornmail', `${heal} heal a lot. Anyone who basic-attacks you gets their healing cut.`],
@@ -103,6 +114,9 @@ function genericPlan(role, champ, bst, F, A) {
   else if (style === 'magesup' || style === 'adsup') job = `Stay behind your front line and hit whoever walks up. Don't be the first person they see${threats.length ? `, and keep an escape for ${andList(threats)}` : ''}.`;
   else if (style === 'tank') job = `You go first. Start on ${tgt} when you can reach them, then stay in the middle so your team can follow.${A.carries.length && threats.length ? ` Once the fight is going, drift back toward ${andList(A.carries.slice(0, 2))}: ${andList(threats)} will go for them.` : ''}`;
   else if (style === 'assassin' || style === 'apburst') job = `Stay out of sight until the fight has started${stuns.length ? ` and ${andList(stuns)} ${stuns.length > 1 ? 'have used their stuns' : 'has used their stun'}` : ''}. Then go for ${tgt}.${A.n && !A.front.length ? ' Your team has nobody to start a fight, so catch people alone before objectives instead of forcing 5v5s.' : ''}`;
+  else if (style === 'bruiser') job = A.front.length
+    ? `Let ${andList(A.front)} start the fight, then go through to ${tgt}. You are the second one in, not the first.`
+    : `Your team has nobody else to start a fight, so it is you, but come from the side and only once your team is close enough to follow. Go for ${tgt}.`;
   else job = `Go in second, after ${A.front.length ? andList(A.front) : 'someone else'} starts it. Hit whoever is closest and safe, then work toward ${tgt}.`;
   P.push(['Your job in fights', job]);
 
@@ -123,11 +137,16 @@ function genericPlan(role, champ, bst, F, A) {
     P.push(['Roaming', foeMid && STUCK.includes(foeMid)
       ? `Mid is the roam: ${short(foeMid)} has no dash${midSetup ? ` and ${mid} has a stun to follow up` : ''}. Go only when your wave is pushed into their tower and ${carry} can stay safe.`
       : `Roam with your jungler to river fights and objectives. Leaving ${carry} alone for a mid roam is rarely worth it this game.`]);
+  } else if (role === 'top') {
+    const foe = champOf(bst.rows[0] ? bst.rows[0].c : ''), foeJg = champOf(bst.rows[1] ? bst.rows[1].c : ''), myJg = at(bst.allies, 0);
+    P.push(['Your lane', laneRead(champ, foe, style)]);
+    P.push(['Their jungler', jungleRead(champ, foeJg, foe)]);
+    P.push(['Your side of the map', `Voidgrubs come at 8:00 and the Rift Herald at 15:00, both on your side. Push your wave into their tower a minute before each, then walk to the pit${myJg ? ` with ${myJg}` : ''}. For a dragon, keep pushing top so their top laner cannot leave, and only go down if your team is going to fight for it.`]);
   } else {
     const g = ganks(champ, bst);
     P.push(['Gank first', g.length ? '' : 'Type each champion in its lane row on both teams and this ranks the lanes for you.']);
   }
-  if (A.fed.length) P.push(['Who to play around', `${andList(A.fed)} ${A.fed.length > 1 ? 'are your strongest players' : 'is your strongest player'}. ${role === 'support' ? 'Stay near them in every fight; your job is to keep them alive.' : 'Put your next ganks and the next objective on their side of the map.'}`]);
+  if (A.fed.length) P.push(['Who to play around', `${andList(A.fed)} ${A.fed.length > 1 ? 'are your strongest players' : 'is your strongest player'}. ${role === 'support' ? 'Stay near them in every fight; your job is to keep them alive.' : role === 'top' ? 'Once the lane is over, be where they fight. Walk over before the objective, or keep Teleport ready for them.' : 'Put your next ganks and the next objective on their side of the map.'}`]);
   else if (role === 'support' && adc) P.push(['Who to play around', `${adc} until the lane phase ends. After that, follow whoever on your team is doing the most damage.`]);
   if (F.n) P.push(['Kill first', `${tgt}.${tanks.length ? ` Don't waste the fight hitting ${andList(tanks)}.` : ''}`]);
   F.rec.filter((r) => r.fed).slice(0, 2).forEach((r) => {
@@ -137,9 +156,56 @@ function genericPlan(role, champ, bst, F, A) {
       : has('a') || has('k') ? `${r.name} is fed and does damage the whole fight. They have to die first, or the fight is lost.`
       : `${r.name} is fed. Spread out so one spell doesn't hit all of you, and get on them fast.`]);
   });
-  if (bst.state === 'behind') P.push(["You're behind", role === 'support' ? 'Ward your own jungle, not theirs. Stay with the team, and save your spells to stop their engage.' : 'No solo fights. Clear your camps, show up to objectives with the team, and buy the defensive item next.']);
-  if (bst.state === 'ahead') P.push(["You're ahead", role === 'support' ? 'Push your vision into their jungle with a teammate, and be at the next objective a minute early.' : "Spend the lead. Take the enemy jungler's camps with a control ward down, and be at the next objective a minute early."]);
+  if (bst.state === 'behind') P.push(["You're behind", role === 'support' ? 'Ward your own jungle, not theirs. Stay with the team, and save your spells to stop their engage.' : role === 'top' ? 'Stop fighting your lane opponent. Farm what reaches your tower, buy the defensive item next, and join the fights your team starts.' : 'No solo fights. Clear your camps, show up to objectives with the team, and buy the defensive item next.']);
+  if (bst.state === 'ahead') P.push(["You're ahead", role === 'support' ? 'Push your vision into their jungle with a teammate, and be at the next objective a minute early.' : role === 'top' ? 'Spend the lead. Push the wave, take plates and the tower, then walk to the next objective with your jungler. A lead that stays in top lane wins nothing.' : "Spend the lead. Take the enemy jungler's camps with a control ward down, and be at the next objective a minute early."]);
   return P;
+}
+
+/* The top-lane matchup in a few sentences, from what the champion data says about the opponent. */
+function laneRead(champ, foe, style) {
+  if (!foe) return 'Type their top laner in the Top row above and this reads the matchup for you.';
+  const t = tagsOf(foe), has = (k) => t.includes(k), them = short(foe), out = [];
+  if (has('t')) out.push(`${them} is a tank and will not die to you alone once the first item is done. Win on farm instead: push the wave, take plates, and be first to the top-side objectives.`);
+  else if (has('b')) out.push(`${them} wins with one burst. Keep your health above what that combo does, and trade right after it has been used.`);
+  else if (has('a')) out.push(`${them} fights with basic attacks, so a long fight next to their minions goes their way. Take short trades and step out.`);
+  if (has('h')) out.push(`${them} heals a lot, so chip damage comes back. Buy the healing-cut piece early and fight to finish, not to poke.`);
+  if (has('c') && !has('t')) out.push(`${them} has a stun or root, and one landed with their jungler near is a death. Stay on the side of the lane your ward covers.`);
+  if (STUCK.includes(foe)) out.push(`${them} has no dash, so a gank on them works. Ask your jungler when the wave is on your side of the lane.`);
+  if (style === 'tank' && !out.length) out.push(`You do not have to win this lane. Farm safely, give up minions you cannot reach, and you will be worth more than ${them} in team fights.`);
+  if (!out.length) out.push(`An even lane against ${them}. Trade when their key ability is on cooldown and your wave is the bigger one, and step back when it is not.`);
+  return out.slice(0, 2).join(' ');
+}
+/* How careful a top laner has to be about the enemy jungler. */
+function jungleRead(champ, foeJg, foe) {
+  if (!foeJg) return 'Type their jungler in the Jungle row above and this tells you how careful to be.';
+  const t = tagsOf(foeJg), jg = short(foeJg), out = [];
+  if (t.includes('v')) out.push(`${jg} can arrive unseen. A control ward in the river brush is the only thing that shows it.`);
+  else if (t.includes('c') || t.includes('p')) out.push(`${jg} brings a stun or a catch, so a gank on you past the middle of the lane is a kill. Ward the river, and stay on your half when the ward is down.`);
+  else out.push(`${jg} has no reliable way to hold you in place, so a gank fails if you see it coming. Keep a ward in the river and walk away early.`);
+  if (STUCK.includes(champ)) out.push('You have no dash, so start backing off as soon as he disappears from the map.');
+  else if (foe && tagsOf(foe).includes('c')) out.push(`With ${short(foe)}'s crowd control added, you will not get out once it starts.`);
+  return out.join(' ');
+}
+
+/* Kled and Renekton (top): what their kits change about this game, on top of the general plan. */
+function tunedTop(champ, F, plan) {
+  const tips = [], shields = real(F, 's').slice(0, 3), heals = real(F, 'h').slice(0, 3), tanks = real(F, 't').slice(0, 3);
+  let head = null;
+  if (champ === 'Renekton') {
+    head = 'Renekton this game';
+    tips.push('Fight with 50 Fury or not at all. The empowered W is your kill, and the empowered Q is your heal when a trade goes wrong.');
+    if (shields.length) tips.push(`Your empowered W breaks shields. Open with it on ${andList(shields)}.`);
+    tips.push(tanks.length >= 2 ? `You are at your strongest before the game goes long, and ${andList(tanks)} will outlast you later. Turn every lane win into plates and the tower now.` : 'You are at your strongest early. Turn every lane win into plates, the tower and the Herald rather than more farm.');
+  } else if (champ === 'Kled') {
+    head = 'Kled this game';
+    tips.push('Watch Skaarl\'s health bar, not only your own. When it is low, back off before you are knocked off: on foot you have no dash and no ultimate.');
+    if (heals.length) tips.push(`Your Q cuts healing. Land it on ${andList(heals)} before the rest of your damage.`);
+    tips.push(F.c >= 3 ? `They have a lot of crowd control (${andList(F.names.c.slice(0, 3))}). Charge at someone standing apart from them, or wait until the fight has started.` : 'From level 6, look at the map before you push the wave. Your ultimate reaches a fight in mid or at the river from where you stand.');
+  }
+  if (!head) return plan;
+  const out = plan.slice();
+  out.splice(Math.min(2, out.length), 0, [head, tips.join(' ')]);
+  return out;
 }
 
 /* Lanes ranked for a jungler, in plain rows. */
@@ -153,7 +219,7 @@ export function ganks(champ, bst) {
 function notesFor(role, champ, F, items, facts) {
   const N = F.names, out = [], family = FAMILY[styleOf(role, champ)], has = (n) => items.some((i) => i.item === n);
   if (F.h >= 1.5) {
-    const piece = family === 'ad' ? "Executioner's Calling" : family === 'tank' ? 'Bramble Vest' : 'Oblivion Orb';
+    const piece = family === 'ad' || family === 'bruiser' ? "Executioner's Calling" : family === 'tank' ? 'Bramble Vest' : 'Oblivion Orb';
     out.push(`Healing from ${andList(N.h)}: buy ${piece} (${gold(piece)} gold) early if they are healing through fights${has('Thornmail') || has('Morellonomicon') || has('Chempunk Chainsword') ? ', then finish the full item when it comes up' : ''}.`);
   }
   if (F.v >= 1) out.push(`${andList(N.v)} can go invisible. Swap your trinket to Oracle Lens and keep a control ward on you.`);
@@ -224,6 +290,7 @@ export function computeLive(bst, role, facts) {
   const rell = role === 'support' && champ === 'Rell';
   let rec = genericBuild(role, champ, F, A, bst.state) || [], plan = genericPlan(role, champ, bst, F, A);
   if (rell) { rec = rellBuild(bst, F, A, rec); plan = rellPlan(bst, F, A, plan); }
+  if (role === 'top') plan = tunedTop(champ, F, plan);
   const items = withBought(rec, bst.bought);
   return { ...base, items, starter, plan, notes: notesFor(role, champ, F, items, facts), missing: !b,
     title: short(champ) + (F.n ? ' against ' + F.list.join(', ') : ' · standard build') };

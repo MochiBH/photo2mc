@@ -35,9 +35,9 @@ travelling edge only ever move by `transform`, nothing keeps a blur filter once 
 start below the screen skip their entrance. Fonts are bundled with the site, files under `/assets` are cached for a
 year, and a returning player sees their last known stats at once while the account is checked in the background.
 
-Screens: Home (record, form, checkpoints, rules, game list), Learn and Drills (a jungle course and a support course), Map (checkpoints, leaks worked out from
-your games, death map and charts), Review (every game, one at a time), Live (teams, in-game tracker, build and plan for any jungle or support champion)
-and Me (profile, refresh, sign out). A switch in the header flips between your jungle and support games, and one under
+Screens: Home (record, form, checkpoints, rules, game list), Learn and Drills (a course each for jungle, support and top), Map (checkpoints, leaks worked out from
+your games, death map and charts), Review (every game, one at a time), Live (teams, in-game tracker, build and plan for any jungle, support or top champion)
+and Me (profile, refresh, sign out). A switch in the header flips between the roles you play (your main role, plus any other coached role you have games in), and one under
 it on Home and Map picks which games count: ranked solo, normal draft, or both. Swiftplay is not read, because it runs
 on different timers.
 
@@ -45,6 +45,12 @@ Review is the record of every game: all roles, ranked and normal, kept for good 
 opens its own screen with what stood out, every death in order on the map, the gold race against the opposing player,
 the objectives, and a box for your own notes; a game can be marked as reviewed. Older games can be pulled from there,
 up to the last 100 of each kind.
+
+Top lane is the third coached role. Its rules are deaths, CS a minute and a control ward; its checkpoints and leaks come
+from the lane itself: the CS and gold race against the lane opponent, early deaths split into lost 1v1s and ganks (their
+jungler got the kill or an assist), plates and whose outer tower fell first, and solo kills. The Map adds those as a
+lane card, a CS race chart and two extra death filters. Live reads the top matchup and the enemy jungler, and Kled and
+Renekton have their own notes. The course is ten lessons and 68 drill questions, with a set each for Kled and Renekton.
 
 The tracker needs no taps for objectives: it counts down from the game clock to the first dragon, Voidgrubs, Rift
 Herald and Baron. In Drills, once you answer, every wrong option shows why it is wrong.
@@ -101,7 +107,7 @@ node scripts/check-analysis.mjs               # JS analysis vs the Python report
 node scripts/check-sync.mjs "Name#TAG" na     # real sync loop against Riot with an in-memory database
 SUPABASE_URL=... SUPABASE_ANON_KEY=... RIOT_API_KEY=... PLAYER_PASSWORD=... node scripts/check-live.mjs <username>   # real sign-in + sync
 node scripts/check-insights.mjs "Name#TAG" na support   # the checkpoints, leaks and strengths a player would see
-node scripts/make-demo.mjs && VITE_DEMO=1 npx vite build && node scripts/shot.mjs live dark scripts/steps-live.mjs support
+node scripts/make-demo.mjs && VITE_DEMO=1 npx vite build && node scripts/shot.mjs live dark scripts/steps-live.mjs support   # last word: jungle, support or top
 VITE_DEMO=1 npx vite build && node scripts/perf.mjs   # how busy the page is in a phone-sized, slowed-down browser
 ```
 

@@ -1,7 +1,7 @@
 // Filling the Live team sheet from a picture. The picture is shrunk in the browser, read by Claude on the server
 // (api/teams.js), and what comes back is placed into the rows here.
 import { champOf } from './legacy';
-import { ALLY_ROWS, ENEMY_ROWS } from './live';
+import { ALLY_ROWS, ENEMY_ROWS, MY_LANE } from './live';
 
 const SCREEN = { champion_select: 'champion select', loading_screen: 'the loading screen', scoreboard: 'the scoreboard' };
 const LONG_EDGE = 1568;   // the largest size Claude reads at full detail; anything bigger only makes the upload slower
@@ -36,7 +36,7 @@ export function placeTeams(bst, role, found) {
   const count = allies.length + enemies.length;
   if (!count) return { patch: null, count: 0, message: found.note || 'No champions found in that picture. Use champion select, the loading screen or the scoreboard.' };
 
-  const patch = {}, myLane = role === 'support' ? 'support' : 'jungle', current = champOf(bst.me);
+  const patch = {}, myLane = MY_LANE[role] || 'jungle', current = champOf(bst.me);
   // the player's own pick: marked by the reader, else whoever is in the player's lane, else the champion already chosen
   const mine = allies.find((a) => a.me) || allies.find((a) => a.lane === myLane) || allies.find((a) => current && a.c === current) || null;
   if (mine && mine.c !== current) { patch.me = mine.c; patch.bought = []; }

@@ -11,6 +11,7 @@ import { SHARP } from './ui';
 import { SessionProvider, useSession, useSynced } from './session';
 import { content } from './lib/content';
 import { QUEUE_TABS } from './lib/queues';
+import { ROLE } from './lib/roles';
 import Learn from './views/Learn';
 import Drills from './views/Drills';
 import Home from './views/Home';
@@ -58,7 +59,7 @@ function Gate() {
 }
 
 function Main() {
-  const { profile, role, setRole, queue, setQueue, queueCounts } = useSession();
+  const { profile, role, roles, setRole, queue, setQueue, queueCounts } = useSession();
   const [tab, setTab] = useLocal('jungle-coach.tab.v3', 'home', (v) => TABS.some((t) => t.id === v));
   const [st, setSt] = useSynced('drills.' + role, EMPTY, (v) => v && typeof v === 'object' && v.q);
   const [quiz, setQuiz] = useState(null);
@@ -87,12 +88,12 @@ function Main() {
             <Logo />
             <div className="min-w-0">
               <h1 className="font-display m-0 text-[16px] leading-none font-black tracking-tight whitespace-nowrap uppercase">
-                <SplitTitle key={role} text={role === 'support' ? 'Support Coach' : 'Jungle Coach'} className="text-neon pb-[0.12em]" />
+                <SplitTitle key={role} text={ROLE[role].title} className="text-neon pb-[0.12em]" />
               </h1>
               <Scramble key={profile.riot_name + role} text={`${profile.riot_name} #${profile.riot_tag}`} className="mt-1 block truncate text-[10px] font-bold tracking-[0.16em] text-muted-foreground uppercase" />
             </div>
           </div>
-          <ContinuousTabs tabs={[{ id: 'jungle', label: 'JG', aria: 'Jungle' }, { id: 'support', label: 'SUP', aria: 'Support' }]} value={role} onChange={(r) => { ripple(innerWidth - 70, 40, 'lime'); setRole(r); }} label="Role" size="sm" className="shrink-0" />
+          {roles.length > 1 && <ContinuousTabs tabs={roles.map((r) => ({ id: r, label: ROLE[r].short, aria: ROLE[r].name }))} value={role} onChange={(r) => { ripple(innerWidth - 70, 40, 'lime'); setRole(r); }} label="Role" size="sm" className="shrink-0" />}
         </header>
         {/* Which games count: ranked, normal or both. Only the screens built from the games show it. */}
         <AnimatePresence initial={false}>

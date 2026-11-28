@@ -22,7 +22,7 @@ for (;;) { const r = await runSync(db, { ...profile, puuid: step ? (await profil
 console.log('sync finished in', step, 'steps,', ((Date.now() - t0) / 1000).toFixed(1) + 's');
 const { data: row, error: sErr } = await asUser.from('player_stats').select('stats,updated_at').eq('user_id', data.user.id).maybeSingle();
 if (sErr || !row) { console.log('READ BACK FAILED:', sErr && sErr.message); process.exit(1); }
-for (const role of ['jungle', 'support']) console.log(' ', role, row.stats[role].games, 'games', row.stats[role].groups.all.record, row.stats[role].champs.join(','));
+for (const role of ['jungle', 'support', 'top']) console.log(' ', role, row.stats[role].games, 'games', row.stats[role].groups.all.record, row.stats[role].champs.join(','));
 const { count } = await asUser.from('player_games').select('*', { count: 'exact', head: true });
 const others = await asUser.from('profiles').select('id');
 console.log('rows this player can see: games', count, '| profiles', others.data.length, '(should be 1)');

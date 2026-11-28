@@ -41,7 +41,7 @@ export default function Home() {
   const G = stats.list, n = G.length, all = stats.groups.all, wins = G.filter((g) => g.w).length, mixed = stats.queue === 'both';
   let streak = 1; while (streak < n && G[streak].w === G[0].w) streak++;
   const leak = insights(stats)[0], checks = checksFor(stats, role), rules = RULES[role];
-  const tiles = [['KDA', all.kda.join('/')], ['Deaths a game', (all.deaths / n).toFixed(1)], role === 'support' ? ['Vision a min', all.vision.per_min] : ['Jungle CS a min', all.jcs_min]];
+  const tiles = [['KDA', all.kda.join('/')], ['Deaths a game', (all.deaths / n).toFixed(1)], role === 'support' ? ['Vision a min', all.vision.per_min] : role === 'top' ? ['CS a min', all.cs_min ?? '–'] : ['Jungle CS a min', all.jcs_min]];
   let when = ''; try { when = new Date(statsAt).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }); } catch (e) {}
 
   return (

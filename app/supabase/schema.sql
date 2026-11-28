@@ -8,7 +8,7 @@ create table if not exists public.profiles (
   riot_name text,
   riot_tag text,
   region text not null default 'na',
-  role text not null default 'jungle' check (role in ('jungle', 'support')),
+  role text not null default 'jungle' check (role in ('jungle', 'support', 'top')),
   mains text[] not null default '{}',
   puuid text,
   updated_at timestamptz not null default now()
@@ -32,6 +32,9 @@ create table if not exists public.player_games (
 alter table public.player_games add column if not exists v smallint not null default 1;
 alter table public.player_games add column if not exists note text;
 alter table public.player_games add column if not exists reviewed_at timestamptz;
+-- The main role a player can pick grew with the site: top was added after jungle and support.
+alter table public.profiles drop constraint if exists profiles_role_check;
+alter table public.profiles add constraint profiles_role_check check (role in ('jungle', 'support', 'top'));
 create index if not exists player_games_recent on public.player_games (user_id, created desc);
 
 create table if not exists public.player_stats (

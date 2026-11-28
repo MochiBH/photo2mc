@@ -2,9 +2,10 @@
 // until done, so each call stays short: at most BATCH new games (two Riot requests each).
 import { ANALYSIS_VERSION, QUEUES, analyseGame, buildStats, roleIn } from './analysis.mjs';
 import { riotClient } from './riot.mjs';
+import { ROLES } from './roles.mjs';
 
+export { ROLES };
 export const BATCH = 3;
-export const ROLES = ['jungle', 'support'];
 const PER_QUEUE = 20;
 
 /** What is saved for a player: ranked numbers per role at the top (where older copies of the site look for them), then
