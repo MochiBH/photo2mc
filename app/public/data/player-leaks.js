@@ -1,5 +1,7 @@
-/* Drill questions written from one player's own games, shown only to that Riot ID. opts[0] is correct.
-   Evlijah#3958: 12 ranked support games pulled Nov 21, 2026 (7-5; Poppy 4-2, Nautilus 3-2). `no` has one line per wrong option, in order (no[0] is for opts[1]), saying why it is wrong. */
+/* Drill questions written from one player's own games, shown only to that Riot ID and only in that role's course.
+   Keyed by Riot ID, then by role. opts[0] is correct. `no` has one line per wrong option, in order (no[0] is for opts[1]), saying why it is wrong.
+   Evlijah#3958 support: 12 ranked support games pulled Nov 21, 2026 (7-5; Poppy 4-2, Nautilus 3-2).
+   Evlijah#3958 top: 33 ranked and normal top games pulled Nov 28, 2026 (17-16; Renekton 7-1, Kled 7-9, Gwen 1-3). */
 window.PLAYER_LEAKS = {
 "evlijah#3958": {
 support: [
@@ -37,6 +39,38 @@ support: [
  why:"Your warding is a real strength: you out-ward the enemy support in most wins. The gap is being at the dragon when it matters, with those wards already down."}
 ],
 top: [
+{id:"et1",tags:["leak","lane"],q:"You're on Kled. Your opponent has just killed you one against one. You're back in lane a level down, with the same items, and he walks at you the same way. What do you do?",
+ opts:["Farm what reaches your tower until something changes","Fight him again, because now you know his combo","Fight him inside your own minions to even it out","Leave the lane and look for a fight in mid"],
+ no:["He knows yours too, and he now has a level and the kill gold on top.","A few minions do not make up for a level and an item.","The wave dies to your tower, and you arrive in mid as the weakest player there."],
+ why:"56 of your 93 deaths before 15:00 in top lane were to one enemy on their own. You are 12–7 when that happens once at most, and 5–9 when it happens more. Wait for an item, a level or your jungler before you take that fight again."},
+{id:"et2",tags:["leak","gank"],q:"First recall. After your item you have 75 gold left over. What do you do with it?",
+ opts:["Buy a control ward for the river brush","Keep it toward the next item","Nothing. Wards are the support's job","Keep it. A ward does not stop a gank anyway"],
+ no:["75 gold barely moves the next item forward, and it can save a death worth far more.","In top lane there is no support. If you do not ward the river, nobody does.","It does not stop the gank, but it shows it coming, and that is all you need to walk away."],
+ why:"You have not bought one control ward in your last 33 top games, and 31 of your early deaths had their jungler in them. One ward in the river brush shows him coming for as long as it lives."},
+{id:"et3",tags:["leak","lane"],q:"6:00 on Renekton. The lane is even. His wave is bigger than yours and nobody has seen their jungler for a while. He steps up, and you have 50 Fury. Do you go in?",
+ opts:["No. Wait for a bigger wave and a jungler you can see","Yes. With 50 Fury the trade is always won","Yes, but stay next to him afterward to finish it","Yes, and Flash onto him to be sure"],
+ no:["Fury wins the trade against him, not against his whole wave and a second enemy.","Staying inside a bigger wave with their jungler missing is exactly the fight that kills you.","Flash makes it a bigger bet on the same bad moment."],
+ why:"133 of your 194 deaths in top lane were free: nobody on their side died with you. You are 12–5 in games with three or fewer of those, and 5–11 with more. Two checks before every fight: the waves, and their jungler."},
+{id:"et4",tags:["leak","wave"],q:"12 minutes. Your tower is down and a full wave is pushing toward your next one. Your team pings a fight in mid that is already going badly. What do you do?",
+ opts:["Catch the wave, then go to your team","Run to mid straight away","Recall and shop first","Stand halfway between and see what happens"],
+ no:["You arrive late to a lost fight, and the wave dies to your tower as well.","The wave is gone by the time you are back, and the fight is long over.","You get neither the wave nor the fight."],
+ why:"You average 5.2 CS a minute in top lane, and you are 8–1 in the games where you reached six. A wave is steady gold, and a fight that is already lost does not need one more death."},
+{id:"et5",tags:["leak","build"],q:"Ranked, champion select. Renekton and Kled are both open, and you have been wanting to get better at Gwen. Which do you lock in?",
+ opts:["Renekton","Gwen, because ranked is the only real practice","Kled, because you have played him the most","Something new, to surprise the enemy"],
+ no:["On Gwen you are 1–3 with nearly nine deaths a game. Learn her in normal games first.","Kled is a fine second pick, but your record on him is 7–9.","A champion you have never played loses the lane before the surprise matters."],
+ why:"Renekton is your best pick so far: 7–1, against 17–16 across all your top games. Eight games is a small sample, but it is the pick your record points at."},
+{id:"et6",tags:["leak","macro"],q:"7:40. The lane is even and your wave is slowly pushing toward his tower. Your jungler pings the Voidgrubs. What do you do?",
+ opts:["Push the wave in and walk to the pit","Stay in lane. The grubs are the jungler's job","Recall for an item now","Fight your opponent first, then go"],
+ no:["They spawn next to your lane, and your jungler loses the fight for them alone.","You are in base when they spawn, and the fight happens without you.","A fight you might lose, a minute before the objective, is how the grubs go to the enemy."],
+ why:"This is something you already do well. You were at the pit for 41 of the 51 Voidgrubs your team took. Keep doing it, and get the wave in first so it costs you nothing."},
+{id:"et7",tags:["leak","lane"],q:"9:00. You're 0/1 and about 20 CS behind. Your opponent is holding the wave near his own tower. What counts as a good next five minutes?",
+ opts:["No deaths, and every minion that comes to you","Getting the kill back, whatever it takes","Leaving the lane for good to find kills elsewhere","Walking up to his tower to break the freeze alone"],
+ no:["Chasing the kill from behind is how 0/1 becomes 0/3.","Your tower falls, and you bring a weak champion to someone else's lane.","That is a long walk toward the player who is ahead, with their jungler free to come."],
+ why:"You are 11–5 in games where you were within 500 gold of your opponent at 15:00, and 6–11 when you were further behind. You do not have to win the lane. You have to keep it close."},
+{id:"et8",tags:["leak","wave"],q:"You died and you're walking back to lane, a level down. He is under your tower with a big wave, hitting it. What do you do when you get there?",
+ opts:["Last hit the wave under your tower","Fight him at once, before he takes a plate","Flash onto him while he is hitting the tower","Wait behind the tower until the wave is gone"],
+ no:["You are a level down with the same items, so the same fight goes worse.","A second death in a row gives him the tower as well as the plate.","Then the tower takes every minion, and you fall another wave behind."],
+ why:"49 of your 194 deaths came within 90 seconds of respawning. The wave under your tower is safe gold, and it is the one thing to take until you have caught up."}
 ]
 }
 };

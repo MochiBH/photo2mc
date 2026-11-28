@@ -11,7 +11,9 @@ export function insights(stats) {
   const add = (score, o) => { if (score > 0) out.push({ score, ...o }); };
   const r = (l) => { const w = l.filter((g) => g.w).length; return w + '–' + (l.length - w); };
   const de = all.obj.dragon_enemy, ge = all.obj.voidgrub_enemy, gm = all.obj.voidgrub_mine;
-  const topZone = Object.keys(all.zones)[0];
+  // the saved numbers come back from the database with their keys in its own order, so the biggest is found, not assumed first
+  const most = (o) => (Object.entries(o || {}).sort((a, b) => b[1] - a[1])[0] || [])[0];
+  const topZone = most(all.zones), earlyZone = most(all.early_zones);
 
   if (all.deaths) {
     add((all.took / all.deaths - 0.15) * 10, {
@@ -85,7 +87,7 @@ export function insights(stats) {
     const cut = role === 'support' ? 1 : 2, ok = early.filter((g) => g.e15 <= cut), bad = early.filter((g) => g.e15 > cut), wr = (l) => l.filter((g) => g.w).length / l.length;
     if (ok.length >= 3 && bad.length >= 3) add((wr(ok) - wr(bad) - 0.25) * 7, {
       title: 'Early deaths decide your games', big: r(bad), unit: `is your record when you die more than ${cut === 1 ? 'once' : 'twice'} before 15:00. With ${cut === 1 ? 'one or none' : 'two or fewer'} you are ${r(ok)}`,
-      detail: `${all.early_free} of your ${all.before15} early deaths were free${Object.keys(all.early_zones)[0] ? `, and most happen in ${ZONE[Object.keys(all.early_zones)[0]]}` : ''}.`,
+      detail: `${all.early_free} of your ${all.before15} early deaths were free${earlyZone ? `, and most happen in ${ZONE[earlyZone] || earlyZone}` : ''}.`,
       fix: role === 'support' ? 'After your first death in lane, no more all-ins unless your jungler is there. Hold the wave and wait for level 6 or a gank.' : top ? 'After your first death in lane, let the wave come to your tower and farm there. No more fights until you have an item or a level on them, or your jungler is there.' : 'Full clear before your first gank, and skip any gank where the enemy is standing under their own tower.' });
   }
   // an engage champion whose deaths mostly buy nothing is going in without follow-up
@@ -134,7 +136,10 @@ export function facts(stats) {
 export function strengths(stats) {
   if (!stats || stats.games < 5) return [];
   const all = stats.groups.all, n = all.games, out = [], role = stats.role;
-  const cw = all.vision.control / n;
+  const cw = all.vision.control / n, wins = (g) => Number(g.record.split('-')[0]);
+  // a champion that wins far more often than the player's games as a whole
+  const star = stats.champs.map((c) => [c, stats.groups[c]]).filter(([, g]) => g && g.games >= 5 && wins(g) / g.games >= 0.65 && wins(g) / g.games - wins(all) / n >= 0.2).sort((a, b) => wins(b[1]) / b[1].games - wins(a[1]) / a[1].games)[0];
+  if (star) out.push(`${champ(star[0])} is your best pick so far: ${star[1].record.replace('-', '–')}, against ${all.record.replace('-', '–')} across all these games. ${star[1].games} games is a small sample, but it is worth picking first.`);
   if (role === 'support' && all.vision.per_min >= 1.8) out.push(`Vision. You average ${all.vision.per_min} vision score a minute and buy ${cw.toFixed(1)} control wards a game${all.vision.rival_score ? `, against ${Math.round(all.vision.rival_score)} total for the enemy support to your ${Math.round(all.vision.score)}` : ''}. Keep it, and aim it at the next objective.`);
   if (role === 'jungle' && cw >= 2) out.push(`Control wards. You buy ${cw.toFixed(1)} a game, which most junglers at your rank don't.`);
   if (all.deaths && all.alone / all.deaths <= 0.08) out.push(`You rarely get caught alone: only ${all.alone} of ${all.deaths} deaths had no teammate near. Your deaths come from fights, so the fix is choosing which fights, not hiding.`);
